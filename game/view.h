@@ -3,10 +3,12 @@
 #include <globject.h>
 //#include "game.h"
 #include <list>
+#include <vector>
 #include "points.h"
 #include "random.h"
 #include "mat4.h"
 #include "text.h"
+#include "texture.h"
 
 class Ship;
 class Gun;
@@ -70,6 +72,8 @@ public:
     int lives() const {return _lives;}
     int scores() const {return _scores;}
     inline bool gameIsOver() const {return _lives <= 0;}
+    void addTexture (FILE * _pFile);
+
 private:
 
 	GLuint createShader(GLenum shaderType, const char* src);
@@ -111,6 +115,7 @@ private:
     void checkAppearences();
     void checkAsteroidBreaksShip();
     void drawEndGame() const;
+    std::vector <Texture *> textures;
 };
 
 #endif // VIEW_H

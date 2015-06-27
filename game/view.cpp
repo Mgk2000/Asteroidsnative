@@ -490,6 +490,12 @@ void View::drawEndGame() const
 {
     text->draw(-0.07, 0.0, 0.05, Point4D(1.0,0.0,0.0),5.0, "END");
 }
+
+void View::addTexture(FILE *_pFile)
+{
+    Texture* texture = new Texture (_pFile);
+    textures.push_back(texture);
+}
 void View::onTouchEvent(int what, int x, int y)
 {
 	mutex->lock();
