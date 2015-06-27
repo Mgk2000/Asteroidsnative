@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Asteroids K</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="sNewgame">New game</string>
+    <string name="sContinue">Continue</string>
+    <string name="sSoundOn">Sound:On</string>
+    <string name="sSoundOff">Sound:Off</string>
+    <string name="sMusicOn">Music:Off</string>
+    <string name="sMusicOff">Music:Off</string>
+    <string name="sTopResults">Top Results</string>
+    <string name="sExit">Exit</string>
+    <string name="sOK">OK</string>
+    <string name="sBack">Back</string>
+    <string name="sMainMenu">Main menu</string>
+    <string name="sEnterYourName">Enter your name:</string>
+    <string name="sTop10results">Top 10 results:</string>
+    <string name="sYourScores">Your Scores:</string>
+    <string name="sMainImage">Main Image</string>
+    
+</resources>

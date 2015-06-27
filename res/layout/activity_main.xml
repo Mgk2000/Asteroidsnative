@@ -1,0 +1,109 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+    
+   <LinearLayout 
+   android:layout_width="fill_parent"
+   android:layout_height="0dip"
+   android:layout_weight="1"
+   >   
+        
+	<ImageView
+	    android:id="@+id/imageView1"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:contentDescription="@string/sMainImage" />
+
+ 	</LinearLayout>
+   <LinearLayout 
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   >   
+
+ 	<TextView
+ 	    android:layout_width="0dip"
+ 	    android:layout_height="match_parent"
+ 	    android:layout_weight="1"
+ 	    android:background="#ffffff"
+ 	    android:gravity="center_vertical|center_horizontal"
+ 	    android:text="@string/sYourScores"
+ 	    android:textColor="#0000ff"
+ 	    android:textSize="24sp" />
+
+ 	<TextView
+		android:id="@+id/ScoresView"
+ 	    android:layout_width="0dip"
+ 	    android:layout_height="match_parent"
+ 	    android:layout_weight="1"
+ 	    android:background="#ffffff"
+ 	    android:gravity="center_vertical|center_horizontal"
+ 	    android:textColor="#0000ff"
+ 	    android:textSize="24sp" />
+ 	
+ 	</LinearLayout>
+   
+   <LinearLayout 
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:background="#ffffff"
+   >   
+   
+  <Button style="?android:attr/borderlessButtonStyle"
+      android:id="@+id/NewGameButton"
+      android:layout_width="0dip"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="@string/sNewgame" />
+    
+    <Button style="?android:attr/borderlessButtonStyle"
+        android:id="@+id/ContinueButton"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/sContinue" />
+
+ 	</LinearLayout>
+   <LinearLayout 
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:background="#ffffff"
+   >   
+   
+    <Button style="?android:attr/borderlessButtonStyle"
+        android:id="@+id/SoundButton"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/sSoundOn" />
+    
+    <Button style="?android:attr/borderlessButtonStyle"
+        android:id="@+id/MusicButton"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/sMusicOff" />
+
+ 	</LinearLayout>
+   <LinearLayout 
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:background="#ffffff"
+   >   
+   
+    <Button style="?android:attr/borderlessButtonStyle"
+        android:id="@+id/TopResultsButton"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/sTopResults" />
+    
+    <Button style="?android:attr/borderlessButtonStyle"
+        android:id="@+id/ExitButton"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/sExit" />
+
+ 	</LinearLayout>
+</LinearLayout>
