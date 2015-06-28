@@ -47,6 +47,7 @@
 #include "patrolbullet.h"
 #include "mutex.h"
 #include "logmsg.h"
+#include "background.h"
 #include <cstdio>
 View::View() :
      bullets(0),asteroidAppearTime(0), nticks(0), period(12),
@@ -312,7 +313,7 @@ int View::drawFrame(long long currTime)
 }
 
 
-bool View::initializeGL()
+bool View::initializeGL(FILE* _pfile)
 {
 	glClearColor(0.0,0., 0.1, 1);
     if (!initShaders())
@@ -326,6 +327,7 @@ bool View::initializeGL()
 		// Use QBasicTimer because its faster than QTimer
 		text = new Text(this);
 		mutex = new Mutex;
+        addTexture(_pfile);
 		startGame();
     }
     else //after pause 9pressing Home button)
@@ -464,6 +466,7 @@ void View::resizeGL(int w, int h)
 void View::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    background->draw();
 	ship->draw();
 	gun->draw();
 	for (std::list<Bullet*> ::iterator bit = bullets.begin(); bit != bullets.end(); bit++)
@@ -473,6 +476,7 @@ void View::paintGL()
 	if (patrol)
 		patrol->draw();
 	drawCurrentResult();
+    background->draw();
     if (gameIsOver())
         drawEndGame();
 }
@@ -495,6 +499,8 @@ void View::addTexture(FILE *_pFile)
 {
     Texture* texture = new Texture (_pFile);
     textures.push_back(texture);
+    background = new Background(this, textures[0]);
+    background->init();
 }
 void View::onTouchEvent(int what, int x, int y)
 {

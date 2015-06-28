@@ -5,13 +5,13 @@ class Texture : public GlObject
 {
 public:
     Texture(FILE* file);
+    int gvPositionHandle,
+    gvSamplerHandle,
+    gvTexCoordHandle,
+    gvMatrixHandle;
+    int program;
 private:
     GLuint uiTexture;
-    int gvPositionHandle,
-    //gvNormalHandle,
-    gvSamplerHandle,
-    gvTexCoordHandle;
-    int program;
 
     GLubyte* loadPicture(FILE* _pFile);
     GLuint createSimpleTexture2D(GLuint _textureid, GLubyte *pixels, int width, int height, int channels);

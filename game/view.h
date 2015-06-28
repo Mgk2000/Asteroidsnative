@@ -17,6 +17,7 @@ class Random;
 class Asteroid;
 class GeometryEngine;
 class Patrol;
+class Background;
 class Mutex;
 struct BulletInfo
 {
@@ -59,7 +60,7 @@ public:
     void processTouchMove (int x, int y);
     void processTouchPress (int x, int y);
     int drawFrame(long long currtime);
-    bool initializeGL();
+    bool initializeGL(FILE*);
     void resizeGL(int w, int h);
     void paintGL();
     int width, height;
@@ -92,6 +93,7 @@ private:
 	void createSplinters(Asteroid* asteroid);
 	Patrol* patrol;
     Ship* ship;
+    Background * background;
     Mutex* mutex;
     void drawCurrentResult() const;
 	GLuint _program;
