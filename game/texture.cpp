@@ -155,8 +155,6 @@ GLuint Texture::createTexture(GLuint _textureId, GLubyte* pixels,
         err = glGetError();
         glGenerateMipmap(GL_TEXTURE_2D);
         err = glGetError();
-        //checkGlError("glTexImage2D");
-        // Set the filtering mode
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
         err = glGetError();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );

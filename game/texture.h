@@ -5,7 +5,6 @@ class Texture : public GlObject
 {
 public:
     Texture(FILE* file);
-    int program;
     int posLocation() const {return _posLocation;}
     int textureLocation() const {return _textureLocation;}
     int texCoordLocation() const {return _texCoordLocation;}
@@ -25,6 +24,7 @@ private:
     _texCoordLocation,
     _matrixLocation;
     int _picWidth, _picHeight;
+    int program;
 };
 
 #endif // TEXTURE_H
