@@ -5,13 +5,15 @@
 class Random;
 class View;
 class Mat4;
+class Texture;
 #define MAXVERTICES 60
 class FlyingObject : public GlObject
 {
 public:
-	FlyingObject(View* _view, int _nbos);
+    FlyingObject(View* _view, int _nbos, Texture* __texture);
 	FlyingObject(View* _view, int _nbos, float _x, float _y, float _speed, float _angle);
-	virtual ~FlyingObject();
+    FlyingObject(View* _view, int _nbos, float _x, float _y, float _speed, float _angle, Texture* __texture);
+    virtual ~FlyingObject();
 	virtual void init();
 	virtual void draw();
     virtual void moveStep(float delta);
@@ -52,6 +54,9 @@ protected:
 	void drawTriangles();
 	void drawLines(int how, uint vbo, int npoints, const Point4D& color, float _width, float angle = 0.0);
     float _scale;
+    Texture* _texture;
+    void drawTexture( float angle = 0.0);
+    Point4D colormult;
 };
 
 

@@ -256,7 +256,7 @@ void View::checkAppearences()
         }
         if (!pat)
         {
-            Asteroid* asteroid = new Asteroid (this);
+            Asteroid* asteroid = new Asteroid (this, textures[0]);
             asteroid->init();
             addAsteroid(asteroid);
         }
@@ -313,7 +313,7 @@ int View::drawFrame(long long currTime)
 }
 
 
-bool View::initializeGL(FILE* _pfile)
+bool View::initializeGL()
 {
 	glClearColor(0.0,0., 0.1, 1);
     if (!initShaders())
@@ -321,18 +321,21 @@ bool View::initializeGL(FILE* _pfile)
 
     if (!ship)
     {
-		ship = new Ship (this);
+        for (int i = 0; i< textures.size(); i++)
+            textures[i]->initGL();
+        ship = new Ship (this);
 		gun = new Gun (this);
 		patrol = 0;
 		// Use QBasicTimer because its faster than QTimer
 		text = new Text(this);
 		mutex = new Mutex;
-        addTexture(_pfile);
 		startGame();
     }
     else //after pause 9pressing Home button)
     {
-    	ship->initGL();
+        for (int i = 0; i< textures.size(); i++)
+            textures[i]->initGL();
+        ship->initGL();
     	gun->initGL();
 		text->initGL();
     	if (!ship->dead())
@@ -345,7 +348,7 @@ bool View::initializeGL(FILE* _pfile)
 			std::list<Asteroid*>::iterator ait = asteroids.begin();
 			for(; ait!= asteroids.end(); ait++)
 				(*ait)->initGL();
-    	}
+        }
     }
     return true;
 }
@@ -442,7 +445,7 @@ void View::createSplinters(Asteroid* asteroid)
 	int nsp = _random2.irandom(3,5);
 	for (int i =0; i< nsp; i++)
 	{
-        Splinter* splinter = new Splinter(this);
+        Splinter* splinter = new Splinter(this, textures[0]);
 		float fi = M_PI * i / nsp;
 		splinter->init(*asteroid, fi);
 		asteroids.push_front(splinter);
@@ -466,7 +469,7 @@ void View::resizeGL(int w, int h)
 void View::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    background->draw();
+   // background->draw();
 	ship->draw();
 	gun->draw();
 	for (std::list<Bullet*> ::iterator bit = bullets.begin(); bit != bullets.end(); bit++)
@@ -476,7 +479,7 @@ void View::paintGL()
 	if (patrol)
 		patrol->draw();
 	drawCurrentResult();
-    background->draw();
+//    background->draw();
     if (gameIsOver())
         drawEndGame();
 }
@@ -495,9 +498,9 @@ void View::drawEndGame() const
     text->draw(-0.07, 0.0, 0.05, Point4D(1.0,0.0,0.0),5.0, "END");
 }
 
-void View::addTexture(FILE *_pFile)
+void View::addTexture(const char* filename)
 {
-    Texture* texture = new Texture (_pFile);
+    Texture* texture = new Texture (filename);
     textures.push_back(texture);
     background = new Background(this, textures[0]);
     background->init();

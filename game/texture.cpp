@@ -1,6 +1,6 @@
 #include "texture.h"
 #include "logmsg.h"
-static const char gVertexShader[] =
+static const char vertexShader[] =
         "precision mediump float;                            \n"
         "precision mediump int;                            \n"
         "//attribute vec4 a_position;   \n"
@@ -15,23 +15,28 @@ static const char gVertexShader[] =
         "   v_texCoord = a_texCoord;  \n"
         "}                            \n";
 
-static const char gFragmentShader[] =
+static const char fragmentShader[] =
         "precision mediump float;                            \n"
         "precision mediump int;                            \n"
 
         "varying vec2 v_texCoord;                            \n"
         "uniform sampler2D s_texture;                        \n"
+        "uniform vec4 s_colormult;                           \n"
         "void main()                                         \n"
         "{                                                   \n"
-        "  gl_FragColor = texture2D( s_texture, v_texCoord );\n"
+        "  vec4 col = texture2D( s_texture, v_texCoord );\n"
+        "  vec4 col1 = vec4(2.0, 0.5, 0.5, 1.0) ;                 \n"
+        "  for(int i=0; i<3; i++)                           \n"
+        "       col[i] = (col[i]*s_colormult[i]);             \n"
+        "  //  col[0] = (col[0]+col1[0])/2.0;                \n"
+        "  //col[1] = (col[1]+col1[1])/2.0;                \n"
+        "  //col[2] = (col[2]+col1[2])/2.0;                \n"
+        "  gl_FragColor = col;                              \n"
+        "  //gl_FragColor = texture2D( s_texture, v_texCoord );\n"
         "}                                                   \n";
-Texture::Texture(FILE* _pFile) : program(0)
+Texture::Texture(const char* filename) : _program(0)
 {
-    GLubyte* data = loadPicture(_pFile);
-    setupGraphics(512, 512, data);
-   // free(data);
-
-
+    loadPicture(filename);
 }
 
 GLubyte *Texture::getFragment(GLubyte *src, GLubyte* dst,
@@ -44,34 +49,37 @@ GLubyte *Texture::getFragment(GLubyte *src, GLubyte* dst,
         memcpy(dptr, sptr, width);
     }
 }
-bool Texture::setupGraphics(int w, int h, GLubyte* data)
+bool Texture::initGL()
 {
-    createProgram(gVertexShader, gFragmentShader);
-    if (!program)
+    createProgram();
+    if (!_program)
     {
         LOGD("Could not create program.");
         return false;
     }
-    _posLocation = glGetAttribLocation(program, "a_position");
-    _texCoordLocation = glGetAttribLocation(program, "a_texCoord");
-    _textureLocation = glGetUniformLocation(program, "s_texture");
-    _matrixLocation  = glGetUniformLocation(program, "mvp_matrix");
+    _posLocation = glGetAttribLocation(_program, "a_position");
+    _texCoordLocation = glGetAttribLocation(_program, "a_texCoord");
+    _textureLocation = glGetUniformLocation(_program, "s_texture");
+    _matrixLocation  = glGetUniformLocation(_program, "mvp_matrix");
+    _colorMultLocation  = glGetUniformLocation(_program, "s_colormult");
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(1, &uiTexture);
-    uiTexture = createTexture(uiTexture, data,w, h);
+    createTexture();
     return true;
 }
 
 
-GLubyte* Texture::loadPicture(FILE* _pFile)
+void Texture::loadPicture(const char* filename)
 {
     // Read data from file into texture
-    _picWidth = 512;
-    _picHeight = 512;
-    pcData = new GLubyte[_picWidth* _picHeight*3];
-    //unsigned char* pcData = (unsigned char*)malloc(width * height * 3);
-    int offset = 0;
-    fseek(_pFile, offset + 14 + 40, SEEK_SET);
+    FILE* _pFile = fopen(filename, "r");
+    int szbuf[2];
+    fseek(_pFile, 18, SEEK_SET);
+    fread(szbuf, 8, 1, _pFile);
+    _picWidth = szbuf[0];
+    _picHeight = szbuf[1];
+     pcData = new GLubyte[_picWidth* _picHeight*3];
+    fseek(_pFile,  14 + 40, SEEK_SET);
     fread(pcData, _picWidth * _picHeight * 3, 1, _pFile);
     for (int i=0; i< _picWidth * _picHeight; i++)
     {
@@ -79,38 +87,35 @@ GLubyte* Texture::loadPicture(FILE* _pFile)
         pcData[i*3] = pcData[i*3+2];
         pcData[i*3+2] = c;
     }
-    char buf[128];
-    memcpy (buf, pcData, 128);
-    return pcData;
 }
-void Texture::createProgram(const char* vtxSrc, const char* fragSrc)
+void Texture::createProgram()
 {
     GLuint vtxShader = 0;
     GLuint fragShader = 0;
     GLint linked = GL_FALSE;
 
-    vtxShader = createShader(GL_VERTEX_SHADER, vtxSrc);
+    vtxShader = createShader(GL_VERTEX_SHADER, vertexShader);
     if (!vtxShader)
         goto exit;
 
-    fragShader = createShader(GL_FRAGMENT_SHADER, fragSrc);
+    fragShader = createShader(GL_FRAGMENT_SHADER, fragmentShader);
     if (!fragShader)
         goto exit;
 
-    program = glCreateProgram();
-    if (!program) {
+    _program = glCreateProgram();
+    if (!_program) {
         goto exit;
     }
-    glAttachShader(program, vtxShader);
-    glAttachShader(program, fragShader);
+    glAttachShader(_program, vtxShader);
+    glAttachShader(_program, fragShader);
 
-    glLinkProgram(program);
-    glGetProgramiv(program, GL_LINK_STATUS, &linked);
+    glLinkProgram(_program);
+    glGetProgramiv(_program, GL_LINK_STATUS, &linked);
     if (!linked)
     {
 
-        glDeleteProgram(program);
-        program = 0;
+        glDeleteProgram(_program);
+        _program = 0;
     }
 
 exit:
@@ -138,8 +143,7 @@ GLuint Texture::createShader(GLenum shaderType, const char *src)
     return shader;
 }
 
-GLuint Texture::createTexture(GLuint _textureId, GLubyte* pixels,
-                int width, int height)
+void Texture::createTexture()
 {
         int err;
         // Bind the texture
@@ -149,17 +153,14 @@ GLuint Texture::createTexture(GLuint _textureId, GLubyte* pixels,
         // Bind the texture object
         glBindTexture(GL_TEXTURE_2D, _textureId);
         err = glGetError();
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                        GL_UNSIGNED_BYTE, pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _picWidth, _picHeight, 0, GL_RGB,
+                        GL_UNSIGNED_BYTE, pcData);
 
         err = glGetError();
         glGenerateMipmap(GL_TEXTURE_2D);
         err = glGetError();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         err = glGetError();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         err = glGetError();
-
-        return _textureId;
-
 }

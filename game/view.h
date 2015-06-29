@@ -60,7 +60,7 @@ public:
     void processTouchMove (int x, int y);
     void processTouchPress (int x, int y);
     int drawFrame(long long currtime);
-    bool initializeGL(FILE*);
+    bool initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
     int width, height;
@@ -73,7 +73,7 @@ public:
     int lives() const {return _lives;}
     int scores() const {return _scores;}
     inline bool gameIsOver() const {return _lives <= 0;}
-    void addTexture (FILE * _pFile);
+    void addTexture (const char* filename);
 
 private:
 

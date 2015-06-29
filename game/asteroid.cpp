@@ -5,7 +5,8 @@
 #include "random.h"
 #include "ship.h"
 
-Asteroid::Asteroid(View * _view) : FlyingObject (_view, 1)
+Asteroid::Asteroid(View * _view, Texture * __texture) :
+    FlyingObject (_view, 1, __texture)
 {
 }
 
@@ -33,14 +34,19 @@ void Asteroid::initParams()
     _rotateSpeed = random1().frandom(-100.1, 100.1);
 	vy = speed* cos (angle);
     nvertices = random1().irandom(MAXVERTICES-20, MAXVERTICES);
+    colormult.r = random1().frandom (0.0, 2.0);
+    colormult.g = random1().frandom (0.0, 2.0);
+    colormult.b = random1().frandom (0.0, 2.0);
 }
 
 void Asteroid::applyParams()
 {
-	vertices = new Point[nvertices];
-	rotatedVertices = new Point[nvertices];
+//	vertices = new Point[nvertices];
+//	rotatedVertices = new Point[nvertices];
+    vertices = new Point[nvertices];
+    rotatedVertices = new Point[nvertices];
     _r = 0.0f;
-	for (int i=0; i< nvertices; i++)
+/*	for (int i=0; i< nvertices; i++)
 	{
 		float fi = M_PI*2 * i /nvertices;
 		fi = fi + random1().frandom(-M_PI / nvertices /2., M_PI / nvertices /2);
@@ -49,20 +55,43 @@ void Asteroid::applyParams()
             _r = r1;
 		vertices[i] = Point (r1 * sin(fi) , r1 * cos(fi), 0);
 		rotatedVertices[i] = vertices[i];
-	}
+    }
 	_color = Point4D (0.3 + random1().frandom()*0.7 , 0.3 + random1().frandom()*0.7, 0.3 + random1().frandom()*0.7, 1.0);
-	initGL();
+*/
+    texScale = 2.0;
+    float sr = _rr  * texScale;
+    texCenterX = random1().frandom( sr, _texture->picWidth()-sr);
+    texCenterY = random1().frandom( sr, _texture->picHeight() - sr);
+    for (int i=0; i< nvertices; i++)
+    {
+        float fi = M_PI*2 * i /nvertices;
+        fi = fi + random1().frandom(-M_PI / (nvertices) /2., M_PI / nvertices /2);
+        float r1 = _rr * random1().frandom(0.9, 1.1);
+        if (r1> _r)
+            _r = r1;
+        sr = r1 * texScale;
+        vertices[i] = Point (r1 * sin(fi) , r1 * cos(fi));
+        rotatedVertices[i] = vertices[i];
+    }
+    initGL();
 }
 void Asteroid::initGL()
 {
-	glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
-	glBufferData(GL_ARRAY_BUFFER, nvertices * sizeof(Point), vertices, GL_STATIC_DRAW);
-
+    Point4D* vertices4 = new Point4D[nvertices+2];
+    vertices4[0] = Point4D (0 , 0, texCenterX , texCenterY);
+    for (int i =0; i< nvertices; i++)
+        vertices4[i+1] = Point4D(vertices[i].x, vertices[i].y,
+            texCenterX + vertices[i].x * texScale , texCenterY + vertices[i].y * texScale);
+    vertices4[nvertices+1] = vertices4[1];
+    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
+    glBufferData(GL_ARRAY_BUFFER, (nvertices+2) * sizeof(Point4D), vertices4, GL_STATIC_DRAW);
+    delete[] vertices4;
 }
 
 void Asteroid::draw()
 {
-	drawLines(GL_LINE_LOOP,vboIds[0],nvertices,color(), 5.0);
+//	drawLines(GL_LINE_LOOP,vboIds[0],nvertices,color(), 5.0);
+    drawTexture();
 }
 
 bool Asteroid::isPointInside(Point *p) const
@@ -93,7 +122,7 @@ void Asteroid::getCurrentCoords(Point *_vertices, int *_nvertices) const
 	}
 }
 
-Splinter::Splinter(View *view) : Asteroid (view)
+Splinter::Splinter(View *view, Texture * __texture) : Asteroid (view, __texture)
 {
 }
 
@@ -113,6 +142,38 @@ void Splinter::init(const Asteroid &parent, float fi)
 	_color = parent.color();
 	angle = atan2(vx, vy);
     nvertices = random2().irandom(4,8);
-	applyParams();
+    applyParams();
+}
+
+void Splinter::applyParams1()
+{
+    vertices = new Point[nvertices];
+    rotatedVertices = new Point[nvertices];
+    _r = 0.0f;
+    for (int i=0; i< nvertices; i++)
+    {
+        float fi = M_PI*2 * i /nvertices;
+        fi = fi + random1().frandom(-M_PI / nvertices /2., M_PI / nvertices /2);
+        float r1 = _rr * random1().frandom(0.9, 1.1);
+        if (r1> _r)
+            _r = r1;
+        vertices[i] = Point (r1 * sin(fi) , r1 * cos(fi), 0);
+        rotatedVertices[i] = vertices[i];
+    }
+    _color = Point4D (0.3 + random1().frandom()*0.7 , 0.3 + random1().frandom()*0.7, 0.3 + random1().frandom()*0.7, 1.0);
+    initGL();
+
+}
+
+void Splinter::draw1()
+{
+    drawLines(GL_LINE_LOOP,vboIds[0],nvertices,color(), 5.0);
+}
+
+void Splinter::initGL1()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
+    glBufferData(GL_ARRAY_BUFFER, nvertices * sizeof(Point4D), vertices, GL_STATIC_DRAW);
+
 }
 

@@ -2,7 +2,7 @@
 #include "view.h"
 #include <math.h>
 
-Patrol::Patrol(View* _view) : FlyingObject (_view, 2), leftShoot(false), rightShoot(false)
+Patrol::Patrol(View* _view) : FlyingObject (_view, 2, 0), leftShoot(false), rightShoot(false)
 {
 //	init();
 }

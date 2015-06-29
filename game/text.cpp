@@ -1,6 +1,6 @@
 #include "text.h"
 
-Letter::Letter(View* view, char c) : FlyingObject (view, 1),
+Letter::Letter(View* view, char c) : FlyingObject (view, 1,0),
     width(1.8), what(GL_LINE_STRIP), linewidth(2.0)
 {
     init (c);

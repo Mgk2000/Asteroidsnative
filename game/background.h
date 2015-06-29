@@ -10,7 +10,6 @@ public:
     Background(View* _view, Texture * _texture);
     void init();
     void draw();
-    Texture* texture;
     Point4D points[6];
 };
 

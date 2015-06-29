@@ -3,7 +3,7 @@
 #include "mat4.h"
 #include "view.h"
 #include "logmsg.h"
-Background::Background(View* _view, Texture * _texture) : FlyingObject(_view, 2) , texture(_texture)
+Background::Background(View* _view, Texture * _texture) : FlyingObject(_view, 2, _texture)
 {
 }
 
@@ -32,7 +32,7 @@ void Background::draw()
 {
     Mat4 _matrix1 = view->projection1;
     int err;
-    glUseProgram(texture->program);
+    glUseProgram(_texture->program());
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
@@ -40,7 +40,7 @@ void Background::draw()
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
-    glUniformMatrix4fv(texture->matrixLocation(), 1, false, (const GLfloat*) &_matrix1);
+    glUniformMatrix4fv(_texture->matrixLocation(), 1, false, (const GLfloat*) &_matrix1);
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
@@ -52,7 +52,7 @@ void Background::draw()
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
-    int texturelocation = texture->textureLocation();
+    int texturelocation = _texture->textureLocation();
     glUniform1i(texturelocation, 0);
     err = glGetError();
     if (err)
@@ -60,7 +60,7 @@ void Background::draw()
 
     quintptr offset = 0;
 
-    int vertexLocation = texture->posLocation();
+    int vertexLocation = _texture->posLocation();
     glEnableVertexAttribArray(vertexLocation);
     err = glGetError();
     if (err)
@@ -72,11 +72,11 @@ void Background::draw()
         LOGD("err=%d", err);
     offset += 8;
 
-    glEnableVertexAttribArray(texture->texCoordLocation());
+    glEnableVertexAttribArray(_texture->texCoordLocation());
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
-    glVertexAttribPointer(texture->texCoordLocation(), 2, GL_FLOAT,
+    glVertexAttribPointer(_texture->texCoordLocation(), 2, GL_FLOAT,
                           GL_FALSE, sizeof(Point4D), (const void *)offset);
     err = glGetError();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
@@ -84,7 +84,7 @@ void Background::draw()
     if (err)
         LOGD("err=%d", err);
     err = glGetError();
-    glDisableVertexAttribArray(texture->texCoordLocation());
+    glDisableVertexAttribArray(_texture->texCoordLocation());
     glDisableVertexAttribArray(vertexLocation);
 
 }

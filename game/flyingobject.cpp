@@ -3,9 +3,11 @@
 #include "math.h"
 #include "math_helper.h"
 #include "logmsg.h"
+#include "texture.h"
 
-FlyingObject::FlyingObject(View* _view, int _nbos): nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
-    _rotateSpeed(0.0f), angle(0.f), rotateAngle (0.0f),  speed (0.f),  _scale(1.0)
+FlyingObject::FlyingObject(View* _view, int _nbos, Texture* __texture): nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
+    _rotateSpeed(0.0f), angle(0.f), rotateAngle (0.0f),  speed (0.f),  _scale(1.0), _texture(__texture),
+    colormult(1.0,1.0,1.0)
 {
 	if (nvbos)
 	{
@@ -16,7 +18,8 @@ FlyingObject::FlyingObject(View* _view, int _nbos): nvbos (_nbos), vertices(0), 
 
 FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _speed, float _angle):
 	nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
-    _rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f), speed (_speed), x(_x), y(_y) ,  _scale(1.0)
+    _rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f),
+    speed (_speed), x(_x), y(_y) , _scale(1.0), _texture(0), colormult(1.0,1.0,1.0)
 {
 	if (nvbos)
 	{
@@ -24,6 +27,19 @@ FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _sp
 		glGenBuffers(nvbos, vboIds);
 	}
 
+}
+
+FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _speed,
+    float _angle, Texture *__texture):
+nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
+_rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f), speed (_speed), x(_x), y(_y) ,
+  _scale(1.0), _texture(__texture), colormult(1.0,1.0,1.0)
+{
+    if (nvbos)
+    {
+        vboIds = new uint[nvbos];
+        glGenBuffers(nvbos, vboIds);
+    }
 }
 
 FlyingObject::~FlyingObject()
@@ -176,4 +192,82 @@ bool FlyingObject::isPointInside(Point *p) const
 	Point mycenter (X(), Y());
 	return ::isInside(p, myvertices, &mycenter,mynvertices, false);
 }
+void FlyingObject::drawTexture(float angle)
+{
+    Mat4 _matrix1;
+    _matrix1.translate(x, y, 0);
+    _matrix1 = view->projection1 * _matrix1;
+    //	glUseProgram(view->flyingprogram().programId());
+        glUseProgram(view->program());
+    float fi = (angle + rotateAngle);
+    if (fi !=0.0f)
+        _matrix1.rotateZ(fi);
+    if (_scale<0.99 ||_scale>1.1)
+    {
+        Mat4 scaleMatrix(_scale);
+        _matrix1=_matrix1 * scaleMatrix;
+    }
+    int err;
+    glUseProgram(_texture->program());
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    glActiveTexture(GL_TEXTURE0);
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    glUniformMatrix4fv(_texture->matrixLocation(), 1, false,
+                       (const GLfloat*) &_matrix1);
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    glUniform4fv(_texture->colorMultLocation(), 1,
+                       (const GLfloat*) &colormult);
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    int texturelocation = _texture->textureLocation();
+    glUniform1i(texturelocation, 0);
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
 
+    quintptr offset = 0;
+
+    int vertexLocation = _texture->posLocation();
+    glEnableVertexAttribArray(vertexLocation);
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+
+    glVertexAttribPointer(vertexLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Point4D), (const void *)offset);
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    offset += 8;
+
+    glEnableVertexAttribArray(_texture->texCoordLocation());
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    glVertexAttribPointer(_texture->texCoordLocation(), 2, GL_FLOAT,
+                          GL_FALSE, sizeof(Point4D), (const void *)offset);
+    err = glGetError();
+//    glDrawElements(how, nindices, GL_UNSIGNED_SHORT, 0);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, nvertices+2);
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    err = glGetError();
+    glDisableVertexAttribArray(_texture->texCoordLocation());
+    glDisableVertexAttribArray(vertexLocation);
+
+}

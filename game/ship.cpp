@@ -1,7 +1,7 @@
 #include "ship.h"
 #include "view.h"
 
-Ship::Ship(View* _view): FlyingObject(_view, 2), _dead (false)
+Ship::Ship(View* _view): FlyingObject(_view, 2, 0), _dead (false)
 {
 	init();
 }

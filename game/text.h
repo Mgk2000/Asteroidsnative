@@ -8,7 +8,7 @@ class View;
 class Letter : public FlyingObject
 {
 public:
-    Letter() : FlyingObject (0,1){}
+    Letter() : FlyingObject (0,1,0){}
     Letter(View* view, char c);
     float width;
     void draw();
