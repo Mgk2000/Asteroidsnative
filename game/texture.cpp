@@ -33,57 +33,47 @@ Texture::Texture(FILE* _pFile) : program(0)
 
 
 }
+
+GLubyte *Texture::getFragment(GLubyte *src, GLubyte* dst,
+    int x, int y, int width, int height) const
+{
+    for (int i=0; i < height; i++)
+    {
+        GLubyte* sptr = &src[(y+i) * _picWidth *3 + x];
+        GLubyte* dptr =&dst[i*width];
+        memcpy(dptr, sptr, width);
+    }
+}
 bool Texture::setupGraphics(int w, int h, GLubyte* data)
 {
-//    printGLString("Version", GL_VERSION);
-//    printGLString("Vendor", GL_VENDOR);
-//    printGLString("Renderer", GL_RENDERER);
-//    printGLString("Extensions", GL_EXTENSIONS);
-
-   // LOGD("setupGraphics(%d, %d)", w, h);
     createProgram(gVertexShader, gFragmentShader);
     if (!program)
     {
         LOGD("Could not create program.");
         return false;
     }
-    gvPositionHandle = glGetAttribLocation(program, "a_position");
-    //gvNormalHandle=glGetAttribLocation(program,"a_normal");
-    gvTexCoordHandle = glGetAttribLocation(program, "a_texCoord");
-
-    gvSamplerHandle = glGetUniformLocation(program, "s_texture");
-    gvMatrixHandle  = glGetUniformLocation(program, "mvp_matrix");
-
-    // Use tightly packed data
+    _posLocation = glGetAttribLocation(program, "a_position");
+    _texCoordLocation = glGetAttribLocation(program, "a_texCoord");
+    _textureLocation = glGetUniformLocation(program, "s_texture");
+    _matrixLocation  = glGetUniformLocation(program, "mvp_matrix");
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    // Generate a texture object
     glGenTextures(1, &uiTexture);
-    bool bAlpha = false;
-    if(!bAlpha)
-        uiTexture = createSimpleTexture2D(uiTexture, data,w, h, 3);
-    else
-        uiTexture = createSimpleTexture2D(uiTexture, data,w, h, 4);
-
-    //checkGlError("glGetAttribLocation");
-    //LOGD("glGetAttribLocation(\"vPosition\") = %d\n", gvPositionHandle);
-
-    //glViewport(0, 0, w, h);
-    //checkGlError("glViewport");
+    uiTexture = createTexture(uiTexture, data,w, h);
     return true;
 }
-unsigned char pcData[512*512*3];
+
 
 GLubyte* Texture::loadPicture(FILE* _pFile)
 {
     // Read data from file into texture
-    int width = 512;
-    int height = 512;
+    _picWidth = 512;
+    _picHeight = 512;
+    pcData = new GLubyte[_picWidth* _picHeight*3];
     //unsigned char* pcData = (unsigned char*)malloc(width * height * 3);
     int offset = 0;
     fseek(_pFile, offset + 14 + 40, SEEK_SET);
-    fread(pcData, width * height * 3, 1, _pFile);
-    for (int i=0; i< 512*512; i++)
+    fread(pcData, _picWidth * _picHeight * 3, 1, _pFile);
+    for (int i=0; i< _picWidth * _picHeight; i++)
     {
         unsigned char c = pcData[i*3];
         pcData[i*3] = pcData[i*3+2];
@@ -148,32 +138,18 @@ GLuint Texture::createShader(GLenum shaderType, const char *src)
     return shader;
 }
 
-GLuint Texture::createSimpleTexture2D(GLuint _textureid, GLubyte* pixels,
-                int width, int height, int channels) {
+GLuint Texture::createTexture(GLuint _textureId, GLubyte* pixels,
+                int width, int height)
+{
         int err;
         // Bind the texture
         glActiveTexture(GL_TEXTURE0);
         //checkGlError("glActiveTexture");
         err = glGetError();
         // Bind the texture object
-        glBindTexture(GL_TEXTURE_2D, _textureid);
+        glBindTexture(GL_TEXTURE_2D, _textureId);
         err = glGetError();
-        //checkGlError("glBindTexture");
-
-        GLenum format;
-        switch (channels) {
-        case 3:
-                format = GL_RGB;
-                break;
-        case 1:
-                format = GL_LUMINANCE;
-                break;
-        case 4:
-                format = GL_RGBA;
-                break;
-        }
-        // Load the texture
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
                         GL_UNSIGNED_BYTE, pixels);
 
         err = glGetError();
@@ -186,6 +162,6 @@ GLuint Texture::createSimpleTexture2D(GLuint _textureid, GLubyte* pixels,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         err = glGetError();
 
-        return _textureid;
+        return _textureId;
 
 }

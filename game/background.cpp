@@ -40,7 +40,7 @@ void Background::draw()
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
-    glUniformMatrix4fv(texture->gvMatrixHandle, 1, false, (const GLfloat*) &_matrix1);
+    glUniformMatrix4fv(texture->matrixLocation(), 1, false, (const GLfloat*) &_matrix1);
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
@@ -52,7 +52,7 @@ void Background::draw()
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
-    int texturelocation = texture->gvSamplerHandle;
+    int texturelocation = texture->textureLocation();
     glUniform1i(texturelocation, 0);
     err = glGetError();
     if (err)
@@ -60,7 +60,7 @@ void Background::draw()
 
     quintptr offset = 0;
 
-    int vertexLocation = texture->gvPositionHandle;
+    int vertexLocation = texture->posLocation();
     glEnableVertexAttribArray(vertexLocation);
     err = glGetError();
     if (err)
@@ -72,19 +72,19 @@ void Background::draw()
         LOGD("err=%d", err);
     offset += 8;
 
-    int texcoordLocation = texture->gvTexCoordHandle;
-    glEnableVertexAttribArray(texcoordLocation);
+    glEnableVertexAttribArray(texture->texCoordLocation());
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
-    glVertexAttribPointer(texcoordLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Point4D), (const void *)offset);
+    glVertexAttribPointer(texture->texCoordLocation(), 2, GL_FLOAT,
+                          GL_FALSE, sizeof(Point4D), (const void *)offset);
     err = glGetError();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
     err = glGetError();
-    glDisableVertexAttribArray(texcoordLocation);
+    glDisableVertexAttribArray(texture->texCoordLocation());
     glDisableVertexAttribArray(vertexLocation);
 
 }
