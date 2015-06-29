@@ -34,9 +34,9 @@ void Asteroid::initParams()
     _rotateSpeed = random1().frandom(-100.1, 100.1);
 	vy = speed* cos (angle);
     nvertices = random1().irandom(MAXVERTICES-20, MAXVERTICES);
-    colormult.r = random1().frandom (0.0, 2.0);
-    colormult.g = random1().frandom (0.0, 2.0);
-    colormult.b = random1().frandom (0.0, 2.0);
+    _colorMult.r = random1().frandom (0.0, 2.0);
+    _colorMult.g = random1().frandom (0.0, 2.0);
+    _colorMult.b = random1().frandom (0.0, 2.0);
 }
 
 void Asteroid::applyParams()
@@ -142,6 +142,7 @@ void Splinter::init(const Asteroid &parent, float fi)
 	_color = parent.color();
 	angle = atan2(vx, vy);
     nvertices = random2().irandom(4,8);
+    _colorMult = parent.colorMult();
     applyParams();
 }
 

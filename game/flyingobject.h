@@ -33,6 +33,7 @@ public:
     inline virtual int cost() const {return 0;}
     inline float r() const {return _r;}
     inline float rotateSpeed() const {return _rotateSpeed;}
+    const Point4D& colorMult() const {return _colorMult;}
 protected:
 	float x,y,angle;
     float rotateAngle;
@@ -56,7 +57,7 @@ protected:
     float _scale;
     Texture* _texture;
     void drawTexture( float angle = 0.0);
-    Point4D colormult;
+    Point4D _colorMult;
 };
 
 

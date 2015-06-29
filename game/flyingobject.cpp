@@ -7,7 +7,7 @@
 
 FlyingObject::FlyingObject(View* _view, int _nbos, Texture* __texture): nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
     _rotateSpeed(0.0f), angle(0.f), rotateAngle (0.0f),  speed (0.f),  _scale(1.0), _texture(__texture),
-    colormult(1.0,1.0,1.0)
+    _colorMult(1.0,1.0,1.0)
 {
 	if (nvbos)
 	{
@@ -19,7 +19,7 @@ FlyingObject::FlyingObject(View* _view, int _nbos, Texture* __texture): nvbos (_
 FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _speed, float _angle):
 	nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
     _rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f),
-    speed (_speed), x(_x), y(_y) , _scale(1.0), _texture(0), colormult(1.0,1.0,1.0)
+    speed (_speed), x(_x), y(_y) , _scale(1.0), _texture(0), _colorMult(1.0,1.0,1.0)
 {
 	if (nvbos)
 	{
@@ -33,7 +33,7 @@ FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _sp
     float _angle, Texture *__texture):
 nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
 _rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f), speed (_speed), x(_x), y(_y) ,
-  _scale(1.0), _texture(__texture), colormult(1.0,1.0,1.0)
+  _scale(1.0), _texture(__texture), _colorMult(1.0,1.0,1.0)
 {
     if (nvbos)
     {
@@ -222,7 +222,7 @@ void FlyingObject::drawTexture(float angle)
     if (err)
         LOGD("err=%d", err);
     glUniform4fv(_texture->colorMultLocation(), 1,
-                       (const GLfloat*) &colormult);
+                       (const GLfloat*) &_colorMult);
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
