@@ -34,9 +34,9 @@ void Asteroid::initParams()
     _rotateSpeed = random1().frandom(-100.1, 100.1);
 	vy = speed* cos (angle);
     nvertices = random1().irandom(MAXVERTICES-20, MAXVERTICES);
-    _colorMult.r = random1().frandom (0.0, 2.0);
-    _colorMult.g = random1().frandom (0.0, 2.0);
-    _colorMult.b = random1().frandom (0.0, 2.0);
+//    _colorMult.r = random1().frandom (0.0, 2.0);
+//    _colorMult.g = random1().frandom (0.0, 2.0);
+//    _colorMult.b = random1().frandom (0.0, 2.0);
 }
 
 void Asteroid::applyParams()

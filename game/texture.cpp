@@ -72,21 +72,33 @@ bool Texture::initGL()
 void Texture::loadPicture(const char* filename)
 {
     // Read data from file into texture
+    GLubyte* inData;
     FILE* _pFile = fopen(filename, "r");
     int szbuf[2];
     fseek(_pFile, 18, SEEK_SET);
     fread(szbuf, 8, 1, _pFile);
     _picWidth = szbuf[0];
     _picHeight = szbuf[1];
-     pcData = new GLubyte[_picWidth* _picHeight*3];
+
+     pcData = new GLubyte[_picWidth* _picHeight*4];
+     inData = new GLubyte[_picWidth* _picHeight*3];
     fseek(_pFile,  14 + 40, SEEK_SET);
-    fread(pcData, _picWidth * _picHeight * 3, 1, _pFile);
+    fread(inData, _picWidth * _picHeight * 3, 1, _pFile);
     for (int i=0; i< _picWidth * _picHeight; i++)
     {
-        unsigned char c = pcData[i*3];
-        pcData[i*3] = pcData[i*3+2];
-        pcData[i*3+2] = c;
+        unsigned char r = inData[i*3+2];
+        unsigned char g = inData[i*3+1];
+        unsigned char b = inData[i*3];
+        unsigned char a = 255;
+        if (r==255 && g==255 && b==255)
+            a = 0;
+        pcData[i*4] = r;
+        pcData[i*4+1] = g;
+        pcData[i*4+2] = b;
+        pcData[i*4+3] = a;
     }
+    delete[] inData;
+    fclose (_pFile);
 }
 void Texture::createProgram()
 {
@@ -120,8 +132,8 @@ void Texture::createProgram()
 
 exit:
     ;
-   // glDeleteShader(vtxShader);
-   // glDeleteShader(fragShader);
+    glDeleteShader(vtxShader);
+    glDeleteShader(fragShader);
 }
 
 GLuint Texture::createShader(GLenum shaderType, const char *src)
@@ -153,7 +165,7 @@ void Texture::createTexture()
         // Bind the texture object
         glBindTexture(GL_TEXTURE_2D, _textureId);
         err = glGetError();
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _picWidth, _picHeight, 0, GL_RGB,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _picWidth, _picHeight, 0, GL_RGBA,
                         GL_UNSIGNED_BYTE, pcData);
 
         err = glGetError();
