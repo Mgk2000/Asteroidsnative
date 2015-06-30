@@ -48,6 +48,7 @@
 #include "mutex.h"
 #include "logmsg.h"
 #include "background.h"
+#include "bonus.h"
 #include <cstdio>
 View::View() :
      bullets(0),asteroidAppearTime(0), nticks(0), period(12),
@@ -80,6 +81,11 @@ void View::processTouchPress(int x, int y)
 		shoot (fi);
 }
 
+void View::freeBonus(Asteroid* asteroid)
+{
+    bonuses.push_back(asteroid->bonus());
+}
+
 void View::checkShoots()
 {
 	for (std::list<Bullet*> ::iterator bit = bullets.begin(); bit != bullets.end(); bit++)
@@ -91,16 +97,18 @@ void View::checkShoots()
 		{
 			if ((*ait)->isPointInside(&p ) || (*ait)->isPointInside(&p1 ))
 			{
-				Asteroid* asteroid = *ait;
-				ait = asteroids.erase(ait);
-				bit = bullets.erase(bit);
-				if (!asteroid->isSplinter())
-					createSplinters(asteroid);
-				_scores+=asteroid->cost();
-				delete asteroid;
-				delete bullet;
-				sound(2);
-				goto nextbullet;
+                Asteroid* asteroid = *ait;
+                ait = asteroids.erase(ait);
+                bit = bullets.erase(bit);
+                if (asteroid->bonus())
+                    freeBonus(asteroid);
+                else if (!asteroid->isSplinter())
+                    createSplinters(asteroid);
+                _scores+=asteroid->cost();
+                delete asteroid;
+                delete bullet;
+                sound(2);
+                goto nextbullet;
 			}
 		}
 		if (bullet->isMy())
@@ -228,6 +236,15 @@ void View::moveObjects(float delta)
             ait = asteroids.erase(ait);
         }
     }
+    for (std::list<Bonus*> ::iterator ait = bonuses.begin(); ait != bonuses.end(); ait++)
+    {
+        (*ait)->moveStep(delta);
+        if ((*ait)->out() )
+        {
+            delete *ait;
+            ait = bonuses.erase(ait);
+        }
+    }
     if (patrol)
     {
         patrol->moveStep(delta);
@@ -246,7 +263,7 @@ void View::checkAppearences()
         bool pat = false;
         if (!patrol)
         {
-            if (_random1.frandom() <= 0.3)
+            if (_random1.frandom() <= -0.3)
             {
                 patrol = new Patrol (this);
                 patrol->init();
@@ -256,8 +273,17 @@ void View::checkAppearences()
         }
         if (!pat)
         {
-            Asteroid* asteroid = new Asteroid (this, textures[0]);
+            Bonus* bonus = 0;
+            Asteroid* asteroid = new Asteroid (this, _textures[0]);
             asteroid->init();
+            if (_random1.frandom() < 0.5)
+            {
+                int n = _random1.irandom(5);
+                LOGD("kind=%d", n);
+                bonus = new Bonus(this, n, asteroid);
+                asteroid->setBonus(bonus);
+                bonus->init();
+            }
             addAsteroid(asteroid);
         }
         asteroidAppearTime = nticks + random1().irandom(300, 1000) / log10 (nticks+10.0);
@@ -321,8 +347,11 @@ bool View::initializeGL()
 
     if (!ship)
     {
-        for (int i = 0; i< textures.size(); i++)
-            textures[i]->initGL();
+        for (int i = 0; i< _textures.size(); i++)
+            _textures[i]->initGL();
+        background = new Background(this, _textures[1]);
+        background->init();
+
         ship = new Ship (this);
 		gun = new Gun (this);
 		patrol = 0;
@@ -333,8 +362,8 @@ bool View::initializeGL()
     }
     else //after pause 9pressing Home button)
     {
-        for (int i = 0; i< textures.size(); i++)
-            textures[i]->initGL();
+        for (int i = 0; i< _textures.size(); i++)
+            _textures[i]->initGL();
         ship->initGL();
     	gun->initGL();
 		text->initGL();
@@ -348,6 +377,9 @@ bool View::initializeGL()
 			std::list<Asteroid*>::iterator ait = asteroids.begin();
 			for(; ait!= asteroids.end(); ait++)
 				(*ait)->initGL();
+            for(std::list<Bonus*>::iterator ait = bonuses.begin();
+                ait!= bonuses.end(); ait++)
+                (*ait)->initGL();
         }
     }
     return true;
@@ -445,7 +477,7 @@ void View::createSplinters(Asteroid* asteroid)
 	int nsp = _random2.irandom(3,5);
 	for (int i =0; i< nsp; i++)
 	{
-        Splinter* splinter = new Splinter(this, textures[0]);
+        Splinter* splinter = new Splinter(this, _textures[0]);
 		float fi = M_PI * i / nsp;
 		splinter->init(*asteroid, fi);
 		asteroids.push_front(splinter);
@@ -469,14 +501,16 @@ void View::resizeGL(int w, int h)
 void View::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   // background->draw();
+    //background->draw();
 	ship->draw();
 	gun->draw();
 	for (std::list<Bullet*> ::iterator bit = bullets.begin(); bit != bullets.end(); bit++)
 		(*bit)->draw();
     for (std::list<Asteroid*> ::iterator ait = asteroids.begin(); ait != asteroids.end(); ait++)
         (*ait)->draw();
-	if (patrol)
+    for (std::list<Bonus*> ::iterator ait = bonuses.begin(); ait != bonuses.end(); ait++)
+        (*ait)->draw();
+    if (patrol)
 		patrol->draw();
 	drawCurrentResult();
 //    background->draw();
@@ -500,10 +534,8 @@ void View::drawEndGame() const
 
 void View::addTexture(const char* filename)
 {
-    Texture* texture = new Texture (filename);
-    textures.push_back(texture);
-    background = new Background(this, textures[0]);
-    background->init();
+    Texture* texture = new Texture (filename, _textures.size());
+    _textures.push_back(texture);
 }
 void View::onTouchEvent(int what, int x, int y)
 {

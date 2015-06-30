@@ -36,10 +36,6 @@ void Background::draw()
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
-    glActiveTexture(GL_TEXTURE0);
-    err = glGetError();
-    if (err)
-        LOGD("err=%d", err);
     glUniformMatrix4fv(_texture->matrixLocation(), 1, false, (const GLfloat*) &_matrix1);
     err = glGetError();
     if (err)

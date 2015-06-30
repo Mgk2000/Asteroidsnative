@@ -4,7 +4,7 @@
 class Texture : public GlObject
 {
 public:
-    Texture(const char* filename);
+    Texture(const char* filename, int ind);
     int posLocation() const {return _posLocation;}
     int textureLocation() const {return _textureLocation;}
     int texCoordLocation() const {return _texCoordLocation;}
@@ -14,9 +14,8 @@ public:
     int picWidth() const {return _picWidth;}
     int picHeight() const {return _picHeight;}
     bool initGL();
-
+    GLuint textureId() const {return _textureId;}
 private:
-    GLuint uiTexture;
     GLubyte* getFragment( GLubyte *src, GLubyte* dst, int x, int y, int width, int height) const;
     void loadPicture(const char* filename);
     void createTexture();
@@ -30,7 +29,7 @@ private:
     _matrixLocation;
     int _picWidth, _picHeight;
     int _program;
-    int _textureId;
+    GLuint _textureId;
 };
 
 #endif // TEXTURE_H

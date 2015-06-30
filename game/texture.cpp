@@ -34,7 +34,7 @@ static const char fragmentShader[] =
         "  gl_FragColor = col;                              \n"
         "  //gl_FragColor = texture2D( s_texture, v_texCoord );\n"
         "}                                                   \n";
-Texture::Texture(const char* filename) : _program(0)
+Texture::Texture(const char* filename, int ind) : _program(0)
 {
     loadPicture(filename);
 }
@@ -63,7 +63,7 @@ bool Texture::initGL()
     _matrixLocation  = glGetUniformLocation(_program, "mvp_matrix");
     _colorMultLocation  = glGetUniformLocation(_program, "s_colormult");
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glGenTextures(1, &uiTexture);
+    glGenTextures(1, &_textureId);
     createTexture();
     return true;
 }
@@ -157,22 +157,16 @@ GLuint Texture::createShader(GLenum shaderType, const char *src)
 
 void Texture::createTexture()
 {
-        int err;
-        // Bind the texture
-        glActiveTexture(GL_TEXTURE0);
-        //checkGlError("glActiveTexture");
-        err = glGetError();
-        // Bind the texture object
+//        int err;
         glBindTexture(GL_TEXTURE_2D, _textureId);
-        err = glGetError();
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _picWidth, _picHeight, 0, GL_RGBA,
-                        GL_UNSIGNED_BYTE, pcData);
-
-        err = glGetError();
+//        err = glGetError();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _picWidth, _picHeight,
+           0, GL_RGBA, GL_UNSIGNED_BYTE, pcData);
+//        err = glGetError();
         glGenerateMipmap(GL_TEXTURE_2D);
-        err = glGetError();
+//        err = glGetError();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        err = glGetError();
+//        err = glGetError();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        err = glGetError();
+//        err = glGetError();
 }

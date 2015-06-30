@@ -34,6 +34,8 @@ public:
     inline float r() const {return _r;}
     inline float rotateSpeed() const {return _rotateSpeed;}
     const Point4D& colorMult() const {return _colorMult;}
+    float getAngle() const {return angle;}
+    float getSpeed() const {return speed;}
 protected:
 	float x,y,angle;
     float rotateAngle;

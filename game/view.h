@@ -18,6 +18,7 @@ class Asteroid;
 class GeometryEngine;
 class Patrol;
 class Background;
+class Bonus;
 class Mutex;
 struct BulletInfo
 {
@@ -74,7 +75,8 @@ public:
     int scores() const {return _scores;}
     inline bool gameIsOver() const {return _lives <= 0;}
     void addTexture (const char* filename);
-
+    const std::vector <Texture *> &textures() {return _textures;}
+    void freeBonus(Asteroid*);
 private:
 
 	GLuint createShader(GLenum shaderType, const char* src);
@@ -91,7 +93,8 @@ private:
 	void addBullet(Bullet* bullet);
 	void deleteBullet(Bullet* bullet);
 	void createSplinters(Asteroid* asteroid);
-	Patrol* patrol;
+    std::list <Bonus*> bonuses;
+    Patrol* patrol;
     Ship* ship;
     Background * background;
     Mutex* mutex;
@@ -117,7 +120,7 @@ private:
     void checkAppearences();
     void checkAsteroidBreaksShip();
     void drawEndGame() const;
-    std::vector <Texture *> textures;
+    std::vector <Texture *> _textures;
 };
 
 #endif // VIEW_H

@@ -197,8 +197,6 @@ void FlyingObject::drawTexture(float angle)
     Mat4 _matrix1;
     _matrix1.translate(x, y, 0);
     _matrix1 = view->projection1 * _matrix1;
-    //	glUseProgram(view->flyingprogram().programId());
-        glUseProgram(view->program());
     float fi = (angle + rotateAngle);
     if (fi !=0.0f)
         _matrix1.rotateZ(fi);
@@ -216,6 +214,12 @@ void FlyingObject::drawTexture(float angle)
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
+    glBindTexture(GL_TEXTURE_2D, _texture->textureId());
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    glEnable (GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glUniformMatrix4fv(_texture->matrixLocation(), 1, false,
                        (const GLfloat*) &_matrix1);
     err = glGetError();

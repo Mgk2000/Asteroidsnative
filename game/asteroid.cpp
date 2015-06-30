@@ -4,9 +4,10 @@
 #include "math_helper.h"
 #include "random.h"
 #include "ship.h"
+#include "bonus.h"
 
 Asteroid::Asteroid(View * _view, Texture * __texture) :
-    FlyingObject (_view, 1, __texture)
+    FlyingObject (_view, 1, __texture), _bonus(0)
 {
 }
 
@@ -41,23 +42,9 @@ void Asteroid::initParams()
 
 void Asteroid::applyParams()
 {
-//	vertices = new Point[nvertices];
-//	rotatedVertices = new Point[nvertices];
     vertices = new Point[nvertices];
     rotatedVertices = new Point[nvertices];
     _r = 0.0f;
-/*	for (int i=0; i< nvertices; i++)
-	{
-		float fi = M_PI*2 * i /nvertices;
-		fi = fi + random1().frandom(-M_PI / nvertices /2., M_PI / nvertices /2);
-        float r1 = _rr * random1().frandom(0.9, 1.1);
-        if (r1> _r)
-            _r = r1;
-		vertices[i] = Point (r1 * sin(fi) , r1 * cos(fi), 0);
-		rotatedVertices[i] = vertices[i];
-    }
-	_color = Point4D (0.3 + random1().frandom()*0.7 , 0.3 + random1().frandom()*0.7, 0.3 + random1().frandom()*0.7, 1.0);
-*/
     texScale = 2.0;
     float sr = _rr  * texScale;
     texCenterX = random1().frandom( sr, _texture->picWidth()-sr);
@@ -86,12 +73,16 @@ void Asteroid::initGL()
     glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
     glBufferData(GL_ARRAY_BUFFER, (nvertices+2) * sizeof(Point4D), vertices4, GL_STATIC_DRAW);
     delete[] vertices4;
+    if (_bonus)
+        _bonus->initGL();
 }
 
 void Asteroid::draw()
 {
 //	drawLines(GL_LINE_LOOP,vboIds[0],nvertices,color(), 5.0);
     drawTexture();
+    if (_bonus)
+        _bonus->draw();
 }
 
 bool Asteroid::isPointInside(Point *p) const
@@ -110,6 +101,8 @@ void Asteroid::moveStep(float delta)
     FlyingObject::moveStep(delta);
     rotateAngle = rotateAngle + _rotateSpeed * delta;
     rotatePoints(vertices, rotatedVertices, rotateAngle , nvertices);
+    if (_bonus)
+        _bonus->moveStep(delta);
 }
 
 void Asteroid::getCurrentCoords(Point *_vertices, int *_nvertices) const
@@ -145,36 +138,3 @@ void Splinter::init(const Asteroid &parent, float fi)
     _colorMult = parent.colorMult();
     applyParams();
 }
-
-void Splinter::applyParams1()
-{
-    vertices = new Point[nvertices];
-    rotatedVertices = new Point[nvertices];
-    _r = 0.0f;
-    for (int i=0; i< nvertices; i++)
-    {
-        float fi = M_PI*2 * i /nvertices;
-        fi = fi + random1().frandom(-M_PI / nvertices /2., M_PI / nvertices /2);
-        float r1 = _rr * random1().frandom(0.9, 1.1);
-        if (r1> _r)
-            _r = r1;
-        vertices[i] = Point (r1 * sin(fi) , r1 * cos(fi), 0);
-        rotatedVertices[i] = vertices[i];
-    }
-    _color = Point4D (0.3 + random1().frandom()*0.7 , 0.3 + random1().frandom()*0.7, 0.3 + random1().frandom()*0.7, 1.0);
-    initGL();
-
-}
-
-void Splinter::draw1()
-{
-    drawLines(GL_LINE_LOOP,vboIds[0],nvertices,color(), 5.0);
-}
-
-void Splinter::initGL1()
-{
-    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
-    glBufferData(GL_ARRAY_BUFFER, nvertices * sizeof(Point4D), vertices, GL_STATIC_DRAW);
-
-}
-
