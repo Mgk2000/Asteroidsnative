@@ -192,6 +192,11 @@ bool FlyingObject::isPointInside(Point *p) const
 	Point mycenter (X(), Y());
 	return ::isInside(p, myvertices, &mycenter,mynvertices, false);
 }
+
+long long FlyingObject::currTime() const
+{
+    return view->currTime();
+}
 void FlyingObject::drawTexture(float angle)
 {
     Mat4 _matrix1;

@@ -9,6 +9,7 @@
 #include "mat4.h"
 #include "text.h"
 #include "texture.h"
+#include "bonus.h"
 
 class Ship;
 class Gun;
@@ -60,7 +61,7 @@ public:
     void processTouches();
     void processTouchMove (int x, int y);
     void processTouchPress (int x, int y);
-    int drawFrame(long long currtime);
+    int drawFrame();
     bool initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
@@ -77,6 +78,11 @@ public:
     void addTexture (const char* data, int kind);
     const std::vector <Texture *> &textures() {return _textures;}
     void freeBonus(Asteroid*);
+    long long currTime() const {return _currTime;}
+    const std::vector<Bonus*> &shipBonuses() const {return _shipBonuses;}
+    Bonus* shipBonus() const {return _shipBonus;}
+    void setShipBonus(Bonus* bonus, int msec);
+    void checkBonusExpired();
 private:
 
 	GLuint createShader(GLenum shaderType, const char* src);
@@ -106,8 +112,8 @@ private:
 	int nticks;
 	int dieticks;
 	int _matrixlocation, _vertexlocation, _colorlocation;
-    long long lastTime;
-    long long startTime;
+    long long _currTime, _lastTime;
+    long long _startTime;
     int period;
     Text *text;
     bool pause;
@@ -123,6 +129,12 @@ private:
     void catchBonus(Bonus* bonus);
     void drawEndGame() const;
     std::vector <Texture *> _textures;
+    std::vector<Bonus*> _shipBonuses;
+    Bonus* _shipBonus;
+    long long _shipBonusExpiredTime;
+    void drawShipBonuses();
 };
+
+
 
 #endif // VIEW_H

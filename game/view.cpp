@@ -1,42 +1,3 @@
-/****************************************************************************
-**
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
-**
-** This file is part of the QtCore module of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
 #include "view.h"
 #include <math.h>
 #include "ship.h"
@@ -50,6 +11,7 @@
 #include "background.h"
 #include "bonus.h"
 #include <cstdio>
+#include <time.h>
 View::View() :
      bullets(0),asteroidAppearTime(0), nticks(0), period(12),
 	 ship(0), gun(0), pause(false)
@@ -81,11 +43,6 @@ void View::processTouchPress(int x, int y)
 		shoot (fi);
 }
 
-void View::freeBonus(Asteroid* asteroid)
-{
-    bonuses.push_back(asteroid->bonus());
-    asteroid->bonus()->free();
-}
 
 void View::checkShoots()
 {
@@ -188,6 +145,8 @@ void View::newGame()
 			delete patrol;
 			patrol = 0;
 		}
+        _shipBonuses.clear();
+        _shipBonus = Bonus::NONE;
 		startGame();
 	}
 }
@@ -324,7 +283,9 @@ void View::catchBonus(Bonus* bonus)
     case Bonus::BIG_BOMB :
     case Bonus::LITTLE_BOMB:
     case Bonus::DIAMOND:
+        break;
     case Bonus::SUPER_GUN:
+        setShipBonus(Bonus::SUPER_GUN, 30);
         break;
     case Bonus::LIVE:
         _lives++;
@@ -332,22 +293,23 @@ void View::catchBonus(Bonus* bonus)
 
 }
 
-int View::drawFrame(long long currTime)
+int View::drawFrame()
 {
+    _currTime = 1.0* clock() / CLOCKS_PER_SEC * 1000;
     if (nticks ==0)
     {
-        startTime = currTime;
-        lastTime = currTime;
+        _startTime = _currTime;
+        _lastTime = _currTime;
     }
-    float delta = (float)(currTime - lastTime)/1000;
+    float delta = (float)(_currTime - _lastTime)/1000;
     if (delta>0.1) //big delay after breaking GL
     {
-    	startTime = startTime+ currTime - lastTime;
-    	lastTime=currTime;
+        _startTime =_startTime+ _currTime - _lastTime;
+        _lastTime=_currTime;
     	return 0;
     }
-    nticks = (currTime-startTime) / period;
-    lastTime = currTime;
+    nticks = (_currTime-_startTime) / period;
+    _lastTime = _currTime;
     maxSound =0;
     checkEndGame();
     if (gameIsOver())
@@ -361,6 +323,7 @@ int View::drawFrame(long long currTime)
         moveObjects(delta);
         checkShoots();
         checkAsteroidBreaksShip();
+        checkBonusExpired();
         checkCatchBonus();
         checkAppearences();
     }
@@ -461,7 +424,7 @@ void View::shoot(float angle)
 {
 	float x = ship->X();
 	float y = ship->top();
-    if (!gun->super())
+    if (_shipBonus != Bonus::SUPER_GUN)
     {
         Bullet* bullet = new Bullet(this, x,y,angle);
         bullet->init();

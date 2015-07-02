@@ -26,7 +26,7 @@ int on_draw_frame() {
 		return true;
 	glClear(GL_COLOR_BUFFER_BIT);
 	long long msec = 1.0* clock() / CLOCKS_PER_SEC * 1000;
-	return view->drawFrame(msec);
+	return view->drawFrame();
 }
 void on_touch_event(jint what, jint x, jint y)
 {

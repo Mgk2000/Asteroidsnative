@@ -54,7 +54,8 @@ void Background::draw()
                        (const GLfloat*) &_colorMult);
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
+        LOGD("err=%d", err);
+    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
     err = glGetError();
     if (err)
         LOGD("err=%d", err);

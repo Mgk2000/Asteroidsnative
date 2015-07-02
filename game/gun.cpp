@@ -4,7 +4,7 @@
 #include "math_helper.h"
 #include "ship.h"
 
-Gun::Gun(View* _view) :  FlyingObject(_view, 1, 0), _super(true)
+Gun::Gun(View* _view) :  FlyingObject(_view, 1, 0)
 {
 	init ();
 }
@@ -15,8 +15,9 @@ Gun::~Gun()
 #define NP 129
 void Gun::initGL()
 {
-	init();
+    init();
 }
+
 void Gun::init()
 {
 	Point points[NP];
@@ -46,7 +47,7 @@ bool Gun::touched(float _x, float _y, float* fi) const
 	{
         *fi = (float) atan2(_x-x,_y-y);
 	}
-	return b;
+    return b;
 }
 
 void Gun::draw()

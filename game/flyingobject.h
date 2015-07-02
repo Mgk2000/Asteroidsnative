@@ -36,6 +36,8 @@ public:
     const Point4D& colorMult() const {return _colorMult;}
     float getAngle() const {return angle;}
     float getSpeed() const {return speed;}
+    long long currTime() const;
+
 protected:
 	float x,y,angle;
     float rotateAngle;
