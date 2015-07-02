@@ -9,8 +9,11 @@ View* view = 0;
 void on_surface_created(JNIEnv* _env, jclass cls)
 {
 
+//	LOGD("on_surface_created 1");
 	view->initializeGL();
+//	LOGD("on_surface_created 2");
 	view->setPause(false);
+//	LOGD("on_surface_created 3");
 }
 
 void on_surface_changed(int width, int height)
@@ -46,4 +49,15 @@ void new_game()
 		view = new View ();
 	else
 		view->newGame();
+}
+
+void create_game()
+{
+	if (!view)
+		view = new View();
+}
+
+void add_texture (const char* data, int kind)
+{
+	view->addTexture(data, kind);
 }

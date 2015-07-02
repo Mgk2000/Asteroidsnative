@@ -74,7 +74,7 @@ public:
     int lives() const {return _lives;}
     int scores() const {return _scores;}
     inline bool gameIsOver() const {return _lives <= 0;}
-    void addTexture (const char* filename);
+    void addTexture (const char* data, int kind);
     const std::vector <Texture *> &textures() {return _textures;}
     void freeBonus(Asteroid*);
 private:
@@ -119,6 +119,8 @@ private:
     void moveObjects(float delta);
     void checkAppearences();
     void checkAsteroidBreaksShip();
+    void checkCatchBonus();
+    void catchBonus(Bonus* bonus);
     void drawEndGame() const;
     std::vector <Texture *> _textures;
 };

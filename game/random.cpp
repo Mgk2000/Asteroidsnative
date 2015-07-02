@@ -17,7 +17,7 @@ float Random::frandom()
 int Random::irandom (int N)
 {
 	float xx = frandom() *N;
-	return (int) round(xx);
+    return (int) xx;
 }
 
 float Random::frandom(float lo, float hi)

@@ -14,11 +14,14 @@ LOCAL_SRC_FILES += ../game/patrol.cpp
 LOCAL_SRC_FILES += ../game/mat4.cpp
 LOCAL_SRC_FILES += ../game/math_helper.cpp
 LOCAL_SRC_FILES += ../game/text.cpp
+LOCAL_SRC_FILES += ../game/texture.cpp
+LOCAL_SRC_FILES += ../game/background.cpp
+LOCAL_SRC_FILES += ../game/bonus.cpp
 LOCAL_SRC_FILES += ../game/mutex.cpp
-LOCAL_LDLIBS := -lGLESv2 -llog
+LOCAL_LDLIBS := -lGLESv2 -llog -landroid
 LOCAL_C_INCLUDES += ${NDKROOT}/sources/cxx-stl/stlport/stlport
 LOCAL_C_INCLUDES += ../game
-
+#LOCAL_SHARED_LIBRARIES += landroid
 include $(BUILD_SHARED_LIBRARY)
 ifndef NDK_ROOT
 include external/stlport/libstlport.mk

@@ -35,9 +35,10 @@ void Asteroid::initParams()
     _rotateSpeed = random1().frandom(-100.1, 100.1);
 	vy = speed* cos (angle);
     nvertices = random1().irandom(MAXVERTICES-20, MAXVERTICES);
-//    _colorMult.r = random1().frandom (0.0, 2.0);
-//    _colorMult.g = random1().frandom (0.0, 2.0);
-//    _colorMult.b = random1().frandom (0.0, 2.0);
+    //nvertices = 4;
+    _colorMult.r = random1().frandom (0.7, 1.4);
+    _colorMult.g = random1().frandom (0.7, 1.4);
+    _colorMult.b = random1().frandom (0.7, 1.4);
 }
 
 void Asteroid::applyParams()
@@ -47,17 +48,19 @@ void Asteroid::applyParams()
     _r = 0.0f;
     texScale = 2.0;
     float sr = _rr  * texScale;
-    texCenterX = random1().frandom( sr, _texture->picWidth()-sr);
-    texCenterY = random1().frandom( sr, _texture->picHeight() - sr);
+//    texCenterX = random1().frandom( sr, _texture->picWidth()-sr);
+//    texCenterY = random1().frandom( sr, _texture->picHeight() - sr);
+    texCenterX = random1().frandom(0.3, 0.7);
+    texCenterY = random1().frandom(0.3, 0.7);
     for (int i=0; i< nvertices; i++)
     {
         float fi = M_PI*2 * i /nvertices;
-        fi = fi + random1().frandom(-M_PI / (nvertices) /2., M_PI / nvertices /2);
+        fi = fi - random1().frandom(-M_PI / (nvertices) /20., M_PI / nvertices /20);
         float r1 = _rr * random1().frandom(0.9, 1.1);
         if (r1> _r)
             _r = r1;
         sr = r1 * texScale;
-        vertices[i] = Point (r1 * sin(fi) , r1 * cos(fi));
+        vertices[i] = Point (-r1 * sin(fi) , r1 * cos(fi));
         rotatedVertices[i] = vertices[i];
     }
     initGL();
@@ -134,7 +137,7 @@ void Splinter::init(const Asteroid &parent, float fi)
     vy = parent.VY() + dv *  sin(fi);
 	_color = parent.color();
 	angle = atan2(vx, vy);
-    nvertices = random2().irandom(4,8);
+    nvertices = random2().irandom(12,16);
     _colorMult = parent.colorMult();
     applyParams();
 }

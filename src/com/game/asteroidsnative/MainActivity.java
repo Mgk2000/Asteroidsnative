@@ -44,7 +44,6 @@ public class MainActivity extends Activity implements OnClickListener
 	    ActivityManager activityManager
 	        = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 	    ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-	 
 	    final boolean supportsEs2 =
 	        configurationInfo.reqGlEsVersion >= 0x20000 || isProbablyEmulator();
 	    sounds = new Sounds(this);

@@ -9,6 +9,8 @@ int on_draw_frame();
 void on_touch_event(int what, int x, int y);
 void set_pause(bool p);
 void new_game();
+void create_game();
+void add_texture (const char* data, int kind);
 int scores();
 
 #define  LOG_TAG    "Aster"

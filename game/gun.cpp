@@ -4,7 +4,7 @@
 #include "math_helper.h"
 #include "ship.h"
 
-Gun::Gun(View* _view) :  FlyingObject(_view, 1, 0)
+Gun::Gun(View* _view) :  FlyingObject(_view, 1, 0), _super(true)
 {
 	init ();
 }

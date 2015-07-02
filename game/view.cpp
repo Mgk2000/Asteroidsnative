@@ -84,6 +84,7 @@ void View::processTouchPress(int x, int y)
 void View::freeBonus(Asteroid* asteroid)
 {
     bonuses.push_back(asteroid->bonus());
+    asteroid->bonus()->free();
 }
 
 void View::checkShoots()
@@ -263,7 +264,7 @@ void View::checkAppearences()
         bool pat = false;
         if (!patrol)
         {
-            if (_random1.frandom() <= -0.3)
+            if (_random1.frandom() <= 0.3)
             {
                 patrol = new Patrol (this);
                 patrol->init();
@@ -278,9 +279,9 @@ void View::checkAppearences()
             asteroid->init();
             if (_random1.frandom() < 0.5)
             {
-                int n = _random1.irandom(5);
-                LOGD("kind=%d", n);
-                bonus = new Bonus(this, n, asteroid);
+                int n = _random1.irandom((int) Bonus::MAX_KIND) +1;
+                //LOGD("kind=%d", n);
+                bonus = new Bonus(this, (Bonus::Kind) n, asteroid);
                 asteroid->setBonus(bonus);
                 bonus->init();
             }
@@ -300,6 +301,35 @@ void View::checkAsteroidBreaksShip()
             break;
         }
     }
+}
+
+void View::checkCatchBonus()
+{
+    for (std::list<Bonus*>::iterator bit = bonuses.begin();
+         bit != bonuses.end(); bit++)
+    {
+        if (ship->isIntersects(**bit))
+        {
+            catchBonus(*bit);
+            bit = bonuses.erase(bit);
+        }
+    }
+}
+
+void View::catchBonus(Bonus* bonus)
+{
+    Bonus::Kind kind = bonus->kind();
+    switch (kind)
+    {
+    case Bonus::BIG_BOMB :
+    case Bonus::LITTLE_BOMB:
+    case Bonus::DIAMOND:
+    case Bonus::SUPER_GUN:
+        break;
+    case Bonus::LIVE:
+        _lives++;
+    }
+
 }
 
 int View::drawFrame(long long currTime)
@@ -330,8 +360,9 @@ int View::drawFrame(long long currTime)
         processTouches();
         moveObjects(delta);
         checkShoots();
-        checkAppearences();
         checkAsteroidBreaksShip();
+        checkCatchBonus();
+        checkAppearences();
     }
     paintGL();
 	nticks ++;
@@ -349,7 +380,7 @@ bool View::initializeGL()
     {
         for (int i = 0; i< _textures.size(); i++)
             _textures[i]->initGL();
-        background = new Background(this, _textures[1]);
+        background = new Background(this, _textures[0]);
         background->init();
 
         ship = new Ship (this);
@@ -430,9 +461,23 @@ void View::shoot(float angle)
 {
 	float x = ship->X();
 	float y = ship->top();
-	Bullet* bullet = new Bullet(this, x,y,angle);
-	bullet->init();
-	addBullet (bullet);
+    if (!gun->super())
+    {
+        Bullet* bullet = new Bullet(this, x,y,angle);
+        bullet->init();
+        addBullet (bullet);
+    }
+    else
+    {
+        float dfi = 0.3;
+        int np = 5;
+        for (int i =0; i< np; i++)
+        {
+            Bullet* bullet = new Bullet(this, x,y,angle - dfi/2.0 + dfi/np*i);
+            bullet->init();
+            addBullet (bullet);
+        }
+    }
 	sound(1);
 }
 
@@ -501,7 +546,7 @@ void View::resizeGL(int w, int h)
 void View::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //background->draw();
+    background->draw();
 	ship->draw();
 	gun->draw();
 	for (std::list<Bullet*> ::iterator bit = bullets.begin(); bit != bullets.end(); bit++)
@@ -532,9 +577,9 @@ void View::drawEndGame() const
     text->draw(-0.07, 0.0, 0.05, Point4D(1.0,0.0,0.0),5.0, "END");
 }
 
-void View::addTexture(const char* filename)
+void View::addTexture(const char* data, int kind)
 {
-    Texture* texture = new Texture (filename, _textures.size());
+    Texture* texture = new Texture (data, kind);
     _textures.push_back(texture);
 }
 void View::onTouchEvent(int what, int x, int y)

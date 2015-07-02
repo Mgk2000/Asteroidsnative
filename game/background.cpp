@@ -10,7 +10,7 @@ Background::Background(View* _view, Texture * _texture) : FlyingObject(_view, 2,
 void Background::init()
 {
     points[0] = Point4D(0.0, 0.0, 0.0, 0.0);
-    points[1] = Point4D(0.6, 0.0, 1.0, 0.0);
+    points[1] = Point4D(0.5, 0.0, 1.0, 0.0);
     points[2] = Point4D(0.0, 0.5, 0.0, 1.0);
     points[3] = points[2];
     points[4] = points[1];
@@ -30,9 +30,19 @@ void Background::init()
 }
 void Background::draw()
 {
+//	drawTexture();
+//	return;
     Mat4 _matrix1 = view->projection1;
     int err;
     glUseProgram(_texture->program());
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    glActiveTexture(GL_TEXTURE0);
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);
+    glBindTexture(GL_TEXTURE_2D, _texture->textureId());
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
@@ -40,7 +50,11 @@ void Background::draw()
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
-    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
+    glUniform4fv(_texture->colorMultLocation(), 1,
+                       (const GLfloat*) &_colorMult);
+    err = glGetError();
+    if (err)
+        LOGD("err=%d", err);    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
@@ -54,7 +68,8 @@ void Background::draw()
     if (err)
         LOGD("err=%d", err);
 
-    quintptr offset = 0;
+//    unsigned int * offset = 0;
+    void * offset = 0;
 
     int vertexLocation = _texture->posLocation();
     glEnableVertexAttribArray(vertexLocation);

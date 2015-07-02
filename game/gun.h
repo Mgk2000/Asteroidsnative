@@ -13,6 +13,9 @@ public:
 	void init();
 	void initGL();
 	bool touched(float _x, float _y, float* fi) const;
+    bool super() const {return _super;}
+private:
+    bool _super;
 };
 
 #endif // GUN_H

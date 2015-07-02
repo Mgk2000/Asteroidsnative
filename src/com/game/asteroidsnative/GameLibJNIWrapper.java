@@ -1,5 +1,7 @@
 package com.game.asteroidsnative;
 
+import android.content.res.AssetManager;
+
 //import android.content.Context;
 
 public class GameLibJNIWrapper {
@@ -21,5 +23,9 @@ public class GameLibJNIWrapper {
     public static native void new_game();
     
     public static native int scores();
+    
+    public static native int create_game();
+
+    public static native void add_texture(AssetManager am, String filename, int kind);
    
 }

@@ -1,5 +1,7 @@
 #include "texture.h"
 #include "logmsg.h"
+#include <stdio.h>
+#include <cstring>
 static const char vertexShader[] =
         "precision mediump float;                            \n"
         "precision mediump int;                            \n"
@@ -34,9 +36,15 @@ static const char fragmentShader[] =
         "  gl_FragColor = col;                              \n"
         "  //gl_FragColor = texture2D( s_texture, v_texCoord );\n"
         "}                                                   \n";
-Texture::Texture(const char* filename, int ind) : _program(0)
+Texture::Texture(const char* data, int __kind) : _program(0), _kind(__kind),
+    bmpdata((char*) data)
 {
-    loadPicture(filename);
+    loadPicture(data);
+}
+
+Texture::~Texture()
+{
+//    delete[] bmpdata;
 }
 
 GLubyte *Texture::getFragment(GLubyte *src, GLubyte* dst,
@@ -65,25 +73,21 @@ bool Texture::initGL()
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(1, &_textureId);
     createTexture();
+    //delete[] bmpdata;
     return true;
 }
 
 
-void Texture::loadPicture(const char* filename)
+void Texture::loadPicture(const char* data)
 {
     // Read data from file into texture
     GLubyte* inData;
-    FILE* _pFile = fopen(filename, "r");
     int szbuf[2];
-    fseek(_pFile, 18, SEEK_SET);
-    fread(szbuf, 8, 1, _pFile);
+    memcpy(szbuf, &data[18],8);
     _picWidth = szbuf[0];
     _picHeight = szbuf[1];
-
-     pcData = new GLubyte[_picWidth* _picHeight*4];
-     inData = new GLubyte[_picWidth* _picHeight*3];
-    fseek(_pFile,  14 + 40, SEEK_SET);
-    fread(inData, _picWidth * _picHeight * 3, 1, _pFile);
+    pcData = new GLubyte[_picWidth* _picHeight*4];
+    inData = (GLubyte*)&data[54];
     for (int i=0; i< _picWidth * _picHeight; i++)
     {
         unsigned char r = inData[i*3+2];
@@ -97,8 +101,6 @@ void Texture::loadPicture(const char* filename)
         pcData[i*4+2] = b;
         pcData[i*4+3] = a;
     }
-    delete[] inData;
-    fclose (_pFile);
 }
 void Texture::createProgram()
 {
@@ -163,7 +165,7 @@ void Texture::createTexture()
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _picWidth, _picHeight,
            0, GL_RGBA, GL_UNSIGNED_BYTE, pcData);
 //        err = glGetError();
-        glGenerateMipmap(GL_TEXTURE_2D);
+//        glGenerateMipmap(GL_TEXTURE_2D);
 //        err = glGetError();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 //        err = glGetError();

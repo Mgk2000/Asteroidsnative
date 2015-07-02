@@ -244,8 +244,8 @@ void FlyingObject::drawTexture(float angle)
     if (err)
         LOGD("err=%d", err);
 
-    quintptr offset = 0;
-
+//    quintptr offset = 0;
+    void* offset = 0;
     int vertexLocation = _texture->posLocation();
     glEnableVertexAttribArray(vertexLocation);
     err = glGetError();
