@@ -33,6 +33,8 @@ private:
     void init_N();
     void init_D();
     void init_semicolon();
+    void init_point();
+    void init_comma();
     int what;
 };
 

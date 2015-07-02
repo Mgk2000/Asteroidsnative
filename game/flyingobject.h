@@ -21,6 +21,7 @@ public:
     void setX(float _x){x=_x;}
 	float Y() const {return y;}
     void setY(float _y){y=_y;}
+    void setRotateAngle(float _fi){rotateAngle = _fi;}
     float VX() const {return vx;}
 	float VY() const {return vy;}
     inline void setColor(float r , float g , float b) {_color = Point4D (r,g,b,1.0);}

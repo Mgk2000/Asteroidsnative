@@ -18,6 +18,7 @@ LOCAL_SRC_FILES += ../game/texture.cpp
 LOCAL_SRC_FILES += ../game/background.cpp
 LOCAL_SRC_FILES += ../game/bonus.cpp
 LOCAL_SRC_FILES += ../game/mutex.cpp
+LOCAL_SRC_FILES += ../game/shipbonuses.cpp
 LOCAL_LDLIBS := -lGLESv2 -llog -landroid
 LOCAL_C_INCLUDES += ${NDKROOT}/sources/cxx-stl/stlport/stlport
 LOCAL_C_INCLUDES += ../game

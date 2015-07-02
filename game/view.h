@@ -81,7 +81,6 @@ public:
     long long currTime() const {return _currTime;}
     const std::vector<Bonus*> &shipBonuses() const {return _shipBonuses;}
     Bonus* shipBonus() const {return _shipBonus;}
-    void setShipBonus(Bonus* bonus, int msec);
     void checkBonusExpired();
 private:
 
@@ -132,7 +131,18 @@ private:
     std::vector<Bonus*> _shipBonuses;
     Bonus* _shipBonus;
     long long _shipBonusExpiredTime;
+    void setShipBonus(Bonus* bonus, int msec);
     void drawShipBonuses();
+    void clearShipBonuses();
+    Bonus::Kind shipBonusKind() const;
+    void deleteShipBonus(Bonus* bonus);
+    void drawBonusBar();
+    Bonus* touchedShipBonus(float x, float y);
+    bool shipUnbreakable() const;
+    void destroyAsteroid(Asteroid* asteroid);
+    float _smallExplosionRadius;
+    void smallExplosion();
+    void bigExplosion();
 };
 
 

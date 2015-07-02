@@ -39,6 +39,8 @@ void Letter::init(char c)
     case 'N': init_N(); break;
     case 'D': init_D(); break;
     case ':': init_semicolon(); break;
+    case '.': init_point(); break;
+    case ',': init_comma(); break;
     }
     initGL();
     FlyingObject::init();
@@ -266,6 +268,24 @@ void Letter::init_semicolon()
 
 }
 
+void Letter::init_point()
+{
+    what = GL_LINES;
+    linewidth = 2.0;
+    mkPoints(2);
+    vertices[0] = Point(0.0, -0.6);
+    vertices[1] = Point(0.0, -0.2);
+}
+
+void Letter::init_comma()
+{
+    what = GL_LINES;
+    linewidth = 2.0;
+    mkPoints(2);
+    vertices[0] = Point(0.0, -0.6);
+    vertices[1] = Point(-0.2, -0.2);
+}
+
 
 Text::Text(View* view)
 {
@@ -285,6 +305,8 @@ Text::Text(View* view)
     letters['N'] = new Letter(view, 'N');
     letters['D'] = new Letter(view, 'D');
     letters[':'] = new Letter(view, ':');
+    letters['.'] = new Letter(view, '.');
+    letters[','] = new Letter(view, ',');
 }
 
 Text::~Text()
@@ -298,6 +320,8 @@ void Text::draw(float x, float y, float scale, Point4D color,float lwidth,  cons
     {
         char c = txt[i];
         Letter *l = letters[c];
+        if (!l)
+            continue;
         l->setScale (scale);
         l->setX(left - (2-l->width)*scale* 0.5);
         l->setY(y);
