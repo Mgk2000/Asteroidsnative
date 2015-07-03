@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <time.h>
 #include "math_helper.h"
+#include "sand.h"
 View::View() :
      bullets(0),asteroidAppearTime(0), nticks(0), period(12),
      ship(0), gun(0), pause(false), _shipBonus(0), _smallExplosionRadius(1.2)
@@ -60,12 +61,17 @@ void View::processTouchPress(int x, int y)
     }
 
 }
-void View::destroyAsteroid(Asteroid* asteroid)
+void View::destroyAsteroid(Asteroid* asteroid, bool total)
 {
     if (asteroid->bonus())
         freeBonus(asteroid);
-    else if (!asteroid->isSplinter())
+    else if (! total && !asteroid->isSplinter())
         createSplinters(asteroid);
+    else
+    {
+        Sand* sand = new Sand(this, asteroid);
+        sands.push_back(sand);
+    }
     _scores+=asteroid->cost();
     delete asteroid;
     sound(2);
@@ -85,8 +91,7 @@ void View::smallExplosion()
         float r2 = sqr(x-ax) + sqr(y-ay);
         if (r2 <= _smallExplosionRadius)
         {
-            _scores += asteroid->cost();
-            delete asteroid;
+            destroyAsteroid(asteroid, true);
             ait = asteroids.erase(ait);
             sound(2);
         }
@@ -100,8 +105,7 @@ void View::bigExplosion()
     {
         Asteroid* asteroid = *ait;
         {
-            _scores += asteroid->cost();
-            delete asteroid;
+            destroyAsteroid(asteroid, true);
             sound(2);
         }
     }
@@ -128,7 +132,7 @@ void View::checkShoots()
                 Asteroid* asteroid = *ait;
                 ait = asteroids.erase(ait);
                 bit = bullets.erase(bit);
-                destroyAsteroid(asteroid);
+                destroyAsteroid(asteroid, false);
                 delete bullet;
                 goto nextbullet;
 			}
@@ -205,7 +209,10 @@ void View::newGame()
 		for (std::list<Bullet*> ::iterator bit = bullets.begin(); bit != bullets.end(); bit++)
 			delete *bit;
 		bullets.clear();
-		if (patrol)
+        for (std::list<Sand*> ::iterator sit = sands.begin(); sit != sands.end(); sit++)
+            delete *sit;
+        sands.clear();
+        if (patrol)
 		{
 			delete patrol;
 			patrol = 0;
@@ -269,6 +276,15 @@ void View::moveObjects(float delta)
             ait = bonuses.erase(ait);
         }
     }
+    for (std::list<Sand*> ::iterator ait = sands.begin(); ait != sands.end(); ait++)
+    {
+        (*ait)->moveStep(delta);
+        if ((*ait)->out() )
+        {
+            delete *ait;
+            ait = sands.erase(ait);
+        }
+    }
     if (patrol)
     {
         patrol->moveStep(delta);
@@ -324,7 +340,7 @@ void View::checkAsteroidBreaksShip()
                 breakShip();
             else
             {
-                destroyAsteroid(*ait);
+                destroyAsteroid(*ait, false);
                 ait = asteroids.erase(ait);
             }
             break;
@@ -576,6 +592,8 @@ void View::paintGL()
     for (std::list<Asteroid*> ::iterator ait = asteroids.begin(); ait != asteroids.end(); ait++)
         (*ait)->draw();
     for (std::list<Bonus*> ::iterator ait = bonuses.begin(); ait != bonuses.end(); ait++)
+        (*ait)->draw();
+    for (std::list<Sand*> ::iterator ait = sands.begin(); ait != sands.end(); ait++)
         (*ait)->draw();
     if (patrol)
 		patrol->draw();

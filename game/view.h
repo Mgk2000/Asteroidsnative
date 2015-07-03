@@ -21,6 +21,7 @@ class Patrol;
 class Background;
 class Bonus;
 class Mutex;
+class Sand;
 struct BulletInfo
 {
 	Bullet* bullet;
@@ -99,6 +100,7 @@ private:
 	void deleteBullet(Bullet* bullet);
 	void createSplinters(Asteroid* asteroid);
     std::list <Bonus*> bonuses;
+    std::list <Sand*> sands;
     Patrol* patrol;
     Ship* ship;
     Background * background;
@@ -139,7 +141,7 @@ private:
     void drawBonusBar();
     Bonus* touchedShipBonus(float x, float y);
     bool shipUnbreakable() const;
-    void destroyAsteroid(Asteroid* asteroid);
+    void destroyAsteroid(Asteroid* asteroid, bool total);
     float _smallExplosionRadius;
     void smallExplosion();
     void bigExplosion();
