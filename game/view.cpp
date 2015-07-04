@@ -14,9 +14,11 @@
 #include <time.h>
 #include "math_helper.h"
 #include "sand.h"
+#include "explosion.h"
+#include "target.h"
 View::View() :
      bullets(0),asteroidAppearTime(0), nticks(0), period(12),
-     ship(0), gun(0), pause(false), _shipBonus(0), _smallExplosionRadius(1.2)
+     ship(0), gun(0), pause(false), _shipBonus(0), _smallExplosionRadius(0.5)
 {
 }
 
@@ -74,28 +76,33 @@ void View::destroyAsteroid(Asteroid* asteroid, bool total)
     }
     _scores+=asteroid->cost();
     delete asteroid;
-    sound(2);
+    sound(BREAK);
 
 }
 
 void View::smallExplosion()
 {
     std::list<Asteroid*>::iterator ait = asteroids.begin();
+    float er2 = sqr(_smallExplosionRadius);
     float x = ship->X();
-    float y = ship->Y();
-    for (; ait != asteroids.end(); ait++)
+    float y = ship->top();
+    for (; ait != asteroids.end(); )
     {
         Asteroid* asteroid = *ait;
         float ax = asteroid->X();
         float ay = asteroid->Y();
         float r2 = sqr(x-ax) + sqr(y-ay);
-        if (r2 <= _smallExplosionRadius)
+        if (r2 <= er2)
         {
             destroyAsteroid(asteroid, true);
             ait = asteroids.erase(ait);
-            sound(2);
         }
+        else
+            ait++;
     }
+    Explosion * explosion = new Explosion(this, _smallExplosionRadius);
+    explosions.push_back(explosion);
+    sound(EXPLOSION);
 }
 
 void View::bigExplosion()
@@ -106,7 +113,9 @@ void View::bigExplosion()
         Asteroid* asteroid = *ait;
         {
             destroyAsteroid(asteroid, true);
-            sound(2);
+            Explosion * explosion = new Explosion(this, 2.0);
+            explosions.push_back(explosion);
+            sound(EXPLOSION);
         }
     }
     asteroids.clear();
@@ -125,17 +134,39 @@ void View::checkShoots()
 		Point p = (*bit)->top();
 		Point p1 = (*bit)->bottom();
 		Bullet* bullet = *bit;
+        if (bullet->isMy())
+        {
+            if (target && (target->isPointInside(&p) || target->isPointInside(&p1)))
+            {
+//                LOGD("patrol delete bullets=%d", bullets.size() );
+                target->shoot();
+                if (target->broken())
+                {
+                    freeBonus(target);
+                }
+                delete *bit;
+                bit = bullets.erase(bit);
+                sound(BREAK);
+                goto nextbullet;
+
+            }
+
+        }
 		for (std::list<Asteroid*> ::iterator ait = asteroids.begin(); ait != asteroids.end(); ait++)
 		{
-			if ((*ait)->isPointInside(&p ) || (*ait)->isPointInside(&p1 ))
+			if ((*ait)->isPointInside(&p ) || (*ait)->isPointInside(&p1))
 			{
                 Asteroid* asteroid = *ait;
-                ait = asteroids.erase(ait);
+                asteroid->shoot();
+                if (asteroid->broken())
+                {
+                    destroyAsteroid(asteroid, false);
+                    ait = asteroids.erase(ait);
+                }
                 bit = bullets.erase(bit);
-                destroyAsteroid(asteroid, false);
                 delete bullet;
                 goto nextbullet;
-			}
+            }
 		}
 		if (bullet->isMy())
 		if (patrol && (patrol->isPointInside(&p) || patrol->isPointInside(&p1)))
@@ -146,7 +177,7 @@ void View::checkShoots()
 			patrol =0;
 			delete *bit;
 			bit = bullets.erase(bit);
-			sound(2);
+            sound(BREAK);
 			goto nextbullet;
 
 		}
@@ -172,8 +203,8 @@ void View::breakShip()
 	ship->die();
     _lives--;
     if (_lives)
-    	sound(4);
-    else sound(5);
+        sound(SHIPBREAK);
+    else sound(ENDGAME);
 	dieticks = 100;
     nticks = 0;
 }
@@ -232,7 +263,8 @@ void View::startGame()
 	asteroidAppearTime = nticks+1;
 	_lives = 3;
 	_scores = 0;
-
+    target->setBreakCount(30);
+    target->setShootCount(0);
 }
 void View::checkEndGame()
 {
@@ -249,6 +281,8 @@ void View::checkEndGame()
 
 void View::moveObjects(float delta)
 {
+    if (target)
+        target->moveStep(delta);
     for (std::list<Bullet*> ::iterator bit = bullets.begin(); bit != bullets.end(); bit++)
     {
         (*bit)->moveStep(delta);
@@ -285,6 +319,15 @@ void View::moveObjects(float delta)
             ait = sands.erase(ait);
         }
     }
+    for (std::list<Explosion*> ::iterator ait = explosions.begin(); ait != explosions.end(); ait++)
+    {
+        (*ait)->moveStep(delta);
+        if ((*ait)->out() )
+        {
+            delete *ait;
+            ait = explosions.erase(ait);
+        }
+    }
     if (patrol)
     {
         patrol->moveStep(delta);
@@ -307,7 +350,7 @@ void View::checkAppearences()
             {
                 patrol = new Patrol (this);
                 patrol->init();
-                sound(3);
+                sound(PATROL);
                 pat = true;
             }
         }
@@ -316,17 +359,28 @@ void View::checkAppearences()
             Bonus* bonus = 0;
             Asteroid* asteroid = new Asteroid (this, _textures[0]);
             asteroid->init();
-            if (_random1.frandom() < 0.5)
+            if (_random1.frandom() < 0.1)
             {
-                int n = _random1.irandom((int) Bonus::MAX_KIND) +1;
-                //LOGD("kind=%d", n);
-                bonus = new Bonus(this, (Bonus::Kind) n, asteroid);
+                float fb = _random1.frandom();
+                Bonus::Kind bk;
+                if (fb<=0.3)
+                	bk = Bonus::SUPER_GUN;
+                else if (fb<=0.5)
+                	bk = Bonus::LITTLE_BOMB;
+                else if (fb<=0.6)
+                    bk = Bonus::BIG_BOMB;
+                else if (fb<=0.9)
+                	bk = Bonus::DIAMOND;
+                else
+                	bk = Bonus::LIVE;
+ //               bk = Bonus::LIVE;
+                bonus = new Bonus(this, bk, asteroid);
                 asteroid->setBonus(bonus);
                 bonus->init();
             }
             addAsteroid(asteroid);
         }
-        asteroidAppearTime = nticks + random1().irandom(300, 1000) / log10 (nticks+10.0);
+        asteroidAppearTime = nticks + random1().irandom(300, 700) / log10 (nticks+10.0) ;
     }
 }
 
@@ -369,7 +423,14 @@ void View::freeBonus(Asteroid* asteroid)
 
 int View::drawFrame()
 {
+#ifdef WIN32
     _currTime = 1.0* clock() / CLOCKS_PER_SEC * 1000;
+#else
+    timeval tv;
+    gettimeofday(&tv, 0);
+    _currTime = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+#endif
+
     if (nticks ==0)
     {
         _startTime = _currTime;
@@ -384,7 +445,7 @@ int View::drawFrame()
     }
     nticks = (_currTime-_startTime) / period;
     _lastTime = _currTime;
-    maxSound =0;
+    maxSound =NONE;
     checkEndGame();
     if (gameIsOver())
     {
@@ -425,12 +486,18 @@ bool View::initializeGL()
 		patrol = 0;
 		// Use QBasicTimer because its faster than QTimer
 		text = new Text(this);
+        target  = new Target(this, _textures[0], -0.2, 0.75, 0.03);
+        target->init();
+        Bonus* tbonus = new Bonus(this, Bonus::TARGET, target);
+        target->setBonus(tbonus);
+        tbonus->init();
+
 		mutex = new Mutex;
 		startGame();
     }
-    else //after pause 9pressing Home button)
+    else //after pause pressing Home button)
     {
-        for (int i = 0; i< _textures.size(); i++)
+        for (unsigned int i = 0; i< _textures.size(); i++)
             _textures[i]->initGL();
         ship->initGL();
     	gun->initGL();
@@ -447,6 +514,9 @@ bool View::initializeGL()
 				(*ait)->initGL();
             for(std::list<Bonus*>::iterator ait = bonuses.begin();
                 ait!= bonuses.end(); ait++)
+                (*ait)->initGL();
+            for(std::vector<Bonus*>::iterator ait = _shipBonuses.begin();
+                ait!= _shipBonuses.end(); ait++)
                 (*ait)->initGL();
         }
     }
@@ -515,7 +585,7 @@ void View::shoot(float angle)
         bullet->init();
         addBullet (bullet);
     }
-    sound(1);
+    sound(SHOOT);
 }
 
 void View::addAsteroid(Asteroid *asteroid)
@@ -587,6 +657,8 @@ void View::paintGL()
 
 	ship->draw();
 	gun->draw();
+        if (target)
+    target->draw();
 	for (std::list<Bullet*> ::iterator bit = bullets.begin(); bit != bullets.end(); bit++)
 		(*bit)->draw();
     for (std::list<Asteroid*> ::iterator ait = asteroids.begin(); ait != asteroids.end(); ait++)
@@ -594,6 +666,8 @@ void View::paintGL()
     for (std::list<Bonus*> ::iterator ait = bonuses.begin(); ait != bonuses.end(); ait++)
         (*ait)->draw();
     for (std::list<Sand*> ::iterator ait = sands.begin(); ait != sands.end(); ait++)
+        (*ait)->draw();
+    for (std::list<Explosion*> ::iterator ait = explosions.begin(); ait != explosions.end(); ait++)
         (*ait)->draw();
     if (patrol)
 		patrol->draw();
@@ -611,6 +685,7 @@ void View::drawCurrentResult() const
                2.0, buf);
 	std::sprintf(buf, "L:%d", _lives);
     text->draw(0.3, 0.95, 0.025, Point4D(0.0,1.0,0.0), 2.0, buf);
+    //text->drawCenter(-0.0, 0.75, 0.04, Point4D(0.0,1.0,0.0), 2.0, "Level cleared!");
 
 }
 void View::drawEndGame() const

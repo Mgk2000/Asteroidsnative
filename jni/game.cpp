@@ -24,8 +24,6 @@ void on_surface_changed(int width, int height)
 int on_draw_frame() {
 	if (view->getPause())
 		return true;
-	glClear(GL_COLOR_BUFFER_BIT);
-	long long msec = 1.0* clock() / CLOCKS_PER_SEC * 1000;
 	return view->drawFrame();
 }
 void on_touch_event(jint what, jint x, jint y)

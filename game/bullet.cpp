@@ -34,7 +34,7 @@ void Bullet::initGL()
 
 void Bullet::draw()
 {
-	drawLines(GL_LINE_STRIP, vboIds[0], 2, color(), 4.0);
+    drawLines(GL_LINE_STRIP, vboIds[0], 2, color(), 4.0);
 }
 
 Point Bullet::top() const

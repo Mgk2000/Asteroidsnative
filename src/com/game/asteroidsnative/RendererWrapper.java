@@ -46,7 +46,7 @@ public class RendererWrapper implements Renderer {
 	}
 	public void playSound (int ind)
 	{
-		if (activity.soundFlag);
+		if (activity.soundFlag)
 			activity.sounds.playSound(ind);
 	}
 }

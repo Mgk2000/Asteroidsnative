@@ -6,6 +6,7 @@ class Random;
 class View;
 class Mat4;
 class Texture;
+class Text;
 #define MAXVERTICES 60
 class FlyingObject : public GlObject
 {
@@ -38,7 +39,13 @@ public:
     float getAngle() const {return angle;}
     float getSpeed() const {return speed;}
     long long currTime() const;
-
+    int shootCount() const {return _shootCount;}
+    int breakCount() const {return _breakCount;}
+    virtual bool broken() const {return _shootCount >= _breakCount;}
+    virtual void shoot() {_shootCount++;}
+    virtual void setBreakCount(int c) {_breakCount = c;}
+    virtual void setShootCount(int c) {_shootCount = c;}
+    Text* text() const;
 protected:
 	float x,y,angle;
     float rotateAngle;
@@ -63,6 +70,8 @@ protected:
     Texture* _texture;
     void drawTexture( float angle = 0.0);
     Point4D _colorMult;
+    long long _startTime;
+    int _shootCount, _breakCount;
 };
 
 

@@ -41,6 +41,16 @@ void Letter::init(char c)
     case ':': init_semicolon(); break;
     case '.': init_point(); break;
     case ',': init_comma(); break;
+    case '-': init_minus(); break;
+    case 'l': init_l(); break;
+    case 'v': init_v(); break;
+    case 'c': init_c(); break;
+    case 'a': init_a(); break;
+    case 'r': init_r(); break;
+    case 'e': init_e(); break;
+    case 'd': init_d(); break;
+    case '!': init_exclaim(); break;
+
     }
     initGL();
     FlyingObject::init();
@@ -247,14 +257,123 @@ void Letter::init_D()
 {
     mkPoints(7);
     vertices[0] = Point(-0.5, 1.0);
-    vertices[1] = Point(0.1, 1.0);
-    vertices[2] = Point(0.5, 0.6);
-    vertices[3] = Point(0.5, -0.6);
-    vertices[4] = Point(0.1, -1.0);
-    vertices[5] = Point(-0.5, -1.0);
+    vertices[1] = Point(-0.5, -1.0);
+    vertices[2] = Point(0.3, -1.0);
+    vertices[3] = Point(0.5, -0.8);
+    vertices[4] = Point(0.5, 0.8);
+    vertices[5] = Point(0.3, 1.0);
     vertices[6] = Point(-0.5, 1.0);
 
 }
+void Letter::init_l()
+{
+    what = GL_LINES;
+    mkPoints(2);
+    vertices[0] = Point(0.0, -1.0);
+    vertices[1] = Point(0.0, 1.0);
+
+}
+
+void Letter::init_v()
+{
+    mkPoints(3);
+    vertices[0] = Point(-0.5, 0.2);
+    vertices[1] = Point(0.0, -1.0);
+    vertices[2] = Point(0.5, 0.2);
+
+}
+
+void Letter::init_c()
+{
+    mkPoints(8);
+    vertices[0] = Point(0.5, 0.0);
+    vertices[1] = Point(0.3, 0.2);
+    vertices[2] = Point(-0.3, 0.2);
+    vertices[3] = Point(-0.5, 0.0);
+    vertices[4] = Point(-0.5, -0.8);
+    vertices[5] = Point(-0.3, -1.0);
+    vertices[6] = Point(0.3, -1.0);
+    vertices[7] = Point(0.5, -0.8);
+}
+
+void Letter::init_a()
+{
+    mkPoints(14);
+    int i=0;
+    vertices[i++] = Point(0.5, -1.0);
+    vertices[i++] = Point(0.3, -0.8);
+    vertices[i++] = Point(0.3, -0.1);
+    vertices[i++] = Point(-0.3, -0.1);
+    vertices[i++] = Point(-0.5, -0.3);
+    vertices[i++] = Point(-0.5, -0.8);
+    vertices[i++] = Point(-0.5, -0.8);
+    vertices[i++] = Point(-0.3, -1.0);
+    vertices[i++] = Point(0.1, -1.0);
+    vertices[i++] = Point(0.3, -0.8);
+    vertices[i++] = Point(0.3, 0.1);
+    vertices[i++] = Point(0.1, 0.3);
+    vertices[i++] = Point(-0.3, 0.3);
+    vertices[i++] = Point(-0.5, 0.3);
+
+}
+
+void Letter::init_r()
+{
+    mkPoints(6);
+    int i=0;
+    vertices[i++] = Point(-0.5, 0.2);
+    vertices[i++] = Point(-0.5, -1.0);
+    vertices[i++] = Point(-0.5, 0.0);
+    vertices[i++] = Point(-0.3, 0.2);
+    vertices[i++] = Point(-0.3, 0.2);
+    vertices[i++] = Point( 0.5, 0.0);
+
+}
+
+void Letter::init_e()
+{
+    mkPoints(10);
+    int i=0;
+    vertices[i++] = Point(0.5, -0.8);
+    vertices[i++] = Point(0.3, -1.0);
+    vertices[i++] = Point(-0.3, -1.0);
+    vertices[i++] = Point(-0.5, -0.8);
+    vertices[i++] = Point(-0.5, 0.0);
+    vertices[i++] = Point(-0.3, 0.2);
+    vertices[i++] = Point(0.3, 0.2);
+    vertices[i++] = Point( 0.5, 0.0);
+    vertices[i++] = Point( 0.5, -0.2);
+    vertices[i++] = Point(-0.5, -0.2);
+
+}
+
+void Letter::init_d()
+{
+    mkPoints(10);
+    int i=0;
+    vertices[i++] = Point(0.5, -1.0);
+    vertices[i++] = Point(0.5, 0.0);
+    vertices[i++] = Point(0.3, 0.2);
+    vertices[i++] = Point(-0.3, 0.2);
+    vertices[i++] = Point(-0.5, 0.0);
+    vertices[i++] = Point(-0.5, -0.8);
+    vertices[i++] = Point(-0.3, -1.0);
+    vertices[i++] = Point(0.3, -1.0);
+    vertices[i++] = Point(0.5, -0.8);
+    vertices[i++] = Point(0.5, 1.0);
+
+}
+
+void Letter::init_exclaim()
+{
+    what = GL_LINES;
+    mkPoints(4);
+    vertices[0] = Point(0.0, 1.0);
+    vertices[1] = Point(0.0, -0.1);
+    vertices[2] = Point(0.0, -0.8);
+    vertices[3] = Point(0.0, -1.0);
+}
+
 
 void Letter::init_semicolon()
 {
@@ -286,6 +405,15 @@ void Letter::init_comma()
     vertices[1] = Point(-0.2, -0.2);
 }
 
+void Letter::init_minus()
+{
+    what = GL_LINES;
+    linewidth = 2.0;
+    mkPoints(2);
+    vertices[0] = Point(-0.4, -0.0);
+    vertices[1] = Point(0.4, -0.0);
+}
+
 
 Text::Text(View* view)
 {
@@ -307,6 +435,15 @@ Text::Text(View* view)
     letters[':'] = new Letter(view, ':');
     letters['.'] = new Letter(view, '.');
     letters[','] = new Letter(view, ',');
+    letters['-'] = new Letter(view, '-');
+    letters['c'] = new Letter(view, 'c');
+    letters['l'] = new Letter(view, 'l');
+    letters['e'] = new Letter(view, 'e');
+    letters['a'] = new Letter(view, 'a');
+    letters['r'] = new Letter(view, 'r');
+    letters['d'] = new Letter(view, 'd');
+    letters['v'] = new Letter(view, 'v');
+    letters['!'] = new Letter(view, '!');
 }
 
 Text::~Text()
@@ -321,7 +458,10 @@ void Text::draw(float x, float y, float scale, Point4D color,float lwidth,  cons
         char c = txt[i];
         Letter *l = letters[c];
         if (!l)
+        {
+            left = left + 1.0 * scale;
             continue;
+        }
         l->setScale (scale);
         l->setX(left - (2-l->width)*scale* 0.5);
         l->setY(y);
@@ -331,9 +471,30 @@ void Text::draw(float x, float y, float scale, Point4D color,float lwidth,  cons
         left = left + l->width * scale;
     }
 }
+
+void Text::drawCenter(float x, float y, float scale, Point4D color, float lwidth, const char *txt)
+{
+    float w = textWidth(txt)* scale;
+    draw(x- w /2, y, scale, color, lwidth, txt);
+}
 void Text::initGL()
 {
 	std::map<char, Letter* >::iterator it = letters.begin();
 	for (; it != letters.end(); it++)
-		(*it).second->initGL();
+        (*it).second->initGL();
+}
+
+float Text::textWidth(const char *txt)
+{
+    float w = 0.0;
+    for (unsigned int i=0; i< strlen(txt); i++)
+    {
+        char c = txt[i];
+        Letter *l = letters[c];
+        if (!l)
+            w = w + 1.0;
+        else
+            w = w + l->width;
+    }
+    return w;
 }

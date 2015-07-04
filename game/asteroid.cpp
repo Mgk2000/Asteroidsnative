@@ -47,9 +47,6 @@ void Asteroid::applyParams()
     rotatedVertices = new Point[nvertices];
     _r = 0.0f;
     texScale = 2.0;
-    float sr = _rr  * texScale;
-//    texCenterX = random1().frandom( sr, _texture->picWidth()-sr);
-//    texCenterY = random1().frandom( sr, _texture->picHeight() - sr);
     texCenterX = random1().frandom(0.3, 0.7);
     texCenterY = random1().frandom(0.3, 0.7);
     for (int i=0; i< nvertices; i++)
@@ -59,7 +56,6 @@ void Asteroid::applyParams()
         float r1 = _rr * random1().frandom(0.9, 1.1);
         if (r1> _r)
             _r = r1;
-        sr = r1 * texScale;
         vertices[i] = Point (-r1 * sin(fi) , r1 * cos(fi));
         rotatedVertices[i] = vertices[i];
     }
@@ -90,6 +86,10 @@ void Asteroid::draw()
 
 bool Asteroid::isPointInside(Point *p) const
 {
+    float dx = p->x - x;
+    float dy = p->y -y;
+    if (sqr(dx) + sqr(dy) > sqr(this->_r))
+        return false;
     Point center(x,y);
 	return ::isInside(p, rotatedVertices, &center, nvertices, true);
 }

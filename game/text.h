@@ -32,9 +32,18 @@ private:
     void init_E();
     void init_N();
     void init_D();
+    void init_l();
+    void init_v();
+    void init_c();
+    void init_a();
+    void init_r();
+    void init_e();
+    void init_d();
+    void init_exclaim();
     void init_semicolon();
     void init_point();
     void init_comma();
+    void init_minus();
     int what;
 };
 
@@ -44,7 +53,9 @@ public:
     Text(View* view);
     ~Text();
     void draw(float x, float y, float scale, Point4D color, float lwidth, const char *txt);
+    void drawCenter(float x, float y, float scale, Point4D color, float lwidth, const char *txt);
     void initGL();
+    float textWidth(const char* txt);
 private:
     std::map<char, Letter* > letters;
 };

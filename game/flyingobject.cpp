@@ -7,19 +7,23 @@
 
 FlyingObject::FlyingObject(View* _view, int _nbos, Texture* __texture): nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
     _rotateSpeed(0.0f), angle(0.f), rotateAngle (0.0f),  speed (0.f),  _scale(1.0), _texture(__texture),
-    _colorMult(1.0,1.0,1.0)
+    _colorMult(1.0,1.0,1.0), _shootCount(0), _breakCount (1)
 {
 	if (nvbos)
 	{
 		vboIds = new uint[nvbos];
 		glGenBuffers(nvbos, vboIds);
 	}
+    _startTime = currTime();
+
 }
 
 FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _speed, float _angle):
 	nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
     _rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f),
-    speed (_speed), x(_x), y(_y) , _scale(1.0), _texture(0), _colorMult(1.0,1.0,1.0)
+    speed (_speed), x(_x), y(_y) , _scale(1.0), _texture(0),
+    _colorMult(1.0,1.0,1.0),
+   _shootCount(0), _breakCount (1)
 {
 	if (nvbos)
 	{
@@ -27,6 +31,7 @@ FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _sp
 		glGenBuffers(nvbos, vboIds);
 	}
 
+    _startTime = currTime();
 }
 
 FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _speed,
@@ -34,12 +39,14 @@ FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _sp
 nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
 _rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f), speed (_speed), x(_x), y(_y) ,
   _scale(1.0), _texture(__texture), _colorMult(1.0,1.0,1.0)
+, _shootCount(0), _breakCount (1)
 {
     if (nvbos)
     {
         vboIds = new uint[nvbos];
         glGenBuffers(nvbos, vboIds);
     }
+    _startTime = currTime();
 }
 
 FlyingObject::~FlyingObject()
@@ -186,7 +193,12 @@ bool FlyingObject::isIntersects(const FlyingObject& obj) const
 
 bool FlyingObject::isPointInside(Point *p) const
 {
-    Point myvertices [MAXVERTICES];
+    float dx = p->x - x;
+    float dy = p->y -y;
+    if (sqr(dx) + sqr(dy) > sqr(this->_r))
+    	return false;
+
+	Point myvertices [MAXVERTICES];
 	int mynvertices;
 	getCurrentCoords(myvertices, &mynvertices);
 	Point mycenter (X(), Y());
@@ -196,6 +208,11 @@ bool FlyingObject::isPointInside(Point *p) const
 long long FlyingObject::currTime() const
 {
     return view->currTime();
+}
+
+Text *FlyingObject::text() const
+{
+      return view->getText();
 }
 void FlyingObject::drawTexture(float angle)
 {

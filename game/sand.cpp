@@ -4,14 +4,13 @@
 
 Sand::Sand(View* _view, FlyingObject* _parent) : FlyingObject(_view, 1, 0)
 {
-    float pr = _parent->r();
+    float pr = _parent->r() * 1.5;
     x = _parent->X();
     y = _parent->Y();
     vx = _parent->VX();
     vy = _parent->VY();
-    _startTime = currTime();
-    _endTime = _startTime+ 1500;
-    nvertices = random2().irandom(20, 30)* 2;
+    _endTime = currTime() + 1500;
+    nvertices = random2().irandom(40, 60)* 2;
     vertices = new Point[nvertices];
     for (int i = 0; i< nvertices/2; i+=2)
     {

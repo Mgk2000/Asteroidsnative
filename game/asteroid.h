@@ -12,7 +12,7 @@ public:
 	virtual ~Asteroid();
 	void init();
     virtual void initGL();
-	void initParams();
+    virtual void initParams();
     virtual void applyParams();
 	void draw();
 	bool isPointInside( Point* p) const;

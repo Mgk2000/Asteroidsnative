@@ -21,8 +21,9 @@ void View::setShipBonus(Bonus* bonus, int msec)
             _shipBonus = bonus;
             _shipBonusExpiredTime =currTime() + msec*1000;
             _shipBonus->setRotateAngle(0.0);
-            shipBonus()->setX(-0.05);
-            shipBonus()->setY(0.95);
+            shipBonus()->setX(-0.1);
+            shipBonus()->setY(0.85);
+            shipBonus()->setScale(2.0);
             break;
         case Bonus::BIG_BOMB:
         case Bonus::LITTLE_BOMB:
@@ -63,7 +64,7 @@ void View::drawShipBonuses()
         int sec = (int) (_shipBonusExpiredTime - _currTime) /1000;
         char buf[8];
         sprintf(buf, ":%d", sec);
-        text->draw(0.05 , 0.95, 0.025, Point4D(1.0, 0.0,0.8, 1.0), 2.0, buf );
+        text->draw(0.10 , 0.85, 0.025, Point4D(1.0, 0.0,0.8, 1.0), 2.0, buf );
         shipBonus()->draw();
 
     }
@@ -126,6 +127,7 @@ void View::deleteShipBonus(Bonus* bonus)
 void View::catchBonus(Bonus* bonus)
 {
     Bonus::Kind kind = bonus->kind();
+    sound(BONUS);
     switch (kind)
     {
     case Bonus::BIG_BOMB :

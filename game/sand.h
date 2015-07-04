@@ -10,7 +10,7 @@ public:
     bool out() const;
     void draw();
 private:
-    long long _startTime, _endTime;
+    long long _endTime;
 };
 
 #endif // SAND_H

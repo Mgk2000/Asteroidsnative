@@ -22,6 +22,8 @@ class Background;
 class Bonus;
 class Mutex;
 class Sand;
+class Explosion;
+class Target;
 struct BulletInfo
 {
 	Bullet* bullet;
@@ -42,6 +44,18 @@ int x, y;
 class View : public GlObject
 {
 public:
+    enum Sounds
+    {
+        NONE,
+        SHOOT,
+        BREAK,
+        PATROL,
+        BONUS,
+        EXPLOSION,
+        SHIPBREAK,
+        ENDGAME
+    };
+
     explicit View();
 	~View();
 	Mat4 projection1;
@@ -82,6 +96,7 @@ public:
     long long currTime() const {return _currTime;}
     const std::vector<Bonus*> &shipBonuses() const {return _shipBonuses;}
     Bonus* shipBonus() const {return _shipBonus;}
+    Text* getText() const {return text;}
     void checkBonusExpired();
 private:
 
@@ -120,8 +135,8 @@ private:
     bool pause;
     int _lives;
     int _scores;
-    void sound(int is) {if (is>maxSound) maxSound=is;}
-    int maxSound;
+    void sound(Sounds is) {if (is>maxSound) maxSound=is;}
+    Sounds maxSound;
     void checkEndGame();
     void moveObjects(float delta);
     void checkAppearences();
@@ -131,6 +146,7 @@ private:
     void drawEndGame() const;
     std::vector <Texture *> _textures;
     std::vector<Bonus*> _shipBonuses;
+    std::list <Explosion*> explosions;
     Bonus* _shipBonus;
     long long _shipBonusExpiredTime;
     void setShipBonus(Bonus* bonus, int msec);
@@ -145,6 +161,7 @@ private:
     float _smallExplosionRadius;
     void smallExplosion();
     void bigExplosion();
+    Target* target;
 };
 
 
