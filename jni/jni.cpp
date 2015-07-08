@@ -1,6 +1,7 @@
 #include "game.h"
 #include <jni.h>
 #include <cstdio>
+#include <cstring>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 #ifdef __cplusplus
@@ -67,10 +68,34 @@ JNIEXPORT jint JNICALL Java_com_game_asteroidsnative_GameLibJNIWrapper_add_1text
    	int len = AAsset_getLength(asset);
    	char* buf = new char[len];
    	int nb = AAsset_read (asset, buf, len);
+   	int szbuf[2];
+   	memcpy(szbuf, &buf[18],8);
+
   //  	LOGD("After read len=%d", len);
     //	LOGD("buf=%s", buf);
     AAsset_close(asset);
-	add_texture(buf, kind);
+	add_texture(szbuf[0], szbuf[1], &buf[54], kind);
+}
+JNIEXPORT void JNICALL Java_com_game_asteroidsnative_GameLibJNIWrapper_add_1intarr_1texture
+  (JNIEnv * env, jclass cls, jint w, jint h, jintArray dataArr, jint kind)
+{
+	LOGD("add_1intarr_1texture 1");
+	int* buf = new int[ w * h];
+	char* data = new char[ w * h * 3];
+	LOGD("add_1intarr_1texture 2");
+	jint length = env->GetArrayLength(dataArr);
+	LOGD("add_1intarr_1texture 3 length=%d", length);
+
+    env->GetIntArrayRegion(dataArr, 0, length, (jint*)buf);
+	LOGD("w=%d h=%d length=%d buf=%x", w,h,length, buf[0]);
+	for (int i=0; i< h; i++)
+		for (int j =0; j< w; j++)
+		{
+			int ii = h-i-1;
+			memcpy(&data[i*3 * w + j*3 ], &buf[ii *w + j], 3);
+		}
+	add_texture(w, h, data, kind);
+	LOGD("Png texture added");
 }
 #ifdef __cplusplus
 };

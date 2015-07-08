@@ -36,10 +36,10 @@ static const char fragmentShader[] =
         "  gl_FragColor = col;                              \n"
         "  //gl_FragColor = texture2D( s_texture, v_texCoord );\n"
         "}                                                   \n";
-Texture::Texture(const char* data, int __kind) : _program(0), _kind(__kind),
+Texture::Texture(int w, int h, const char* data, int __kind) : _program(0), _kind(__kind),
     bmpdata((char*) data)
 {
-    loadPicture(data);
+    loadPicture(w, h, data);
 }
 
 Texture::~Texture()
@@ -78,16 +78,17 @@ bool Texture::initGL()
 }
 
 
-void Texture::loadPicture(const char* data)
+void Texture::loadPicture(int picWidth, int picHeight, const char* data)
 {
     // Read data from file into texture
     GLubyte* inData;
-    int szbuf[2];
-    memcpy(szbuf, &data[18],8);
-    _picWidth = szbuf[0];
-    _picHeight = szbuf[1];
-    pcData = new GLubyte[_picWidth* _picHeight*4];
-    inData = (GLubyte*)&data[54];
+    _picWidth = picWidth;
+    _picHeight = picHeight;
+    int  size = _picWidth* _picHeight*4;
+    char * ccc = new char[size];
+    pcData = (GLubyte*) ccc;
+    //pcData = new GLubyte[size];
+    inData = (GLubyte*)&data[0];
     for (int i=0; i< _picWidth * _picHeight; i++)
     {
         unsigned char r = inData[i*3+2];

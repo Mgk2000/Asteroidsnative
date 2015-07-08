@@ -27,18 +27,31 @@ private:
     void init_7();
     void init_8();
     void init_9();
-    void init_S();
-    void init_L();
-    void init_E();
-    void init_N();
+
     void init_D();
-    void init_l();
-    void init_v();
-    void init_c();
+    void init_E();
+    void init_K();
+    void init_L();
+    void init_N();
+    void init_O();
+    void init_S();
+    void init_Y();
+
     void init_a();
-    void init_r();
-    void init_e();
+    void init_c();
     void init_d();
+    void init_e();
+    void init_i();
+    void init_k();
+    void init_l();
+    void init_n();
+    void init_o();
+    void init_r();
+    void init_s();
+    void init_t();
+    void init_u();
+    void init_v();
+
     void init_exclaim();
     void init_semicolon();
     void init_point();

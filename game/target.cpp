@@ -44,12 +44,12 @@ void Target::draw()
     if (_bonus)
     {
         _bonus->setX(x);
-        _bonus->setY(y -0.05);
+        _bonus->setY(y -_r*2);
     }
 //    FlyingObject::draw();
     drawTexture();
 
     char buf[6];
     sprintf(buf, "%d", _breakCount - _shootCount);
-    text()->drawCenter(x, y+0.05, 0.025, Point4D(1,1,0,1), 3, buf);
+    text()->drawCenter(x, y+_r*3, 0.025, Point4D(1,1,0,1), 3, buf);
 }

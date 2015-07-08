@@ -28,4 +28,5 @@ public class GameLibJNIWrapper {
 
     public static native void add_texture(AssetManager am, String filename, int kind);
    
+    public static native void add_intarr_texture(int width, int height, int[] data , int kind);
 }

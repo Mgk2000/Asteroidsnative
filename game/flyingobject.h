@@ -42,9 +42,11 @@ public:
     int shootCount() const {return _shootCount;}
     int breakCount() const {return _breakCount;}
     virtual bool broken() const {return _shootCount >= _breakCount;}
-    virtual void shoot() {_shootCount++;}
+    virtual void shooted() {_shootCount++;}
     virtual void setBreakCount(int c) {_breakCount = c;}
     virtual void setShootCount(int c) {_shootCount = c;}
+    float scaleX () const {return _scaleX;}
+    float scaleY () const {return _scaleY;}
     Text* text() const;
 protected:
 	float x,y,angle;
@@ -64,9 +66,9 @@ protected:
     float _r;
 	Random &random1() const;
 	Random &random2() const;
-	void drawTriangles();
+    void drawTriangles(uint vbo);
 	void drawLines(int how, uint vbo, int npoints, const Point4D& color, float _width, float angle = 0.0);
-    float _scale;
+    float _scale, _scaleX, _scaleY;
     Texture* _texture;
     void drawTexture( float angle = 0.0);
     Point4D _colorMult;

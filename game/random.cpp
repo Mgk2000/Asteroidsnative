@@ -1,13 +1,17 @@
 #include "random.h"
 #include <math.h>
+#include <stdlib.h>
+#include <time.h>
 Random::Random()
 {
-	n = 9.036192184;
+    srand (time(NULL));
+    n = 90361.92184;
 	reset();
 }
 
 float Random::frandom()
 {
+    return 1.0 * rand()/ RAND_MAX;
 	x = x * n;
 	x = x-floor(x);
 	if (x==0.0f)

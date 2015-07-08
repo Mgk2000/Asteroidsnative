@@ -16,10 +16,13 @@
 #include "sand.h"
 #include "explosion.h"
 #include "target.h"
+#include "rectangle.h"
 View::View() :
      bullets(0),asteroidAppearTime(0), nticks(0), period(12),
-     ship(0), gun(0), pause(false), _shipBonus(0), _smallExplosionRadius(0.5)
+     ship(0), gun(0), pause(false), _shipBonus(0), _smallExplosionRadius(0.5),
+     _maxTargets(20)
 {
+    initLevels();
 }
 
 View::~View()
@@ -122,6 +125,7 @@ void View::bigExplosion()
     if (patrol)
     {
         _scores += patrol->cost();
+        _patrolBreaks++;
         delete patrol;
         patrol = 0;
     }
@@ -136,13 +140,17 @@ void View::checkShoots()
 		Bullet* bullet = *bit;
         if (bullet->isMy())
         {
-            if (target && (target->isPointInside(&p) || target->isPointInside(&p1)))
+            for (int i=0; i< _levelTargets; i++)
+            if (targets[i] && (targets[i]->isPointInside(&p) ||
+                               targets[i]->isPointInside(&p1)))
             {
 //                LOGD("patrol delete bullets=%d", bullets.size() );
-                target->shoot();
-                if (target->broken())
+                targets[i]->shooted();
+                if (targets[i]->broken())
                 {
-                    freeBonus(target);
+                    freeBonus(targets[i]);
+                    delete targets[i];
+                    targets[i] = 0;
                 }
                 delete *bit;
                 bit = bullets.erase(bit);
@@ -157,7 +165,7 @@ void View::checkShoots()
 			if ((*ait)->isPointInside(&p ) || (*ait)->isPointInside(&p1))
 			{
                 Asteroid* asteroid = *ait;
-                asteroid->shoot();
+                asteroid->shooted();
                 if (asteroid->broken())
                 {
                     destroyAsteroid(asteroid, false);
@@ -174,6 +182,7 @@ void View::checkShoots()
 			LOGD("patrol delete bullets=%d", bullets.size() );
 			_scores+= patrol->cost();
 			delete patrol;
+            _patrolBreaks++;
 			patrol =0;
 			delete *bit;
 			bit = bullets.erase(bit);
@@ -254,17 +263,7 @@ void View::newGame()
 }
 void View::startGame()
 {
-	_random1.reset();
-	_random2.reset();
-    touches.clear();
-	ship->revive();
-    nticks = 0;
-    ship->setX(0.0f);
-	asteroidAppearTime = nticks+1;
-	_lives = 3;
-	_scores = 0;
-    target->setBreakCount(30);
-    target->setShootCount(0);
+    startLevel(0);
 }
 void View::checkEndGame()
 {
@@ -281,8 +280,9 @@ void View::checkEndGame()
 
 void View::moveObjects(float delta)
 {
-    if (target)
-        target->moveStep(delta);
+    for (int i=0; i< _levelTargets; i++)
+        if (targets[i])
+            targets[i]->moveStep(delta);
     for (std::list<Bullet*> ::iterator bit = bullets.begin(); bit != bullets.end(); bit++)
     {
         (*bit)->moveStep(delta);
@@ -359,7 +359,8 @@ void View::checkAppearences()
             Bonus* bonus = 0;
             Asteroid* asteroid = new Asteroid (this, _textures[0]);
             asteroid->init();
-            if (_random1.frandom() < 0.1)
+            float rr =_random1.frandom();
+            if (rr < _levelBonusProbability)
             {
                 float fb = _random1.frandom();
                 Bonus::Kind bk;
@@ -380,7 +381,8 @@ void View::checkAppearences()
             }
             addAsteroid(asteroid);
         }
-        asteroidAppearTime = nticks + random1().irandom(300, 700) / log10 (nticks+10.0) ;
+        asteroidAppearTime = nticks + random1().irandom(300, 700) *
+           _levelAppearenceFrequency  / log10 (nticks+10.0) ;
     }
 }
 
@@ -416,8 +418,11 @@ void View::checkCatchBonus()
 }
 void View::freeBonus(Asteroid* asteroid)
 {
-    bonuses.push_back(asteroid->bonus());
-    asteroid->bonus()->free();
+    if (asteroid->bonus())
+    {
+        bonuses.push_back(asteroid->bonus());
+        asteroid->bonus()->free();
+    }
 }
 
 
@@ -461,6 +466,8 @@ int View::drawFrame()
         checkBonusExpired();
         checkCatchBonus();
         checkAppearences();
+        if (checkLevelDone())
+            startLevel(_level+1);
     }
     paintGL();
 	nticks ++;
@@ -470,12 +477,16 @@ int View::drawFrame()
 
 bool View::initializeGL()
 {
+	LOGD("View::initializeGL() 1");
 	glClearColor(0.0,0., 0.1, 1);
+	LOGD("View::initializeGL() 2");
     if (!initShaders())
         return false;
+	LOGD("View::initializeGL() 3");
 
     if (!ship)
     {
+    	LOGD("View::initializeGL() 4");
         for (int i = 0; i< _textures.size(); i++)
             _textures[i]->initGL();
         background = new Background(this, _textures[0]);
@@ -486,38 +497,49 @@ bool View::initializeGL()
 		patrol = 0;
 		// Use QBasicTimer because its faster than QTimer
 		text = new Text(this);
-        target  = new Target(this, _textures[0], -0.2, 0.75, 0.03);
-        target->init();
-        Bonus* tbonus = new Bonus(this, Bonus::TARGET, target);
-        target->setBonus(tbonus);
-        tbonus->init();
-
+        _rectangle = new ARectangle(this);
 		mutex = new Mutex;
 		startGame();
     }
     else //after pause pressing Home button)
     {
+    	LOGD("View::initializeGL() 5");
         for (unsigned int i = 0; i< _textures.size(); i++)
             _textures[i]->initGL();
+    	LOGD("View::initializeGL() 6");
         ship->initGL();
+    	LOGD("View::initializeGL() 7");
     	gun->initGL();
+    	LOGD("View::initializeGL() 8");
 		text->initGL();
-    	if (!ship->dead())
+    	LOGD("View::initializeGL() 9");
+        _rectangle->initGL();
+        for (int i=0; i< targets.size(); i++)
+        	if (targets[i])
+        	targets[i]->initGL();
+    	LOGD("View::initializeGL() 10");
+        //background->initGL();
+        if (!ship->dead())
     	{
 			if (patrol)
 				patrol->initGL();
+	    	LOGD("View::initializeGL() 11");
 			std::list<Bullet*>::iterator bit = bullets.begin();
 			for(; bit!= bullets.end(); bit++)
 				(*bit)->initGL();
+	    	LOGD("View::initializeGL() 12");
 			std::list<Asteroid*>::iterator ait = asteroids.begin();
 			for(; ait!= asteroids.end(); ait++)
 				(*ait)->initGL();
+	    	LOGD("View::initializeGL() 13");
             for(std::list<Bonus*>::iterator ait = bonuses.begin();
                 ait!= bonuses.end(); ait++)
                 (*ait)->initGL();
+        	LOGD("View::initializeGL() 14");
             for(std::vector<Bonus*>::iterator ait = _shipBonuses.begin();
                 ait!= _shipBonuses.end(); ait++)
                 (*ait)->initGL();
+        	LOGD("View::initializeGL() 15");
         }
     }
     return true;
@@ -652,13 +674,15 @@ void View::resizeGL(int w, int h)
 
 void View::paintGL()
 {
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //background->draw();
-
+    //glViewport(0, 0.0, 380,700);
 	ship->draw();
 	gun->draw();
-        if (target)
-    target->draw();
+    for (int i=0; i<_levelTargets; i++)
+        if (targets[i])
+            targets[i]->draw();
 	for (std::list<Bullet*> ::iterator bit = bullets.begin(); bit != bullets.end(); bit++)
 		(*bit)->draw();
     for (std::list<Asteroid*> ::iterator ait = asteroids.begin(); ait != asteroids.end(); ait++)
@@ -680,12 +704,24 @@ void View::paintGL()
 void View::drawCurrentResult() const
 {
 	char buf[32];
-	std::sprintf(buf, "S:%d", _scores);
-    text->draw(-0.4, 0.95, 0.025, Point4D(1.0,1.0,0.0),
+    std::sprintf(buf, "Level:%d", _level);
+//    _rectangle->draw(-0.6, 0.9, 0.6, 1.0, Point4D(0.2, 0.0, 0.5));
+//    _rectangle->drawFrame(-0.6,  0.9, 0.6, 1.0, Point4D(1.0, 1.0, 0.5));
+    _rectangle->drawFramed(-0.6,  0.9, 0.6, 1.0, 0.5, Point4D(0.2, 0.0, 0.5), Point4D(1.0, 1.0, 0.5));
+    text->draw(-0.57, 0.95, 0.02, Point4D(1.0,1.0,0.0),
                2.0, buf);
-	std::sprintf(buf, "L:%d", _lives);
-    text->draw(0.3, 0.95, 0.025, Point4D(0.0,1.0,0.0), 2.0, buf);
-    //text->drawCenter(-0.0, 0.75, 0.04, Point4D(0.0,1.0,0.0), 2.0, "Level cleared!");
+
+    std::sprintf(buf, "Scores:%d", _scores);
+    text->draw(-0.2, 0.95, 0.02, Point4D(1.0,1.0,0.0),
+               2.0, buf);
+
+    std::sprintf(buf, "Lives:%d", _lives);
+    text->draw(0.3, 0.95, 0.02, Point4D(0.0,1.0,0.0), 2.0, buf);
+
+    drawLevelCompleting();
+
+//    text->drawCenter(-0.0, 0.75, 0.04, Point4D(0.0,1.0,0.0), 2.0, "Level cleared!");
+//    text->drawCenter(-0.0, 0.75, 0.05, Point4D(0.0,1.0,0.0), 2.0, "Your task: OK");
 
 }
 void View::drawEndGame() const
@@ -693,9 +729,9 @@ void View::drawEndGame() const
     text->draw(-0.07, 0.0, 0.05, Point4D(1.0,0.0,0.0),5.0, "END");
 }
 
-void View::addTexture(const char* data, int kind)
+void View::addTexture(int w, int h, const char* data, int kind)
 {
-    Texture* texture = new Texture (data, kind);
+    Texture* texture = new Texture (w,h, data, kind);
     _textures.push_back(texture);
 }
 void View::onTouchEvent(int what, int x, int y)

@@ -33,23 +33,35 @@ void Letter::init(char c)
     case '7': init_7(); break;
     case '8': init_8(); break;
     case '9': init_9(); break;
-    case 'S': init_S(); break;
-    case 'L': init_L(); break;
-    case 'E': init_E(); break;
-    case 'N': init_N(); break;
     case 'D': init_D(); break;
+    case 'E': init_E(); break;
+    case 'K': init_K(); break;
+    case 'L': init_L(); break;
+    case 'N': init_N(); break;
+    case 'O': init_O(); break;
+    case 'S': init_S(); break;
+    case 'Y': init_Y(); break;
+
     case ':': init_semicolon(); break;
     case '.': init_point(); break;
     case ',': init_comma(); break;
     case '-': init_minus(); break;
-    case 'l': init_l(); break;
-    case 'v': init_v(); break;
-    case 'c': init_c(); break;
-    case 'a': init_a(); break;
-    case 'r': init_r(); break;
-    case 'e': init_e(); break;
-    case 'd': init_d(); break;
     case '!': init_exclaim(); break;
+
+    case 'a': init_a(); break;
+    case 'c': init_c(); break;
+    case 'd': init_d(); break;
+    case 'e': init_e(); break;
+    case 'i': init_i(); break;
+    case 'k': init_k(); break;
+    case 'l': init_l(); break;
+    case 'n': init_n(); break;
+    case 'o': init_o(); break;
+    case 'r': init_r(); break;
+    case 's': init_s(); break;
+    case 't': init_t(); break;
+    case 'u': init_u(); break;
+    case 'v': init_v(); break;
 
     }
     initGL();
@@ -243,6 +255,19 @@ void Letter::init_E()
 
 }
 
+void Letter::init_K()
+{
+    mkPoints(6);
+    int i = 0;
+    vertices[i++] = Point(-0.5, 1.0);
+    vertices[i++] = Point(-0.5, -1.0);
+    vertices[i++] = Point(-0.5, 0.0);
+    vertices[i++] = Point(0.5, 1.0);
+    vertices[i++] = Point(-0.5, 0.0);
+    vertices[i++] = Point(0.5, -1.0);
+
+}
+
 void Letter::init_N()
 {
     mkPoints(4);
@@ -250,6 +275,22 @@ void Letter::init_N()
     vertices[1] = Point(0.5, -1.0);
     vertices[2] = Point(-0.5, 1.0);
     vertices[3] = Point(-0.5, -1.0);
+
+}
+
+void Letter::init_O()
+{
+    int i =0;
+    mkPoints(9);
+    vertices[i++] = Point(-0.5, 0.8);
+    vertices[i++] = Point(-0.5, -0.8);
+    vertices[i++] = Point(-0.3, -1.0);
+    vertices[i++] = Point( 0.3, -1.0);
+    vertices[i++] = Point(0.5, -0.8);
+    vertices[i++] = Point(0.5, 0.8);
+    vertices[i++] = Point(0.3, 1.0);
+    vertices[i++] = Point(-0.3, 1.0);
+    vertices[i++] = Point(-0.5, 0.8);
 
 }
 
@@ -263,6 +304,18 @@ void Letter::init_D()
     vertices[4] = Point(0.5, 0.8);
     vertices[5] = Point(0.3, 1.0);
     vertices[6] = Point(-0.5, 1.0);
+
+}
+
+void Letter::init_Y()
+{
+    mkPoints(5);
+    int i =0;
+    vertices[i++] = Point(-0.5, 1.0);
+    vertices[i++] = Point(0.0, 0.0);
+    vertices[i++] = Point(0.0, -1.0);
+    vertices[i++] = Point(0.0, 0.0);
+    vertices[i++] = Point( 0.5, 1.0);
 
 }
 void Letter::init_l()
@@ -313,8 +366,82 @@ void Letter::init_a()
     vertices[i++] = Point(0.3, 0.1);
     vertices[i++] = Point(0.1, 0.3);
     vertices[i++] = Point(-0.3, 0.3);
-    vertices[i++] = Point(-0.5, 0.3);
+    vertices[i++] = Point(-0.5, 0.1);
 
+}
+void Letter::init_n()
+{
+    mkPoints(7);
+    int i=0;
+    vertices[i++] = Point(-0.5, 0.2);
+    vertices[i++] = Point(-0.5, -1.0);
+    vertices[i++] = Point(-0.5, 0.0);
+    vertices[i++] = Point(-0.3, 0.2);
+    vertices[i++] = Point( 0.3, 0.2);
+    vertices[i++] = Point( 0.5, 0.0);
+    vertices[i++] = Point( 0.5, -1.0);
+
+}
+void Letter::init_o()
+{
+    mkPoints(9);
+    int i=0;
+    vertices[i++] = Point(-0.5, 0.0);
+    vertices[i++] = Point(-0.5, -0.8);
+    vertices[i++] = Point(-0.3, -1.0);
+    vertices[i++] = Point(0.3, -1.0);
+    vertices[i++] = Point( 0.5, -0.8);
+    vertices[i++] = Point( 0.5, 0.0);
+    vertices[i++] = Point( 0.3, 0.2);
+    vertices[i++] = Point( -0.3, 0.2);
+    vertices[i++] = Point(-0.5, 0.0);
+
+}
+
+void Letter::init_s()
+{
+    mkPoints(12);
+    int i=0;
+    vertices[i++] = Point(0.5, 0.0);
+    vertices[i++] = Point(0.3, 0.2);
+    vertices[i++] = Point(-0.3, 0.2);
+    vertices[i++] = Point(-0.5, 0.0);
+    vertices[i++] = Point(-0.5, -0.2);
+    vertices[i++] = Point(-0.3, -0.4);
+    vertices[i++] = Point(0.3, -0.4);
+    vertices[i++] = Point(0.5, -0.6);
+    vertices[i++] = Point(0.5, -0.8);
+    vertices[i++] = Point(0.3, -1.0);
+    vertices[i++] = Point(-0.3, -1.0);
+    vertices[i++] = Point(-0.5, -0.8);
+
+}
+
+void Letter::init_t()
+{
+    mkPoints(7);
+    int i=0;
+    vertices[i++] = Point(0.0, 1.0);
+    vertices[i++] = Point(0.0, 0.2);
+    vertices[i++] = Point(-0.5,0.2);
+    vertices[i++] = Point(0.5, 0.2);
+    vertices[i++] = Point(0.0, 0.2);
+    vertices[i++] = Point(0.0, -0.8);
+    vertices[i++] = Point(0.2, -1.0);
+
+}
+
+void Letter::init_u()
+{
+    mkPoints(7);
+    int i=0;
+    vertices[i++] = Point(-0.5, 0.2);
+    vertices[i++] = Point(-0.5, -0.8);
+    vertices[i++] = Point(-0.3, -1.0);
+    vertices[i++] = Point(0.3, -1.0);
+    vertices[i++] = Point( 0.5, -0.8);
+    vertices[i++] = Point( 0.5, 0.2);
+    vertices[i++] = Point( 0.5, -1.0);
 }
 
 void Letter::init_r()
@@ -325,7 +452,7 @@ void Letter::init_r()
     vertices[i++] = Point(-0.5, -1.0);
     vertices[i++] = Point(-0.5, 0.0);
     vertices[i++] = Point(-0.3, 0.2);
-    vertices[i++] = Point(-0.3, 0.2);
+    vertices[i++] = Point( 0.3, 0.2);
     vertices[i++] = Point( 0.5, 0.0);
 
 }
@@ -344,6 +471,18 @@ void Letter::init_e()
     vertices[i++] = Point( 0.5, 0.0);
     vertices[i++] = Point( 0.5, -0.2);
     vertices[i++] = Point(-0.5, -0.2);
+
+}
+
+void Letter::init_i()
+{
+    mkPoints(4);
+    int i=0;
+    what = GL_LINES;
+    vertices[i++] = Point(0.0, -1.0);
+    vertices[i++] = Point(0.0, -0.2);
+    vertices[i++] = Point(0.0, 0.0);
+    vertices[i++] = Point(0.0, 0.2);
 
 }
 
@@ -414,6 +553,18 @@ void Letter::init_minus()
     vertices[1] = Point(0.4, -0.0);
 }
 
+void Letter::init_k()
+{
+    mkPoints(6);
+    int i=0;
+    vertices[i++] = Point(-0.5, 1.0);
+    vertices[i++] = Point(-0.5, -1.0);
+    vertices[i++] = Point(-0.5, -0.2);
+    vertices[i++] = Point(0.5, 0.2);
+    vertices[i++] = Point(-0.5, -0.2);
+    vertices[i++] = Point(0.5, -1.0);
+}
+
 
 Text::Text(View* view)
 {
@@ -427,23 +578,36 @@ Text::Text(View* view)
     letters['7'] = new Letter(view, '7');
     letters['8'] = new Letter(view, '8');
     letters['9'] = new Letter(view, '9');
-    letters['S'] = new Letter(view, 'S');
-    letters['L'] = new Letter(view, 'L');
-    letters['E'] = new Letter(view, 'E');
-    letters['N'] = new Letter(view, 'N');
+
     letters['D'] = new Letter(view, 'D');
+    letters['E'] = new Letter(view, 'E');
+    letters['K'] = new Letter(view, 'K');
+    letters['L'] = new Letter(view, 'L');
+    letters['N'] = new Letter(view, 'N');
+    letters['O'] = new Letter(view, 'O');
+    letters['S'] = new Letter(view, 'S');
+    letters['Y'] = new Letter(view, 'Y');
+
     letters[':'] = new Letter(view, ':');
     letters['.'] = new Letter(view, '.');
     letters[','] = new Letter(view, ',');
     letters['-'] = new Letter(view, '-');
-    letters['c'] = new Letter(view, 'c');
-    letters['l'] = new Letter(view, 'l');
-    letters['e'] = new Letter(view, 'e');
-    letters['a'] = new Letter(view, 'a');
-    letters['r'] = new Letter(view, 'r');
-    letters['d'] = new Letter(view, 'd');
-    letters['v'] = new Letter(view, 'v');
     letters['!'] = new Letter(view, '!');
+
+    letters['a'] = new Letter(view, 'a');
+    letters['c'] = new Letter(view, 'c');
+    letters['d'] = new Letter(view, 'd');
+    letters['e'] = new Letter(view, 'e');
+    letters['i'] = new Letter(view, 'i');
+    letters['k'] = new Letter(view, 'k');
+    letters['l'] = new Letter(view, 'l');
+    letters['n'] = new Letter(view, 'n');
+    letters['o'] = new Letter(view, 'o');
+    letters['r'] = new Letter(view, 'r');
+    letters['s'] = new Letter(view, 's');
+    letters['t'] = new Letter(view, 't');
+    letters['u'] = new Letter(view, 'u');
+    letters['v'] = new Letter(view, 'v');
 }
 
 Text::~Text()
@@ -486,7 +650,7 @@ void Text::initGL()
 
 float Text::textWidth(const char *txt)
 {
-    float w = 0.0;
+    float w = -2.0;
     for (unsigned int i=0; i< strlen(txt); i++)
     {
         char c = txt[i];

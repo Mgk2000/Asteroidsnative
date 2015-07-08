@@ -7,7 +7,7 @@
 
 FlyingObject::FlyingObject(View* _view, int _nbos, Texture* __texture): nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
     _rotateSpeed(0.0f), angle(0.f), rotateAngle (0.0f),  speed (0.f),  _scale(1.0), _texture(__texture),
-    _colorMult(1.0,1.0,1.0), _shootCount(0), _breakCount (1)
+    _colorMult(1.0,1.0,1.0), _shootCount(0), _breakCount (1), _scaleX(1.0), _scaleY(1.0)
 {
 	if (nvbos)
 	{
@@ -23,7 +23,7 @@ FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _sp
     _rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f),
     speed (_speed), x(_x), y(_y) , _scale(1.0), _texture(0),
     _colorMult(1.0,1.0,1.0),
-   _shootCount(0), _breakCount (1)
+   _shootCount(0), _breakCount (1) , _scaleX(1.0), _scaleY(1.0)
 {
 	if (nvbos)
 	{
@@ -39,7 +39,7 @@ FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _sp
 nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
 _rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f), speed (_speed), x(_x), y(_y) ,
   _scale(1.0), _texture(__texture), _colorMult(1.0,1.0,1.0)
-, _shootCount(0), _breakCount (1)
+, _shootCount(0), _breakCount (1) , _scaleX(1.0), _scaleY(1.0)
 {
     if (nvbos)
     {
@@ -109,15 +109,16 @@ Random &FlyingObject::random2() const
 	return view->random2();
 }
 
-void FlyingObject::drawTriangles ()
+void FlyingObject::drawTriangles (uint vbo)
 {
 	Mat4 _matrix1;
 	_matrix1.translate(x, y, 0);
 	_matrix1 = view->projection1 * _matrix1;
 	glUseProgram(view->program());
-	glUniformMatrix4fv(view->matrixlocation(), 1, false, (const GLfloat*) &_matrix1);
+    _matrix1.scale(_scaleX, _scaleY , 1.0);
+    glUniformMatrix4fv(view->matrixlocation(), 1, false, (const GLfloat*) &_matrix1);
 	glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(view->vertexlocation());
 	glVertexAttribPointer(view->vertexlocation(), 3, GL_FLOAT, GL_FALSE, sizeof(Point), (const void *) 0);
 	Point4D col = color();
@@ -142,7 +143,8 @@ void FlyingObject::drawLines(int how, uint vbo, int npoints, const Point4D& _col
         Mat4 scaleMatrix(_scale);
         _matrix1=_matrix1 * scaleMatrix;
     }
-	glUniformMatrix4fv(view->matrixlocation(), 1, false, (const GLfloat*) &_matrix1);
+    _matrix1.scale(_scaleX, _scaleY , 1.0);
+    glUniformMatrix4fv(view->matrixlocation(), 1, false, (const GLfloat*) &_matrix1);
 //	err = glGetError();
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 //	err = glGetError();

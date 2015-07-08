@@ -24,6 +24,7 @@ public class MainActivity extends Activity implements OnClickListener
 {
 	private SurfaceWrapper glSurfaceView;
 	private boolean rendererSet;
+	RendererWrapper renderer;
 	boolean pause = false;
 	Button playButton, continueButton, topResultsButton, exitButton,nameOkButton, soundButton, musicButton;
 	public int layoutId =0;
@@ -56,7 +57,7 @@ public class MainActivity extends Activity implements OnClickListener
 	        }
 	 
 	        glSurfaceView.setEGLContextClientVersion(2);
-	        RendererWrapper renderer = new RendererWrapper(); 
+	        renderer = new RendererWrapper(); 
 	        glSurfaceView.setRenderer(renderer);
 	        renderer.setActivity(this);
 	        
@@ -97,13 +98,15 @@ public class MainActivity extends Activity implements OnClickListener
         //Toast.makeText(this, "It works", Toast.LENGTH_SHORT).show();
     	if (v == (View) playButton)
     	{
-    		GameLibJNIWrapper.new_game();
+    		//GameLibJNIWrapper.new_game();
+    		renderer.newgame = true;
     		pause = false;
     		setContentView(glSurfaceView);
     	}
     	else if (v == (View) continueButton)
     	{
     		pause = false;
+    		renderer.newgame = false;
     		setContentView(glSurfaceView);
     	}
     	else if (v == (View) soundButton)

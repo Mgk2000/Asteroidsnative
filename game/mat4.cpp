@@ -130,8 +130,21 @@ void Mat4::translate(float x, float y, float z)
 {
 	m[3][0] = m[3][0] + x;
 	m[3][1] = m[3][1] + y;
-	m[3][2] = m[3][2] + z;
+    m[3][2] = m[3][2] + z;
 }
+
+void Mat4::scale(float x, float y, float z)
+{
+    m[0][0] = m[0][0] * x;
+    m[1][1] = m[1][1] * y;
+    m[2][2] = m[2][2] * z;
+
+}
+void Mat4::scale(Point &p)
+{
+    scale(p.x, p.y, p.z);
+}
+
 Mat4 operator * (const Mat4 &m1, const Mat4 &m2)
 {
 	Mat4 m;

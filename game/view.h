@@ -24,6 +24,7 @@ class Mutex;
 class Sand;
 class Explosion;
 class Target;
+class ARectangle;
 struct BulletInfo
 {
 	Bullet* bullet;
@@ -90,7 +91,7 @@ public:
     int lives() const {return _lives;}
     int scores() const {return _scores;}
     inline bool gameIsOver() const {return _lives <= 0;}
-    void addTexture (const char* data, int kind);
+    void addTexture (int w, int h, const char* data, int kind);
     const std::vector <Texture *> &textures() {return _textures;}
     void freeBonus(Asteroid*);
     long long currTime() const {return _currTime;}
@@ -161,9 +162,35 @@ private:
     float _smallExplosionRadius;
     void smallExplosion();
     void bigExplosion();
-    Target* target;
+    std::vector<Target*> targets;
+    //-----------Level
+    int _level;
+    int _maxTargets;
+    int _maxCountedLevel;
+    float _levelAppearenceFrequency;
+    int _levelTargets;
+    int _levelPatrolBreaks , _patrolBreaks ;
+    struct LevelBonus
+    {
+        int num;
+        int catched;
+        char name[16];
+        Bonus* bonus;
+    };
+    std::vector<LevelBonus*> _levelBonuses;
+    int _levelScores;
+    int _levelTargetBreaks, _targetBreaks;
+    float _levelBonusProbability;
+    bool _levelDone;
+    Random * levelRandom;
+    void initLevels();
+    void calcLevel(int __level);
+    float calcAppearenceFrequency(int __level);
+    void startLevel(int l);
+    bool checkLevelDone();
+    void drawLevelCompleting() const;
+    //-----------------
+    ARectangle* _rectangle;
 };
-
-
 
 #endif // VIEW_H

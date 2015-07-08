@@ -43,9 +43,9 @@ int scores()
 
 void new_game()
 {
-	if (!view)
-		view = new View ();
-	else
+//	if (!view)
+//		view = new View ();
+//	else
 		view->newGame();
 }
 
@@ -55,7 +55,7 @@ void create_game()
 		view = new View();
 }
 
-void add_texture (const char* data, int kind)
+void add_texture (int w, int h, const char* data, int kind)
 {
-	view->addTexture(data, kind);
+	view->addTexture(w,h, data, kind);
 }

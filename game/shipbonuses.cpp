@@ -64,7 +64,7 @@ void View::drawShipBonuses()
         int sec = (int) (_shipBonusExpiredTime - _currTime) /1000;
         char buf[8];
         sprintf(buf, ":%d", sec);
-        text->draw(0.10 , 0.85, 0.025, Point4D(1.0, 0.0,0.8, 1.0), 2.0, buf );
+        text->draw(0.10 , 0.75, 0.025, Point4D(1.0, 0.0,0.8, 1.0), 2.0, buf );
         shipBonus()->draw();
 
     }
@@ -140,6 +140,7 @@ void View::catchBonus(Bonus* bonus)
         _lives++;
         delete bonus;
     }
+    _levelBonuses[(int)kind - 1]->catched++;
 
 }
 Bonus* View::touchedShipBonus(float x, float y)

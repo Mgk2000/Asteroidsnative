@@ -42,7 +42,6 @@ void Ship::init()
 	deadcolor = Point4D(1,0,0,1);
 	alivecolor =  Point4D(0.0, 0.7, 0.7, 1.0);
 	fill_vbos();
-
 }
 
 void Ship::setX(float _x)
@@ -106,7 +105,7 @@ const Point4D &Ship::color() const
 
 void Ship::draw()
 {
-	drawTriangles();
+    drawTriangles(vboIds[1]);
 	//FlyingObject::draw();
 }
 
