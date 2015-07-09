@@ -11,7 +11,7 @@ Random::Random()
 
 float Random::frandom()
 {
-    return 1.0 * rand()/ RAND_MAX;
+    //return 1.0 * rand()/ RAND_MAX;
 	x = x * n;
 	x = x-floor(x);
 	if (x==0.0f)

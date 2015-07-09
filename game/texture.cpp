@@ -36,10 +36,11 @@ static const char fragmentShader[] =
         "  gl_FragColor = col;                              \n"
         "  //gl_FragColor = texture2D( s_texture, v_texCoord );\n"
         "}                                                   \n";
-Texture::Texture(int w, int h, const char* data, int __kind) : _program(0), _kind(__kind),
+Texture::Texture(int w, int h, const char* data, int __kind, bool transparentWhite)
+    : _program(0), _kind(__kind),
     bmpdata((char*) data)
 {
-    loadPicture(w, h, data);
+    loadPicture(w, h, data, transparentWhite);
 }
 
 Texture::~Texture()
@@ -78,8 +79,9 @@ bool Texture::initGL()
 }
 
 
-void Texture::loadPicture(int picWidth, int picHeight, const char* data)
+void Texture::loadPicture(int picWidth, int picHeight, const char* data, bool transparentWhite)
 {
+    unsigned char trb = transparentWhite ? 255 : 0;
     // Read data from file into texture
     GLubyte* inData;
     _picWidth = picWidth;
@@ -95,7 +97,7 @@ void Texture::loadPicture(int picWidth, int picHeight, const char* data)
         unsigned char g = inData[i*3+1];
         unsigned char b = inData[i*3];
         unsigned char a = 255;
-        if (r==255 && g==255 && b==255)
+        if (r==trb && g==trb && b==trb)
             a = 0;
         pcData[i*4] = r;
         pcData[i*4+1] = g;
@@ -166,10 +168,12 @@ void Texture::createTexture()
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _picWidth, _picHeight,
            0, GL_RGBA, GL_UNSIGNED_BYTE, pcData);
 //        err = glGetError();
-//        glGenerateMipmap(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D) ;
+
+        glGenerateMipmap(GL_TEXTURE_2D);
 //        err = glGetError();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 //        err = glGetError();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 //        err = glGetError();
 }

@@ -25,6 +25,7 @@ class Sand;
 class Explosion;
 class Target;
 class ARectangle;
+class BitmapText;
 struct BulletInfo
 {
 	Bullet* bullet;
@@ -91,7 +92,8 @@ public:
     int lives() const {return _lives;}
     int scores() const {return _scores;}
     inline bool gameIsOver() const {return _lives <= 0;}
-    void addTexture (int w, int h, const char* data, int kind);
+    void addTexture (int w, int h, const char* data,
+                     int kind, bool transparentWhite = true);
     const std::vector <Texture *> &textures() {return _textures;}
     void freeBonus(Asteroid*);
     long long currTime() const {return _currTime;}
@@ -133,6 +135,7 @@ private:
     long long _startTime;
     int period;
     Text *text;
+    BitmapText* bitmapText;
     bool pause;
     int _lives;
     int _scores;

@@ -48,6 +48,7 @@ public:
     float scaleX () const {return _scaleX;}
     float scaleY () const {return _scaleY;}
     Text* text() const;
+    void setColorMult( const Point4D cm) {_colorMult = cm;}
 protected:
 	float x,y,angle;
     float rotateAngle;

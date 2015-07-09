@@ -17,6 +17,8 @@
 #include "explosion.h"
 #include "target.h"
 #include "rectangle.h"
+#include "bitmaptext.h"
+#include "texture.h"
 View::View() :
      bullets(0),asteroidAppearTime(0), nticks(0), period(12),
      ship(0), gun(0), pause(false), _shipBonus(0), _smallExplosionRadius(0.5),
@@ -497,6 +499,8 @@ bool View::initializeGL()
 		patrol = 0;
 		// Use QBasicTimer because its faster than QTimer
 		text = new Text(this);
+        bitmapText = new BitmapText (this, _textures[(int)Bonus::LETTERS]);
+        bitmapText->init();
         _rectangle = new ARectangle(this);
 		mutex = new Mutex;
 		startGame();
@@ -512,7 +516,9 @@ bool View::initializeGL()
     	gun->initGL();
     	LOGD("View::initializeGL() 8");
 		text->initGL();
-    	LOGD("View::initializeGL() 9");
+        LOGD("View::initializeGL() 8.1");
+        bitmapText->init();
+        LOGD("View::initializeGL() 9");
         _rectangle->initGL();
         for (int i=0; i< targets.size(); i++)
         	if (targets[i])
@@ -676,7 +682,7 @@ void View::paintGL()
 {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //background->draw();
+    background->draw();
     //glViewport(0, 0.0, 380,700);
 	ship->draw();
 	gun->draw();
@@ -722,16 +728,23 @@ void View::drawCurrentResult() const
 
 //    text->drawCenter(-0.0, 0.75, 0.04, Point4D(0.0,1.0,0.0), 2.0, "Level cleared!");
 //    text->drawCenter(-0.0, 0.75, 0.05, Point4D(0.0,1.0,0.0), 2.0, "Your task: OK");
-
+    float k = 0.04;
+    float l =-0.6;
+    bitmapText->draw(l, 0.7, k, Point4D(1,1,0), 1.0, "Congratullations! %1%");
+    bitmapText->draw(l, 0.5, k, Point4D(1,0,1), 1.0, "Level 12 done");
+    bitmapText->draw(l, 0.3, k, Point4D(1,1,0), 1.0, "Your task: %3%");
+    bitmapText->draw(l, 0.1, k, Point4D(1,1,0), 1.0, "The End");
+    bitmapText->draw(l, -0.1, k, Point4D(1,1,0), 1.0, "0123-45.67,89:0?");
+    bitmapText->draw(l, -0.3, k, Point4D(1,1,0), 1.0, "OK");
 }
 void View::drawEndGame() const
 {
     text->draw(-0.07, 0.0, 0.05, Point4D(1.0,0.0,0.0),5.0, "END");
 }
 
-void View::addTexture(int w, int h, const char* data, int kind)
+void View::addTexture(int w, int h, const char* data, int kind, bool transparentWhite)
 {
-    Texture* texture = new Texture (w,h, data, kind);
+    Texture* texture = new Texture (w,h, data, kind, transparentWhite);
     _textures.push_back(texture);
 }
 void View::onTouchEvent(int what, int x, int y)

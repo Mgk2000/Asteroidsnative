@@ -5,7 +5,7 @@
 class Texture : public GlObject
 {
 public:
-    Texture(int w, int h, const char* data, int kind);
+    Texture(int w, int h, const char* data, int kind, bool transparentWhite);
     ~Texture();
     int posLocation() const {return _posLocation;}
     int textureLocation() const {return _textureLocation;}
@@ -20,7 +20,7 @@ public:
     int kind() const {return _kind;}
 private:
     GLubyte* getFragment( GLubyte *src, GLubyte* dst, int x, int y, int width, int height) const;
-    void loadPicture(int, int, const char* data);
+    void loadPicture(int, int, const char* data, bool transparentWhite);
     void createTexture();
     void createProgram();
     GLuint createShader(GLenum shaderType, const char* src);

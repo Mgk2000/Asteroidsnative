@@ -1,25 +1,25 @@
 #include "text.h"
 
-Letter::Letter(View* view, char c) : FlyingObject (view, 1,0),
+Text::Letter::Letter(View* view, char c) : FlyingObject (view, 1,0),
     width(1.8), what(GL_LINE_STRIP), linewidth(2.0)
 {
     init (c);
 }
 
-void Letter::draw()
+void Text::Letter::draw()
 {
     if (nvertices)
         drawLines(what , vboIds[0], nvertices, color(), linewidth);
 }
 
 
-void Letter::mkPoints(int np)
+void Text::Letter::mkPoints(int np)
 {
     nvertices = np;
     vertices = new Point[np];
 }
 
-void Letter::init(char c)
+void Text::Letter::init(char c)
 {
     switch (c)
     {
@@ -67,13 +67,13 @@ void Letter::init(char c)
     initGL();
     FlyingObject::init();
 }
-void Letter::initGL()
+void Text::Letter::initGL()
 {
     glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
     glBufferData(GL_ARRAY_BUFFER, nvertices * sizeof(Point), vertices, GL_STATIC_DRAW);
 
 }
-void Letter::init_0()
+void Text::Letter::init_0()
 {
     mkPoints(9);
     vertices[0] = Point(-0.3, 1.0);
@@ -88,7 +88,7 @@ void Letter::init_0()
 
 }
 
-void Letter::init_1()
+void Text::Letter::init_1()
 {
     mkPoints(3);
     vertices[0] = Point(-0.15, 0.5);
@@ -97,7 +97,7 @@ void Letter::init_1()
     width = 1.3;
 }
 
-void Letter::init_2()
+void Text::Letter::init_2()
 {
     mkPoints(6);
     vertices[0] = Point(-0.5, 0.8);
@@ -109,7 +109,7 @@ void Letter::init_2()
 
 }
 
-void Letter::init_3()
+void Text::Letter::init_3()
 {
     mkPoints(11);
     vertices[0] = Point(-0.5, 0.8);
@@ -126,7 +126,7 @@ void Letter::init_3()
 
 }
 
-void Letter::init_4()
+void Text::Letter::init_4()
 {
     mkPoints(5);
     vertices[0] = Point(-0.5, 1.0);
@@ -137,7 +137,7 @@ void Letter::init_4()
 
 }
 
-void Letter::init_5()
+void Text::Letter::init_5()
 {
     mkPoints(9);
     vertices[0] = Point(0.5, 1.0);
@@ -150,7 +150,7 @@ void Letter::init_5()
     vertices[7] = Point(-0.3, -1.0);
     vertices[8] = Point(-0.5, -0.8);
 }
-void Letter::init_6()
+void Text::Letter::init_6()
 {
     mkPoints(11);
     vertices[0] = Point(0.5, 0.8);
@@ -167,7 +167,7 @@ void Letter::init_6()
 
 }
 
-void Letter::init_7()
+void Text::Letter::init_7()
 {
     mkPoints(3);
     vertices[0] = Point(-0.5, 1.0);
@@ -176,7 +176,7 @@ void Letter::init_7()
 
 }
 
-void Letter::init_8()
+void Text::Letter::init_8()
 {
     mkPoints(17);
     vertices[0] = Point(-0.3, 0.0);
@@ -199,7 +199,7 @@ void Letter::init_8()
 
 }
 
-void Letter::init_9()
+void Text::Letter::init_9()
 {
     mkPoints(12);
     vertices[0] = Point(0.5, 0.2);
@@ -216,7 +216,7 @@ void Letter::init_9()
     vertices[11] = Point(-0.5, -0.8);
 }
 
-void Letter::init_S()
+void Text::Letter::init_S()
 {
     mkPoints(12);
     vertices[0] = Point(0.5, 0.8);
@@ -234,7 +234,7 @@ void Letter::init_S()
 
 }
 
-void Letter::init_L()
+void Text::Letter::init_L()
 {
     mkPoints(3);
     vertices[0] = Point(-0.5, 1.0);
@@ -242,7 +242,7 @@ void Letter::init_L()
     vertices[2] = Point(0.5, -1.0);
 }
 
-void Letter::init_E()
+void Text::Letter::init_E()
 {
     mkPoints(7);
     vertices[0] = Point(0.5, 1.0);
@@ -255,7 +255,7 @@ void Letter::init_E()
 
 }
 
-void Letter::init_K()
+void Text::Letter::init_K()
 {
     mkPoints(6);
     int i = 0;
@@ -268,7 +268,7 @@ void Letter::init_K()
 
 }
 
-void Letter::init_N()
+void Text::Letter::init_N()
 {
     mkPoints(4);
     vertices[0] = Point(0.5, 1.0);
@@ -278,7 +278,7 @@ void Letter::init_N()
 
 }
 
-void Letter::init_O()
+void Text::Letter::init_O()
 {
     int i =0;
     mkPoints(9);
@@ -294,7 +294,7 @@ void Letter::init_O()
 
 }
 
-void Letter::init_D()
+void Text::Letter::init_D()
 {
     mkPoints(7);
     vertices[0] = Point(-0.5, 1.0);
@@ -307,7 +307,7 @@ void Letter::init_D()
 
 }
 
-void Letter::init_Y()
+void Text::Letter::init_Y()
 {
     mkPoints(5);
     int i =0;
@@ -318,7 +318,7 @@ void Letter::init_Y()
     vertices[i++] = Point( 0.5, 1.0);
 
 }
-void Letter::init_l()
+void Text::Letter::init_l()
 {
     what = GL_LINES;
     mkPoints(2);
@@ -327,7 +327,7 @@ void Letter::init_l()
 
 }
 
-void Letter::init_v()
+void Text::Letter::init_v()
 {
     mkPoints(3);
     vertices[0] = Point(-0.5, 0.2);
@@ -336,7 +336,7 @@ void Letter::init_v()
 
 }
 
-void Letter::init_c()
+void Text::Letter::init_c()
 {
     mkPoints(8);
     vertices[0] = Point(0.5, 0.0);
@@ -349,7 +349,7 @@ void Letter::init_c()
     vertices[7] = Point(0.5, -0.8);
 }
 
-void Letter::init_a()
+void Text::Letter::init_a()
 {
     mkPoints(14);
     int i=0;
@@ -369,7 +369,7 @@ void Letter::init_a()
     vertices[i++] = Point(-0.5, 0.1);
 
 }
-void Letter::init_n()
+void Text::Letter::init_n()
 {
     mkPoints(7);
     int i=0;
@@ -382,7 +382,7 @@ void Letter::init_n()
     vertices[i++] = Point( 0.5, -1.0);
 
 }
-void Letter::init_o()
+void Text::Letter::init_o()
 {
     mkPoints(9);
     int i=0;
@@ -398,7 +398,7 @@ void Letter::init_o()
 
 }
 
-void Letter::init_s()
+void Text::Letter::init_s()
 {
     mkPoints(12);
     int i=0;
@@ -417,7 +417,7 @@ void Letter::init_s()
 
 }
 
-void Letter::init_t()
+void Text::Letter::init_t()
 {
     mkPoints(7);
     int i=0;
@@ -431,7 +431,7 @@ void Letter::init_t()
 
 }
 
-void Letter::init_u()
+void Text::Letter::init_u()
 {
     mkPoints(7);
     int i=0;
@@ -444,7 +444,7 @@ void Letter::init_u()
     vertices[i++] = Point( 0.5, -1.0);
 }
 
-void Letter::init_r()
+void Text::Letter::init_r()
 {
     mkPoints(6);
     int i=0;
@@ -457,7 +457,7 @@ void Letter::init_r()
 
 }
 
-void Letter::init_e()
+void Text::Letter::init_e()
 {
     mkPoints(10);
     int i=0;
@@ -474,19 +474,19 @@ void Letter::init_e()
 
 }
 
-void Letter::init_i()
+void Text::Letter::init_i()
 {
     mkPoints(4);
     int i=0;
     what = GL_LINES;
     vertices[i++] = Point(0.0, -1.0);
-    vertices[i++] = Point(0.0, -0.2);
-    vertices[i++] = Point(0.0, 0.0);
+    vertices[i++] = Point(0.0, -0.0);
     vertices[i++] = Point(0.0, 0.2);
+    vertices[i++] = Point(0.0, 0.4);
 
 }
 
-void Letter::init_d()
+void Text::Letter::init_d()
 {
     mkPoints(10);
     int i=0;
@@ -503,7 +503,7 @@ void Letter::init_d()
 
 }
 
-void Letter::init_exclaim()
+void Text::Letter::init_exclaim()
 {
     what = GL_LINES;
     mkPoints(4);
@@ -514,7 +514,7 @@ void Letter::init_exclaim()
 }
 
 
-void Letter::init_semicolon()
+void Text::Letter::init_semicolon()
 {
     what = GL_LINES;
     linewidth = 2.0;
@@ -526,7 +526,7 @@ void Letter::init_semicolon()
 
 }
 
-void Letter::init_point()
+void Text::Letter::init_point()
 {
     what = GL_LINES;
     linewidth = 2.0;
@@ -535,7 +535,7 @@ void Letter::init_point()
     vertices[1] = Point(0.0, -0.2);
 }
 
-void Letter::init_comma()
+void Text::Letter::init_comma()
 {
     what = GL_LINES;
     linewidth = 2.0;
@@ -544,7 +544,7 @@ void Letter::init_comma()
     vertices[1] = Point(-0.2, -0.2);
 }
 
-void Letter::init_minus()
+void Text::Letter::init_minus()
 {
     what = GL_LINES;
     linewidth = 2.0;
@@ -553,7 +553,7 @@ void Letter::init_minus()
     vertices[1] = Point(0.4, -0.0);
 }
 
-void Letter::init_k()
+void Text::Letter::init_k()
 {
     mkPoints(6);
     int i=0;
