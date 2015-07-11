@@ -15,18 +15,22 @@ protected:
 class View;
 class Texture;
 class Bonus;
+class Target;
+class Patrol;
 class BitmapText
 {
 public:
     BitmapText(View* view, Texture* texture);
     void init();
-    void draw(float x, float y, float scale, Point4D color, float lwidth, const char *txt);
-    void drawCenter(float x, float y, float scale, Point4D color, float lwidth, const char *txt);
+    void draw(float x, float y, float scale, const Point4D &color, const char *txt);
+    void drawCenter(float x, float y, float scale, const Point4D &color, const char *txt);
     void initGL();
     float textWidth(const char* txt);
 private:
     std::map <char, Letter*> letters;
     Bonus* bonus;
+    Target* target;
+    Patrol* patrol;
     int cellSize;
     int nrows;
 };

@@ -26,6 +26,7 @@ class Explosion;
 class Target;
 class ARectangle;
 class BitmapText;
+class RoundedRectangle;
 struct BulletInfo
 {
 	Bullet* bullet;
@@ -100,6 +101,7 @@ public:
     const std::vector<Bonus*> &shipBonuses() const {return _shipBonuses;}
     Bonus* shipBonus() const {return _shipBonus;}
     Text* getText() const {return text;}
+    BitmapText* getBitmapText() const {return bitmapText;}
     void checkBonusExpired();
 private:
 
@@ -182,6 +184,7 @@ private:
     };
     std::vector<LevelBonus*> _levelBonuses;
     int _levelScores;
+    int _levelStartScores;
     int _levelTargetBreaks, _targetBreaks;
     float _levelBonusProbability;
     bool _levelDone;
@@ -191,9 +194,15 @@ private:
     float calcAppearenceFrequency(int __level);
     void startLevel(int l);
     bool checkLevelDone();
+    void drawLevelTodo();
     void drawLevelCompleting() const;
+    bool _showingDialog;
+    void showLevelDialog();
+    float _okButtonLeft, _okButtonTop, _okButtonRight, _okButtonBottom;
+    void processDialogTouch(float fx, float fy);
     //-----------------
     ARectangle* _rectangle;
+    RoundedRectangle* _roundedRect, * _wideRoundedRect;
 };
 
 #endif // VIEW_H

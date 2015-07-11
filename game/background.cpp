@@ -37,37 +37,37 @@ void Background::draw()
     glUseProgram(_texture->program());
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
     glActiveTexture(GL_TEXTURE0);
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
     glBindTexture(GL_TEXTURE_2D, _texture->textureId());
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
     glUniformMatrix4fv(_texture->matrixLocation(), 1, false, (const GLfloat*) &_matrix1);
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
     glUniform4fv(_texture->colorMultLocation(), 1,
                        (const GLfloat*) &_colorMult);
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
     glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
     int texturelocation = _texture->textureLocation();
     glUniform1i(texturelocation, 0);
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
 
 //    unsigned int * offset = 0;
     void * offset = 0;
@@ -76,25 +76,25 @@ void Background::draw()
     glEnableVertexAttribArray(vertexLocation);
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
 
     glVertexAttribPointer(vertexLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Point4D), (const void *)offset);
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
     offset += 8;
 
     glEnableVertexAttribArray(_texture->texCoordLocation());
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
     glVertexAttribPointer(_texture->texCoordLocation(), 2, GL_FLOAT,
                           GL_FALSE, sizeof(Point4D), (const void *)offset);
     err = glGetError();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
     err = glGetError();
     if (err)
-        LOGD("err=%d", err);
+        LOG0("err=%d", err);
     err = glGetError();
     glDisableVertexAttribArray(_texture->texCoordLocation());
     glDisableVertexAttribArray(vertexLocation);

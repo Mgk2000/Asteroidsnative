@@ -1,6 +1,6 @@
 #include "target.h"
 #include <math.h>
-#include "text.h"
+#include "bitmaptext.h"
 #include "bonus.h"
 #define NP 16
 Target::Target(View* __view, Texture* __texture,
@@ -51,5 +51,5 @@ void Target::draw()
 
     char buf[6];
     sprintf(buf, "%d", _breakCount - _shootCount);
-    text()->drawCenter(x, y+_r*3, 0.025, Point4D(1,1,0,1), 3, buf);
+    bitmapText()->drawCenter(x, y+_r*3, 0.045, COLOR_YELLOW, buf);
 }

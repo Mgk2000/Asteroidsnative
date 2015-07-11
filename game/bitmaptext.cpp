@@ -1,6 +1,9 @@
 #include "bitmaptext.h"
 #include "texture.h"
 #include "bonus.h"
+#include "target.h"
+#include "patrol.h"
+#include "view.h"
 
 Letter::Letter(View* view, Texture* texture ) : FlyingObject (view , 1,texture )
 {
@@ -51,135 +54,135 @@ BitmapText::BitmapText(View* view, Texture* texture)
     Letter* l;
     l = new Letter (view, texture);
     l->index = 0;
-    l->width = 90;
+    l->width = 84;
     letters['A'] = l;
     l = new Letter (view, texture);
     l->index = 1;
-    l->width = 77;
+    l->width = 78;
     letters['B'] = l;
     l = new Letter (view, texture);
     l->index = 2;
-    l->width = 80;
+    l->width = 86;
     letters['C'] = l;
     l = new Letter (view, texture);
     l->index = 3;
-    l->width = 87;
+    l->width = 85;
     letters['D'] = l;
     l = new Letter (view, texture);
     l->index = 4;
-    l->width = 74;
+    l->width = 78;
     letters['E'] = l;
     l = new Letter (view, texture);
     l->index = 5;
-    l->width = 65;
+    l->width = 71;
     letters['F'] = l;
     l = new Letter (view, texture);
     l->index = 6;
-    l->width = 90;
+    l->width = 91;
     letters['G'] = l;
     l = new Letter (view, texture);
     l->index = 7;
-    l->width = 89;
+    l->width = 81;
     letters['H'] = l;
     l = new Letter (view, texture);
     l->index = 8;
-    l->width = 39;
+    l->width = 23;
     letters['I'] = l;
     l = new Letter (view, texture);
     l->index = 9;
-    l->width = 48;
+    l->width = 53;
     letters['J'] = l;
     l = new Letter (view, texture);
     l->index = 10;
-    l->width = 93;
+    l->width = 84;
     letters['K'] = l;
     l = new Letter (view, texture);
     l->index = 11;
-    l->width = 74;
+    l->width = 66;
     letters['L'] = l;
     l = new Letter (view, texture);
     l->index = 12;
-    l->width = 127;
+    l->width = 96;
     letters['M'] = l;
     l = new Letter (view, texture);
     l->index = 13;
-    l->width = 90;
+    l->width = 81;
     letters['N'] = l;
     l = new Letter (view, texture);
     l->index = 14;
-    l->width = 86;
+    l->width = 93;
     letters['O'] = l;
     l = new Letter (view, texture);
     l->index = 15;
-    l->width = 66;
+    l->width = 79;
     letters['P'] = l;
     l = new Letter (view, texture);
     l->index = 16;
-    l->width = 87;
+    l->width = 94;
     letters['Q'] = l;
     l = new Letter (view, texture);
     l->index = 17;
-    l->width = 86;
+    l->width = 89;
     letters['R'] = l;
     l = new Letter (view, texture);
     l->index = 18;
-    l->width = 63;
+    l->width = 78;
     letters['S'] = l;
     l = new Letter (view, texture);
     l->index = 19;
-    l->width = 74;
+    l->width = 75;
     letters['T'] = l;
     l = new Letter (view, texture);
     l->index = 20;
-    l->width = 90;
+    l->width = 81;
     letters['U'] = l;
     l = new Letter (view, texture);
     l->index = 21;
-    l->width = 90;
+    l->width = 83;
     letters['V'] = l;
     l = new Letter (view, texture);
     l->index = 22;
-    l->width = 119;
+    l->width = 118;
     letters['W'] = l;
     l = new Letter (view, texture);
     l->index = 23;
-    l->width = 90;
+    l->width = 83;
     letters['X'] = l;
     l = new Letter (view, texture);
     l->index = 24;
-    l->width = 90;
+    l->width = 93;
     letters['Y'] = l;
     l = new Letter (view, texture);
     l->index = 25;
-    l->width = 73;
+    l->width = 74;
     letters['Z'] = l;
     l = new Letter (view, texture);
     l->index = 26;
-    l->width = 56;
+    l->width = 65;
     letters['a'] = l;
     l = new Letter (view, texture);
     l->index = 27;
-    l->width = 59;
+    l->width = 65;
     letters['b'] = l;
     l = new Letter (view, texture);
     l->index = 28;
-    l->width = 50;
+    l->width = 62;
     letters['c'] = l;
     l = new Letter (view, texture);
     l->index = 29;
-    l->width = 63;
+    l->width = 61;
     letters['d'] = l;
     l = new Letter (view, texture);
     l->index = 30;
-    l->width = 55;
+    l->width = 65;
     letters['e'] = l;
     l = new Letter (view, texture);
     l->index = 31;
-    l->width = 55;
+    l->width = 39;
     letters['f'] = l;
     l = new Letter (view, texture);
     l->index = 32;
-    l->width = 61;
+    l->width = 62;
     letters['g'] = l;
     l = new Letter (view, texture);
     l->index = 33;
@@ -187,47 +190,47 @@ BitmapText::BitmapText(View* view, Texture* texture)
     letters['h'] = l;
     l = new Letter (view, texture);
     l->index = 34;
-    l->width = 30;
+    l->width = 35;
     letters['i'] = l;
     l = new Letter (view, texture);
     l->index = 35;
-    l->width = 37;
+    l->width = 43;
     letters['j'] = l;
     l = new Letter (view, texture);
     l->index = 36;
-    l->width = 64;
+    l->width = 62;
     letters['k'] = l;
     l = new Letter (view, texture);
     l->index = 37;
-    l->width = 37;
+    l->width = 39;
     letters['l'] = l;
     l = new Letter (view, texture);
     l->index = 38;
-    l->width = 98;
+    l->width = 97;
     letters['m'] = l;
     l = new Letter (view, texture);
     l->index = 39;
-    l->width = 62;
+    l->width = 61;
     letters['n'] = l;
     l = new Letter (view, texture);
     l->index = 40;
-    l->width = 60;
+    l->width = 65;
     letters['o'] = l;
     l = new Letter (view, texture);
     l->index = 41;
-    l->width = 59;
+    l->width = 65;
     letters['p'] = l;
     l = new Letter (view, texture);
     l->index = 42;
-    l->width = 59;
+    l->width = 127;
     letters['q'] = l;
     l = new Letter (view, texture);
     l->index = 43;
-    l->width = 42;
+    l->width = 43;
     letters['r'] = l;
     l = new Letter (view, texture);
     l->index = 44;
-    l->width = 44;
+    l->width = 58;
     letters['s'] = l;
     l = new Letter (view, texture);
     l->index = 45;
@@ -235,11 +238,11 @@ BitmapText::BitmapText(View* view, Texture* texture)
     letters['t'] = l;
     l = new Letter (view, texture);
     l->index = 46;
-    l->width = 63;
+    l->width = 61;
     letters['u'] = l;
     l = new Letter (view, texture);
     l->index = 47;
-    l->width = 62;
+    l->width = 61;
     letters['v'] = l;
     l = new Letter (view, texture);
     l->index = 48;
@@ -247,31 +250,31 @@ BitmapText::BitmapText(View* view, Texture* texture)
     letters['w'] = l;
     l = new Letter (view, texture);
     l->index = 49;
-    l->width = 61;
+    l->width = 62;
     letters['x'] = l;
     l = new Letter (view, texture);
     l->index = 50;
-    l->width = 63;
+    l->width = 62;
     letters['y'] = l;
     l = new Letter (view, texture);
     l->index = 51;
-    l->width = 54;
+    l->width = 60;
     letters['z'] = l;
     l = new Letter (view, texture);
     l->index = 52;
-    l->width = 58;
+    l->width = 64;
     letters['0'] = l;
     l = new Letter (view, texture);
     l->index = 53;
-    l->width = 47;
+    l->width = 65;
     letters['1'] = l;
     l = new Letter (view, texture);
     l->index = 54;
-    l->width = 57;
+    l->width = 63;
     letters['2'] = l;
     l = new Letter (view, texture);
     l->index = 55;
-    l->width = 52;
+    l->width = 64;
     letters['3'] = l;
     l = new Letter (view, texture);
     l->index = 56;
@@ -279,62 +282,63 @@ BitmapText::BitmapText(View* view, Texture* texture)
     letters['4'] = l;
     l = new Letter (view, texture);
     l->index = 57;
-    l->width = 54;
+    l->width = 65;
     letters['5'] = l;
     l = new Letter (view, texture);
     l->index = 58;
-    l->width = 58;
+    l->width = 64;
     letters['6'] = l;
     l = new Letter (view, texture);
     l->index = 59;
-    l->width = 57;
+    l->width = 64;
     letters['7'] = l;
     l = new Letter (view, texture);
     l->index = 60;
-    l->width = 56;
+    l->width = 65;
     letters['8'] = l;
     l = new Letter (view, texture);
     l->index = 61;
-    l->width = 57;
+    l->width = 65;
     letters['9'] = l;
     l = new Letter (view, texture);
     l->index = 62;
-    l->width = 22;
+    l->width = 23;
     letters['.'] = l;
     l = new Letter (view, texture);
     l->index = 63;
-    l->width = 29;
+    l->width = 43;
     letters[','] = l;
     l = new Letter (view, texture);
     l->index = 64;
-    l->width = 24;
+    l->width = 50;
     letters[':'] = l;
     l = new Letter (view, texture);
     l->index = 65;
-    l->width = 37;
+    l->width = 42;
     letters['-'] = l;
     l = new Letter (view, texture);
     l->index = 66;
-    l->width = 69;
+    l->width = 67;
     letters['+'] = l;
     l = new Letter (view, texture);
     l->index = 67;
-    l->width = 39;
+    l->width = 37;
     letters['('] = l;
     l = new Letter (view, texture);
     l->index = 68;
-    l->width = 39;
+    l->width = 44;
     letters[')'] = l;
     l = new Letter (view, texture);
     l->index = 69;
-    l->width = 27;
+    l->width = 40;
     letters['!'] = l;
     l = new Letter (view, texture);
     l->index = 70;
-    l->width = 51;
+    l->width = 64;
     letters['?'] = l;
     bonus = new Bonus(view, Bonus::NONE,0);
-
+    patrol = new Patrol(view);
+    target = new Target(view, view->textures().at(0),0,0,1.0);
 }
 
 void BitmapText::init()
@@ -343,6 +347,8 @@ void BitmapText::init()
     for (; it!= letters.end(); it++)
         it->second->init(nrows);
     bonus->init();
+    patrol->init();
+    target->init();
 }
 
 void BitmapText::initGL()
@@ -351,12 +357,14 @@ void BitmapText::initGL()
     for (; it!= letters.end(); it++)
         it->second->initGL(nrows);
 }
-void BitmapText::draw(float x, float y, float scale, Point4D color,float lwidth,  const char *txt)
+void BitmapText::draw(float x, float y, float scale, const Point4D& color, const char *txt)
 {
     float left = x;
     for (unsigned int i=0; i< strlen(txt); i++)
     {
+        float _scale = scale;
         char c = txt[i];
+        float dh=0;
         if (c=='%')
         {
             char buf[4] = {0};
@@ -365,11 +373,25 @@ void BitmapText::draw(float x, float y, float scale, Point4D color,float lwidth,
                 buf[j-i-1] = txt[j];
             int n;
             sscanf(buf, "%d",  &n);
-            bonus->setKind((Bonus::Kind) n);
-            bonus->setScale(scale);
-            bonus->setX(left);
-            bonus->setY(y);
-            bonus->draw();
+            Bonus::Kind bk = (Bonus::Kind) n;
+            FlyingObject * ob;
+            if (bk == Bonus::PATROL)
+            {
+                ob = patrol;
+                _scale = 0.5;
+                dh = 0.01;
+            }
+            else if (bk == Bonus::TARGET)
+                ob = target;
+            else
+            {
+                bonus->setKind(bk);
+                ob = bonus;
+            }
+            ob->setScale(_scale);
+            ob->setX(left);
+            ob->setY(y + dh);
+            ob->draw();
             i = j;
             continue;
         }
@@ -387,10 +409,11 @@ void BitmapText::draw(float x, float y, float scale, Point4D color,float lwidth,
         left = left + (0.0 + 2.0 * l->width/cellSize) * scale; //1.0* l->width/cellSize * scale;
     }
 }
-void BitmapText::drawCenter(float x, float y, float scale, Point4D color, float lwidth, const char *txt)
+void BitmapText::drawCenter(float x, float y, float scale, const Point4D &color,
+                            const char *txt)
 {
     float w = textWidth(txt)* scale;
-    draw(x- w /2, y, scale, color, lwidth, txt);
+    draw(x- w /2, y, scale, color, txt);
 }
 
 float BitmapText::textWidth(const char *txt)

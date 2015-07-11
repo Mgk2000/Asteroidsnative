@@ -7,6 +7,7 @@ class View;
 class Mat4;
 class Texture;
 class Text;
+class BitmapText;
 #define MAXVERTICES 60
 class FlyingObject : public GlObject
 {
@@ -48,6 +49,7 @@ public:
     float scaleX () const {return _scaleX;}
     float scaleY () const {return _scaleY;}
     Text* text() const;
+    BitmapText* bitmapText() const;
     void setColorMult( const Point4D cm) {_colorMult = cm;}
 protected:
 	float x,y,angle;
@@ -57,6 +59,7 @@ protected:
 	Point* vertices;
 	int nvertices;
 	GLushort* indices;
+    void showVertices();
 	int nindices;
 	Point4D _color;
 	void fill_vbos();
@@ -68,13 +71,15 @@ protected:
 	Random &random1() const;
 	Random &random2() const;
     void drawTriangles(uint vbo);
-	void drawLines(int how, uint vbo, int npoints, const Point4D& color, float _width, float angle = 0.0);
+    void drawLines(int how, uint vbo, int npoints, const Point4D& color, float _width, float angle = 0.0);
     float _scale, _scaleX, _scaleY;
     Texture* _texture;
     void drawTexture( float angle = 0.0);
     Point4D _colorMult;
     long long _startTime;
     int _shootCount, _breakCount;
+    GLenum _howDrawTriangles;
+
 };
 
 

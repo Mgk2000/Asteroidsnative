@@ -7,7 +7,8 @@
 
 FlyingObject::FlyingObject(View* _view, int _nbos, Texture* __texture): nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
     _rotateSpeed(0.0f), angle(0.f), rotateAngle (0.0f),  speed (0.f),  _scale(1.0), _texture(__texture),
-    _colorMult(1.0,1.0,1.0), _shootCount(0), _breakCount (1), _scaleX(1.0), _scaleY(1.0)
+    _colorMult(1.0,1.0,1.0), _shootCount(0), _breakCount (1), _scaleX(1.0), _scaleY(1.0),
+    _howDrawTriangles (GL_TRIANGLES)
 {
 	if (nvbos)
 	{
@@ -23,7 +24,9 @@ FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _sp
     _rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f),
     speed (_speed), x(_x), y(_y) , _scale(1.0), _texture(0),
     _colorMult(1.0,1.0,1.0),
-   _shootCount(0), _breakCount (1) , _scaleX(1.0), _scaleY(1.0)
+   _shootCount(0), _breakCount (1) , _scaleX(1.0), _scaleY(1.0),
+   _howDrawTriangles (GL_TRIANGLES)
+
 {
 	if (nvbos)
 	{
@@ -39,7 +42,9 @@ FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _sp
 nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
 _rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f), speed (_speed), x(_x), y(_y) ,
   _scale(1.0), _texture(__texture), _colorMult(1.0,1.0,1.0)
-, _shootCount(0), _breakCount (1) , _scaleX(1.0), _scaleY(1.0)
+, _shootCount(0), _breakCount (1) , _scaleX(1.0), _scaleY(1.0),
+  _howDrawTriangles (GL_TRIANGLES)
+
 {
     if (nvbos)
     {
@@ -123,7 +128,7 @@ void FlyingObject::drawTriangles (uint vbo)
 	glVertexAttribPointer(view->vertexlocation(), 3, GL_FLOAT, GL_FALSE, sizeof(Point), (const void *) 0);
 	Point4D col = color();
 	glUniform4fv(view->colorlocation() ,1 , (GLfloat*) &col );
-	glDrawElements(GL_TRIANGLES, nindices , GL_UNSIGNED_SHORT, 0);
+    glDrawElements(_howDrawTriangles, nindices , GL_UNSIGNED_SHORT, 0);
 	glDisableVertexAttribArray(view->vertexlocation());
 }
 
@@ -214,7 +219,18 @@ long long FlyingObject::currTime() const
 
 Text *FlyingObject::text() const
 {
-      return view->getText();
+    return view->getText();
+}
+
+BitmapText *FlyingObject::bitmapText() const
+{
+    return view->getBitmapText();
+}
+
+void FlyingObject::showVertices()
+{
+    for (int i = 0; i< nvertices; i++)
+        LOGD("vertices[%d] x=%f y=%f", i, vertices[i].x, vertices[i].y );
 }
 void FlyingObject::drawTexture(float angle)
 {

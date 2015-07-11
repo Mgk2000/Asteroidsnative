@@ -17,6 +17,7 @@
 #include "explosion.h"
 #include "target.h"
 #include "rectangle.h"
+#include "roundedrectangle.h"
 #include "bitmaptext.h"
 #include "texture.h"
 View::View() :
@@ -47,6 +48,11 @@ void View::processTouchPress(int x, int y)
 {
     float fx,fy;
     screenToView(x,y, &fx, &fy);
+    if (_showingDialog)
+    {
+        processDialogTouch(fx, fy);
+        return;
+    }
 	float fi;
 	if (gun->touched(fx, fy, &fi))
 		shoot (fi);
@@ -181,7 +187,7 @@ void View::checkShoots()
 		if (bullet->isMy())
 		if (patrol && (patrol->isPointInside(&p) || patrol->isPointInside(&p1)))
 		{
-			LOGD("patrol delete bullets=%d", bullets.size() );
+            //LOGD("patrol delete bullets=%d", bullets.size() );
 			_scores+= patrol->cost();
 			delete patrol;
             _patrolBreaks++;
@@ -424,6 +430,7 @@ void View::freeBonus(Asteroid* asteroid)
     {
         bonuses.push_back(asteroid->bonus());
         asteroid->bonus()->free();
+        asteroid->setBonus(0);
     }
 }
 
@@ -459,7 +466,7 @@ int View::drawFrame()
         if (!dieticks)
             return -1;
     }
-    else
+    else if (!_showingDialog)
     {
         processTouches();
         moveObjects(delta);
@@ -469,8 +476,13 @@ int View::drawFrame()
         checkCatchBonus();
         checkAppearences();
         if (checkLevelDone())
+        {
             startLevel(_level+1);
+            showLevelDialog();
+        }
     }
+    else if (_showingDialog)
+        processTouches();
     paintGL();
 	nticks ++;
 	return maxSound;
@@ -479,16 +491,16 @@ int View::drawFrame()
 
 bool View::initializeGL()
 {
-	LOGD("View::initializeGL() 1");
+    //LOGD("View::initializeGL() 1");
 	glClearColor(0.0,0., 0.1, 1);
-	LOGD("View::initializeGL() 2");
+    //LOGD("View::initializeGL() 2");
     if (!initShaders())
         return false;
-	LOGD("View::initializeGL() 3");
+    //LOGD("View::initializeGL() 3");
 
     if (!ship)
     {
-    	LOGD("View::initializeGL() 4");
+        //LOGD("View::initializeGL() 4");
         for (int i = 0; i< _textures.size(); i++)
             _textures[i]->initGL();
         background = new Background(this, _textures[0]);
@@ -502,42 +514,44 @@ bool View::initializeGL()
         bitmapText = new BitmapText (this, _textures[(int)Bonus::LETTERS]);
         bitmapText->init();
         _rectangle = new ARectangle(this);
-		mutex = new Mutex;
+        _roundedRect = new RoundedRectangle(this, 1, 1.2);
+        _wideRoundedRect = new RoundedRectangle(this, 0.4, 0.15);
+        mutex = new Mutex;
 		startGame();
     }
     else //after pause pressing Home button)
     {
-    	LOGD("View::initializeGL() 5");
+        //LOGD("View::initializeGL() 5");
         for (unsigned int i = 0; i< _textures.size(); i++)
             _textures[i]->initGL();
-    	LOGD("View::initializeGL() 6");
+        //LOGD("View::initializeGL() 6");
         ship->initGL();
-    	LOGD("View::initializeGL() 7");
+        //LOGD("View::initializeGL() 7");
     	gun->initGL();
-    	LOGD("View::initializeGL() 8");
+        //LOGD("View::initializeGL() 8");
 		text->initGL();
-        LOGD("View::initializeGL() 8.1");
+        //LOGD("View::initializeGL() 8.1");
         bitmapText->init();
-        LOGD("View::initializeGL() 9");
+        //LOGD("View::initializeGL() 9");
         _rectangle->initGL();
         for (int i=0; i< targets.size(); i++)
         	if (targets[i])
         	targets[i]->initGL();
-    	LOGD("View::initializeGL() 10");
+        //LOGD("View::initializeGL() 10");
         //background->initGL();
         if (!ship->dead())
     	{
 			if (patrol)
 				patrol->initGL();
-	    	LOGD("View::initializeGL() 11");
+            //LOGD("View::initializeGL() 11");
 			std::list<Bullet*>::iterator bit = bullets.begin();
 			for(; bit!= bullets.end(); bit++)
 				(*bit)->initGL();
-	    	LOGD("View::initializeGL() 12");
+            //LOGD("View::initializeGL() 12");
 			std::list<Asteroid*>::iterator ait = asteroids.begin();
 			for(; ait!= asteroids.end(); ait++)
 				(*ait)->initGL();
-	    	LOGD("View::initializeGL() 13");
+            //LOGD("View::initializeGL() 13");
             for(std::list<Bonus*>::iterator ait = bonuses.begin();
                 ait!= bonuses.end(); ait++)
                 (*ait)->initGL();
@@ -545,7 +559,7 @@ bool View::initializeGL()
             for(std::vector<Bonus*>::iterator ait = _shipBonuses.begin();
                 ait!= _shipBonuses.end(); ait++)
                 (*ait)->initGL();
-        	LOGD("View::initializeGL() 15");
+            //LOGD("View::initializeGL() 15");
         }
     }
     return true;
@@ -682,8 +696,13 @@ void View::paintGL()
 {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    background->draw();
+   // background->draw();
     //glViewport(0, 0.0, 380,700);
+    if (_showingDialog)
+    {
+        showLevelDialog();
+        return ;
+    }
 	ship->draw();
 	gun->draw();
     for (int i=0; i<_levelTargets; i++)
@@ -702,6 +721,8 @@ void View::paintGL()
     if (patrol)
 		patrol->draw();
 	drawCurrentResult();
+    drawLevelTodo();
+
     drawShipBonuses();
 //    background->draw();
     if (gameIsOver())
@@ -713,21 +734,31 @@ void View::drawCurrentResult() const
     std::sprintf(buf, "Level:%d", _level);
 //    _rectangle->draw(-0.6, 0.9, 0.6, 1.0, Point4D(0.2, 0.0, 0.5));
 //    _rectangle->drawFrame(-0.6,  0.9, 0.6, 1.0, Point4D(1.0, 1.0, 0.5));
-    _rectangle->drawFramed(-0.6,  0.9, 0.6, 1.0, 0.5, Point4D(0.2, 0.0, 0.5), Point4D(1.0, 1.0, 0.5));
-    text->draw(-0.57, 0.95, 0.02, Point4D(1.0,1.0,0.0),
-               2.0, buf);
+//    _rectangle->drawFramed(-0.6,  0.9, 0.6, 1.0, 0.5, Point4D(0.2, 0.0, 0.5), Point4D(1.0, 1.0, 0.5));
+    _rectangle->draw(-0.6,  0.9, 0.6, 1.0, Point4D(0.2, 0.0, 0.5));
+//    text->draw(-0.57, 0.95, 0.02, Point4D(1.0,1.0,0.0),
+//               2.0, buf);
+    float scale = 0.035;
+    bitmapText->draw(-0.57, 0.94, scale, Point4D(1.0,1.0,0.0), buf);
 
     std::sprintf(buf, "Scores:%d", _scores);
-    text->draw(-0.2, 0.95, 0.02, Point4D(1.0,1.0,0.0),
-               2.0, buf);
+//    text->draw(-0.2, 0.95, 0.02, Point4D(1.0,1.0,0.0),
+//               2.0, buf);
+    bitmapText->draw(-0.2, 0.94, scale, Point4D(1.0,1.0,0.0), buf);
 
     std::sprintf(buf, "Lives:%d", _lives);
-    text->draw(0.3, 0.95, 0.02, Point4D(0.0,1.0,0.0), 2.0, buf);
+//    text->draw(0.3, 0.95, 0.02, Point4D(0.0,1.0,0.0), 2.0, buf);
+    bitmapText->draw(0.3, 0.94, scale, Point4D(0.0,1.0,0.0), buf);
 
-    drawLevelCompleting();
-
+//    _roundedRect->drawFrame(-0.5,  -0.5, 0.5, 0.5, 1.0,
+//                              Point4D(1.0, 0.0, 1.0));
+//    _roundedRect->drawFramed(-0.5,  -0.5, 0.5, 0.5, 1.0,
+//                             Point4D(0.2, 0.2, 0.0), Point4D(1.0, 1.0, 0.0));
+//    _wideRoundedRect->drawFramed(-0.5,  -0.5, 0.5, 0.5, 3.0,
+//                             Point4D(0.3, 0.2, 0.0), Point4D(1.0, 1.0, 0.0));
 //    text->drawCenter(-0.0, 0.75, 0.04, Point4D(0.0,1.0,0.0), 2.0, "Level cleared!");
 //    text->drawCenter(-0.0, 0.75, 0.05, Point4D(0.0,1.0,0.0), 2.0, "Your task: OK");
+    /*
     float k = 0.04;
     float l =-0.6;
     bitmapText->draw(l, 0.7, k, Point4D(1,1,0), 1.0, "Congratullations! %1%");
@@ -736,6 +767,7 @@ void View::drawCurrentResult() const
     bitmapText->draw(l, 0.1, k, Point4D(1,1,0), 1.0, "The End");
     bitmapText->draw(l, -0.1, k, Point4D(1,1,0), 1.0, "0123-45.67,89:0?");
     bitmapText->draw(l, -0.3, k, Point4D(1,1,0), 1.0, "OK");
+    */
 }
 void View::drawEndGame() const
 {

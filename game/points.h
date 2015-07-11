@@ -21,4 +21,14 @@ struct Point4D
 	float z() {return b;}
 };
 typedef Point3D Point;
+typedef Point4D Color;
+#define COLOR_BLACK Color(0.0, 0.0, 0.0)
+#define COLOR_WHITE Color(1.0, 1.0, 1.0)
+#define COLOR_RED Color(1.0, 0.0, 0.0)
+#define COLOR_GREEN Color(0.0, 1.0, 0.0)
+#define COLOR_BLUE Color(0.0, 0.0, 1.0)
+#define COLOR_YELLOW Color(1.0, 1.0, 0.0)
+#define COLOR_CYAN Color(0.0, 0.8.0, 1.0)
+#define COLOR_MAGENTA Color(1.0, 0.0, 0.8)
+#define COLOR_BROWN Color(0.3, 0.15, 0.0)
 #endif // POINTS_H

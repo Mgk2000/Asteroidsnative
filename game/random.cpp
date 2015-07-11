@@ -5,7 +5,7 @@
 Random::Random()
 {
     srand (time(NULL));
-    n = 90361.92184;
+    n = 9036.192184;
 	reset();
 }
 
@@ -40,5 +40,5 @@ int Random::irandom(int lo, int hi)
 
 void Random::reset()
 {
-	x = 0.9036192184;
+    x = 0.6192184;
 }

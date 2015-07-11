@@ -1,5 +1,6 @@
 #include "view.h"
 #include "logmsg.h"
+#include "bitmaptext.h"
 static float barX = -0.5;
 static float barY  = -0.9;
 static float cellWidth = 0.3;
@@ -61,10 +62,20 @@ void View::drawShipBonuses()
 {
     if (_shipBonus != 0)
     {
+        float y = 0.75;
         int sec = (int) (_shipBonusExpiredTime - _currTime) /1000;
         char buf[8];
         sprintf(buf, ":%d", sec);
-        text->draw(0.10 , 0.75, 0.025, Point4D(1.0, 0.0,0.8, 1.0), 2.0, buf );
+//        text->draw(0.10 , y, 0.025, Point4D(1.0, 0.0,0.8, 1.0), 2.0, buf );
+        Color col;
+        if (sec>5)
+            col = COLOR_GREEN;
+        else
+            col = COLOR_RED;
+        bitmapText->draw (0.05 , y, 0.05, col, buf );
+        shipBonus()->setY(y);
+        shipBonus()->setX(-0.05);
+        shipBonus()->setScale(1.5);
         shipBonus()->draw();
 
     }
@@ -131,6 +142,7 @@ void View::catchBonus(Bonus* bonus)
     switch (kind)
     {
     case Bonus::BIG_BOMB :
+        LOGD("BigBomb kind=%d catched=%d",(int)kind - 1, _levelBonuses[(int)kind - 1]->catched+1 )
     case Bonus::LITTLE_BOMB:
     case Bonus::DIAMOND:
     case Bonus::SUPER_GUN:
@@ -147,7 +159,7 @@ Bonus* View::touchedShipBonus(float x, float y)
 {
     for (int i = 0; i< _shipBonuses.size(); i++)
     {
-        LOGD ("x=%f y=%f", x,y);
+        //LOGD ("x=%f y=%f", x,y);
         float bx = barX + i* cellWidth;
         if (x > bx && x< bx+ cellWidth && y > barY-cellWidth && y< barY + cellWidth)
             return _shipBonuses[i];

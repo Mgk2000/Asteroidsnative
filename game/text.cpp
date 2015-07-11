@@ -614,7 +614,8 @@ Text::~Text()
 {
 }
 
-void Text::draw(float x, float y, float scale, Point4D color,float lwidth,  const char *txt)
+void Text::draw(float x, float y, float scale, const Point4D &color,
+                float lwidth,  const char *txt)
 {
     float left = x;
     for (unsigned int i=0; i< strlen(txt); i++)
@@ -636,7 +637,8 @@ void Text::draw(float x, float y, float scale, Point4D color,float lwidth,  cons
     }
 }
 
-void Text::drawCenter(float x, float y, float scale, Point4D color, float lwidth, const char *txt)
+void Text::drawCenter(float x, float y, float scale,const Point4D &color,
+                      float lwidth, const char *txt)
 {
     float w = textWidth(txt)* scale;
     draw(x- w /2, y, scale, color, lwidth, txt);

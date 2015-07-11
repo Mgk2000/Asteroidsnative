@@ -9,8 +9,8 @@ class Text
 public:
     Text(View* view);
     ~Text();
-    void draw(float x, float y, float scale, Point4D color, float lwidth, const char *txt);
-    void drawCenter(float x, float y, float scale, Point4D color, float lwidth, const char *txt);
+    void draw(float x, float y, float scale, const Point4D &color, float lwidth, const char *txt);
+    void drawCenter(float x, float y, float scale, const Point4D & color, float lwidth, const char *txt);
     void initGL();
     float textWidth(const char* txt);
 private:

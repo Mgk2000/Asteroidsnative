@@ -14,6 +14,8 @@ Asteroid::Asteroid(View * _view, Texture * __texture) :
 Asteroid::~Asteroid()
 {
 	delete[] rotatedVertices;
+    if (_bonus)
+        delete _bonus;
 }
 
 void Asteroid::init()
