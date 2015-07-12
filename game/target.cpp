@@ -51,5 +51,5 @@ void Target::draw()
 
     char buf[6];
     sprintf(buf, "%d", _breakCount - _shootCount);
-    bitmapText()->drawCenter(x, y+_r*3, 0.045, COLOR_YELLOW, buf);
+    bitmapText()->drawCenter(x, y+_r*2, 0.045, COLOR_YELLOW, buf);
 }

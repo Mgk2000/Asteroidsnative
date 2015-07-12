@@ -406,7 +406,7 @@ void BitmapText::draw(float x, float y, float scale, const Point4D& color, const
         l->setY(y);
         l->setColorMult(color);
         l->drawTexture();
-        left = left + (0.0 + 2.0 * l->width/cellSize) * scale; //1.0* l->width/cellSize * scale;
+        left = left + (2.0 * l->width/cellSize) * scale; //1.0* l->width/cellSize * scale;
     }
 }
 void BitmapText::drawCenter(float x, float y, float scale, const Point4D &color,
@@ -418,7 +418,7 @@ void BitmapText::drawCenter(float x, float y, float scale, const Point4D &color,
 
 float BitmapText::textWidth(const char *txt)
 {
-    float w = -2.0;
+    float w = -cellSize /2; //-2.0;
     for (unsigned int i=0; i< strlen(txt); i++)
     {
         char c = txt[i];
@@ -426,7 +426,7 @@ float BitmapText::textWidth(const char *txt)
         if (!l)
             w = w + 1.0;
         else
-            w = w + l->width;
+            w = w + l->width * 2.0;
     }
-    return w;
+    return w  / cellSize;
 }

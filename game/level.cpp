@@ -64,7 +64,7 @@ void View::calcLevel(int __level)
         _levelTargetBreaks = 10;
         _levelScores = 200;
         _levelStartScores = 0;
-        _levelPatrolBreaks =12;
+        _levelPatrolBreaks =1;
         break;
     case 1:
         _levelTargets = 2;
@@ -148,7 +148,6 @@ float View::calcAppearenceFrequency(int __level)
 void View::startLevel(int l)
 {
     _level = l;
-    calcLevel(l);
     _random1.reset();
     _random2.reset();
     touches.clear();
@@ -169,23 +168,12 @@ void View::startLevel(int l)
     }
     for (int i=0; i< _levelBonuses.size(); i++)
         _levelBonuses[i]->catched=0;
-    _showingDialog = true;
+    _gameRunning = true;
+//    _showingDialog = true;
 }
 
-bool View::checkLevelDone()
+void View::clearGame()
 {
-    //bool done = false;
-    for (int i =0; i< _levelTargets; i++)
-        if (targets[i] && targets[i]->breakCount()>0)
-            return false;
-    if (_patrolBreaks < _levelPatrolBreaks)
-        return false;
-    for (int i =0; i< _levelBonuses.size(); i++)
-        if ( _levelBonuses[i]->catched < _levelBonuses[i]->num)
-            return false;
-    if (_scores<_levelScores)
-        return false;
-
     if (patrol)
     {
         delete patrol;
@@ -222,6 +210,26 @@ bool View::checkLevelDone()
         _shipBonus = 0;
     }
     _scores = 0;
+}
+
+bool View::checkLevelDone()
+{
+    //bool done = false;
+    for (int i =0; i< _levelTargets; i++)
+        if (targets[i] && targets[i]->breakCount()>0)
+            return false;
+    if (_patrolBreaks < _levelPatrolBreaks)
+        return false;
+    for (int i =0; i< _levelBonuses.size(); i++)
+        if ( _levelBonuses[i]->catched < _levelBonuses[i]->num)
+            return false;
+    if (_scores<_levelScores)
+        return false;
+
+    _levelDone = true;
+    _gameRunning = false;
+    levelDoneTicks = 100;
+    _level++;
     return true;
 }
 
@@ -242,7 +250,20 @@ void View::drawLevelTodo()
         bitmapText->draw(tleft,ttop,scale,Color(1,1,0), buf);
         ttop = ttop + dh;
     }
-    if (_levelPatrolBreaks)
+    if (_levelTargets)
+    {
+        int nt =0;
+        for (int i=0; i<_levelTargets; i++)
+            if (targets[i])
+                nt ++;
+        if (nt)
+        {
+            sprintf (buf,"%%%d%%  %d", (int) Bonus::TARGET, nt);
+            bitmapText->draw(tleft,ttop,scale,Color(1,1,0), buf);
+            ttop = ttop + dh;
+        }
+    }
+    if (_levelPatrolBreaks && _levelPatrolBreaks - _patrolBreaks >0)
     {
         sprintf(buf, "%%%d%%  %d", (int) Bonus::PATROL, _levelPatrolBreaks - _patrolBreaks);
         bitmapText->draw(tleft,ttop,scale,Color(1,1,0), buf);
@@ -263,6 +284,7 @@ void View::drawLevelTodo()
 void View::showLevelDialog()
 {
     //startLevel(2);
+    calcLevel(_level);
     _showingDialog =  true;
     float top = 0.8;
     float left = -0.4;
@@ -350,8 +372,10 @@ void View::showLevelDialog()
 
 void View::processDialogTouch(float fx, float fy)
 {
-    if (fx >= _okButtonLeft && fx <= _okButtonRight &&
-        fy >= _okButtonBottom && fy <=_okButtonTop
+    if (fx >= _okButtonLeft -0.1 && fx <= _okButtonRight +0.1 &&
+        fy >= _okButtonBottom - 0.1 && fy <=_okButtonTop + 0.1
             )
         _showingDialog = false;
+        _levelDone = false;
+        startLevel(_level);
 }

@@ -103,6 +103,7 @@ public:
     Text* getText() const {return text;}
     BitmapText* getBitmapText() const {return bitmapText;}
     void checkBonusExpired();
+    void clearGame();
 private:
 
 	GLuint createShader(GLenum shaderType, const char* src);
@@ -132,6 +133,7 @@ private:
 	Random _random1, _random2;
 	int nticks;
 	int dieticks;
+    int levelDoneTicks;
 	int _matrixlocation, _vertexlocation, _colorlocation;
     long long _currTime, _lastTime;
     long long _startTime;
@@ -150,6 +152,7 @@ private:
     void checkCatchBonus();
     void catchBonus(Bonus* bonus);
     void drawEndGame() const;
+    void drawLevelDone() const;
     std::vector <Texture *> _textures;
     std::vector<Bonus*> _shipBonuses;
     std::list <Explosion*> explosions;
@@ -168,6 +171,7 @@ private:
     void smallExplosion();
     void bigExplosion();
     std::vector<Target*> targets;
+    bool _gameRunning;
     //-----------Level
     int _level;
     int _maxTargets;

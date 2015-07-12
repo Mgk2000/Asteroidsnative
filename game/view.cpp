@@ -23,7 +23,7 @@
 View::View() :
      bullets(0),asteroidAppearTime(0), nticks(0), period(12),
      ship(0), gun(0), pause(false), _shipBonus(0), _smallExplosionRadius(0.5),
-     _maxTargets(20)
+     _maxTargets(20), _gameRunning(false)
 {
     initLevels();
 }
@@ -271,7 +271,9 @@ void View::newGame()
 }
 void View::startGame()
 {
-    startLevel(0);
+    _level = 0;
+    showLevelDialog();
+    //startLevel(0);
 }
 void View::checkEndGame()
 {
@@ -284,6 +286,7 @@ void View::checkEndGame()
                 ship->revive();
         }
     }
+
 }
 
 void View::moveObjects(float delta)
@@ -466,7 +469,7 @@ int View::drawFrame()
         if (!dieticks)
             return -1;
     }
-    else if (!_showingDialog)
+    else if (_gameRunning)
     {
         processTouches();
         moveObjects(delta);
@@ -477,8 +480,6 @@ int View::drawFrame()
         checkAppearences();
         if (checkLevelDone())
         {
-            startLevel(_level+1);
-            showLevelDialog();
         }
     }
     else if (_showingDialog)
@@ -726,7 +727,21 @@ void View::paintGL()
     drawShipBonuses();
 //    background->draw();
     if (gameIsOver())
+    {
+        _gameRunning = false;
         drawEndGame();
+    }
+    if (_levelDone)
+    {
+        levelDoneTicks --;
+        if (levelDoneTicks >=0)
+            drawLevelDone();
+        else
+        {
+            clearGame();
+            showLevelDialog();
+        }
+    }
 }
 void View::drawCurrentResult() const
 {
@@ -771,7 +786,14 @@ void View::drawCurrentResult() const
 }
 void View::drawEndGame() const
 {
-    text->draw(-0.07, 0.0, 0.05, Point4D(1.0,0.0,0.0),5.0, "END");
+    bitmapText->drawCenter(0, 0.0, 0.05, COLOR_RED, "END");
+}
+
+void View::drawLevelDone() const
+{
+    char buf[64];
+    sprintf(buf, "Level %d done!", _level);
+    bitmapText ->drawCenter(0, 0, 0.05, COLOR_GREEN, buf);
 }
 
 void View::addTexture(int w, int h, const char* data, int kind, bool transparentWhite)
