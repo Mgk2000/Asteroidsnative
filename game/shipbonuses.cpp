@@ -26,8 +26,7 @@ void View::setShipBonus(Bonus* bonus, int msec)
             shipBonus()->setY(0.85);
             shipBonus()->setScale(2.0);
             break;
-        case Bonus::BIG_BOMB:
-        case Bonus::LITTLE_BOMB:
+        case Bonus::BOMB:
             if (_shipBonuses.size() < MAX_BONUSES)
             {
                 bonus->setY(barY + cellDx);
@@ -65,7 +64,7 @@ void View::drawShipBonuses()
         float y = 0.75;
         int sec = (int) (_shipBonusExpiredTime - _currTime) /1000;
         char buf[8];
-        sprintf(buf, ":%d", sec);
+        sprintf(buf, " %d", sec);
 //        text->draw(0.10 , y, 0.025, Point4D(1.0, 0.0,0.8, 1.0), 2.0, buf );
         Color col;
         if (sec>5)
@@ -141,9 +140,9 @@ void View::catchBonus(Bonus* bonus)
     sound(BONUS);
     switch (kind)
     {
-    case Bonus::BIG_BOMB :
+    case Bonus::BOMB :
         LOGD("BigBomb kind=%d catched=%d",(int)kind - 1, _levelBonuses[(int)kind - 1]->catched+1 )
-    case Bonus::LITTLE_BOMB:
+    case Bonus::SHOOTER:
     case Bonus::DIAMOND:
     case Bonus::SUPER_GUN:
          setShipBonus(bonus, 30);
@@ -151,6 +150,9 @@ void View::catchBonus(Bonus* bonus)
     case Bonus::LIVE:
         _lives++;
         delete bonus;
+        break;
+    default:
+        break;
     }
     _levelBonuses[(int)kind - 1]->catched++;
 

@@ -19,8 +19,8 @@ void View::initLevels()
         LevelBonus* lb = new LevelBonus;
         _levelBonuses.push_back(lb);
     }
-    strcpy(_levelBonuses[(int) Bonus::BIG_BOMB -1]->name, "BB");
-    strcpy(_levelBonuses[(int) Bonus::LITTLE_BOMB -1]->name, "lb");
+    strcpy(_levelBonuses[(int) Bonus::BOMB -1]->name, "BB");
+    strcpy(_levelBonuses[(int) Bonus::SHOOTER -1]->name, "sh");
     strcpy(_levelBonuses[(int) Bonus::SUPER_GUN -1]->name, "sg");
     strcpy(_levelBonuses[(int) Bonus::DIAMOND -1]->name, "d");
     strcpy(_levelBonuses[(int) Bonus::LIVE -1]->name, "live");
@@ -150,7 +150,7 @@ void View::startLevel(int l)
     _level = l;
     _random1.reset();
     _random2.reset();
-    touches.clear();
+//    touches.clear();
     ship->revive();
     nticks = 0;
     ship->setX(0.0f);
@@ -283,6 +283,7 @@ void View::drawLevelTodo()
 }
 void View::showLevelDialog()
 {
+   _lives = 1999;
     //startLevel(2);
     calcLevel(_level);
     _showingDialog =  true;
@@ -377,5 +378,5 @@ void View::processDialogTouch(float fx, float fy)
             )
         _showingDialog = false;
         _levelDone = false;
-        startLevel(_level);
+         startLevel(_level);
 }

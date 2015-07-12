@@ -54,24 +54,17 @@ void View::processTouchPress(int x, int y)
         return;
     }
 	float fi;
-	if (gun->touched(fx, fy, &fi))
-		shoot (fi);
-    else
+     Bonus * bonus = touchedShipBonus(fx, fy);
+    if ( bonus )
     {
-        Bonus * bonus = touchedShipBonus(fx, fy);
-        if (! bonus )
-            return;
-        if (bonus->kind() == Bonus::LITTLE_BOMB)
-        {
-            deleteShipBonus(bonus);
-            smallExplosion();
-        }
-        else if (bonus->kind() == Bonus::BIG_BOMB)
+        if (bonus->kind() == Bonus::BOMB)
         {
             deleteShipBonus(bonus);
             bigExplosion();
         }
     }
+    else if (gun->touched(fx, fy, &fi))
+        shoot (fi);
 
 }
 void View::destroyAsteroid(Asteroid* asteroid, bool total)
@@ -157,6 +150,9 @@ void View::checkShoots()
                 if (targets[i]->broken())
                 {
                     freeBonus(targets[i]);
+                    Sand* sand = new Sand(this, targets[i]);
+                    sands.push_back(sand);
+
                     delete targets[i];
                     targets[i] = 0;
                 }
@@ -229,6 +225,7 @@ void View::breakShip()
 void View::processTouches()
 {
 	mutex->lock();
+    int nt = touches.size();
     for (std::list<TouchEvent>::const_iterator it2 = touches.begin();
          it2 != touches.end(); it2++)
         {
@@ -271,8 +268,11 @@ void View::newGame()
 }
 void View::startGame()
 {
-    _level = 0;
-    showLevelDialog();
+    _level = 40;
+    _lives = 3;
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    _showingDialog = true;
+//    showLevelDialog();
     //startLevel(0);
 }
 void View::checkEndGame()
@@ -375,13 +375,13 @@ void View::checkAppearences()
             {
                 float fb = _random1.frandom();
                 Bonus::Kind bk;
-                if (fb<=0.3)
-                	bk = Bonus::SUPER_GUN;
-                else if (fb<=0.5)
-                	bk = Bonus::LITTLE_BOMB;
-                else if (fb<=0.6)
-                    bk = Bonus::BIG_BOMB;
-                else if (fb<=0.9)
+                if (fb<=0.4)
+                    bk = Bonus::BOMB;
+                else if (fb<=0.55)
+                    bk = Bonus::SHOOTER;
+                else if (fb<=0.7)
+                    bk = Bonus::SUPER_GUN;
+                else if (fb<=0.85)
                 	bk = Bonus::DIAMOND;
                 else
                 	bk = Bonus::LIVE;
