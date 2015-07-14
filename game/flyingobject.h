@@ -48,9 +48,9 @@ public:
     virtual void setShootCount(int c) {_shootCount = c;}
     float scaleX () const {return _scaleX;}
     float scaleY () const {return _scaleY;}
-    Text* text() const;
     BitmapText* bitmapText() const;
     void setColorMult( const Point4D cm) {_colorMult = cm;}
+    float getShootAngle(const FlyingObject* dst, float shootSpeed) const;
 protected:
 	float x,y,angle;
     float rotateAngle;

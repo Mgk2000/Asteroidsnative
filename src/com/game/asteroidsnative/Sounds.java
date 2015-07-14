@@ -15,8 +15,8 @@ public class Sounds
 	boolean soundLoaded = false;
 	AssetManager assets;
 	int shootSound, breakSound,patrolSound;
-	int [] sound = new int[7];
-	float [] volume = new float[7];
+	int [] sound = new int[8];
+	float [] volume = new float[8];
 	MainActivity activity;
 	public Sounds(MainActivity _activity)
 	{
@@ -37,7 +37,7 @@ public class Sounds
 	        }
 	      });
 		assets = activity.getAssets();
-		int shipBreakSound, endOfGameSound, explosionSound, bonusSound;
+		int shipBreakSound, endOfGameSound, explosionSound, bonusSound, applauseSound;
 	    shootSound = loadSound("shoot.mp3");
 	    breakSound = loadSound("break.mp3");
 	    patrolSound = loadSound("patrol.mp3");
@@ -45,6 +45,7 @@ public class Sounds
 	    explosionSound = loadSound("explosion.mp3");
 	    shipBreakSound = loadSound("shipbreak.mp3");
 	    endOfGameSound = loadSound("aliluia.mp3");
+	    applauseSound = loadSound("applause.mp3");
 	    sound[0] = shootSound;
 	    sound[1] = breakSound;
 	    sound[2] = patrolSound;
@@ -52,6 +53,7 @@ public class Sounds
 	    sound[4] = explosionSound;
 	    sound[5] = shipBreakSound;
 	    sound[6] = endOfGameSound;
+	    sound[7] = applauseSound;
 	    volume[0] = 0.2f;
 	    volume[1] = 1.0f;
 	    volume[2] = 1.0f;
@@ -59,6 +61,7 @@ public class Sounds
 	    volume[4] = 1.0f;
 	    volume[5] = 1.0f;
 	    volume[6] = 1.0f;
+	    volume[7] = 1.0f;
 	}
 	private int loadSound(String fileName) {
 	    AssetFileDescriptor afd = null;

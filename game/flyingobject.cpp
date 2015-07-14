@@ -217,14 +217,34 @@ long long FlyingObject::currTime() const
     return view->currTime();
 }
 
-Text *FlyingObject::text() const
-{
-    return view->getText();
-}
-
 BitmapText *FlyingObject::bitmapText() const
 {
     return view->getBitmapText();
+}
+
+float FlyingObject::getShootAngle(const FlyingObject *dst, float shootSpeed) const
+{
+    float dstX = dst->X();
+    float dstY = dst->Y();
+    float srcX, srcY;
+    float r2 = sqr(dst->r()) / 2;
+    float fi;
+    for (int i =0; i<3; i++)
+    {
+        float dist0 = dist(dstX, dstY, x, y);
+        float t = dist0 / shootSpeed;
+        dstX = dst->X() + t * dst->VX();
+        dstY = dst->Y() + t * dst->VY();
+        if (dstX < view->left() || dstX > view->right() || dstY >1 || dstY < -1)
+            return 1000;
+        fi = atan2(dstX - x, dstY - y);
+        srcX = x + t * shootSpeed * sin(fi);
+        srcY = y * t * shootSpeed * cos(fi);
+       // if (dist2 (dstX, dstY, srcX, srcY) < r2)
+       //     break;
+    }
+    return fi;
+
 }
 
 void FlyingObject::showVertices()

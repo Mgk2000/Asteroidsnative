@@ -13,6 +13,7 @@ public class RendererWrapper implements Renderer {
 	MainActivity activity;
 	AssetManager assets;
 	public boolean newgame;
+	boolean texturesCreated = false;
 	void setActivity(MainActivity _activity)
 	{
 		activity = _activity;
@@ -42,23 +43,25 @@ public class RendererWrapper implements Renderer {
 	public void onSurfaceCreated(GL10 gl,
 			javax.microedition.khronos.egl.EGLConfig config) 
 	{
-		if (newgame)
+		if (true || newgame && !texturesCreated)
 		{
 			GameLibJNIWrapper.create_game();
 	    	AssetManager am = activity.getAssets();
-	        addPngTexture("Asteroidsurface.png", 0);
-	        addPngTexture("LittleBomb.png", 1);
-	        addPngTexture("BigBomb.png", 2);
-	        addPngTexture("Live.png", 3);
-	        addPngTexture("SuperGun.png", 4);
-	        addPngTexture("Diamond.png", 5);
-	        addPngTexture("goldenkey.png", 6);
+	        addPngTexture("Asteroidsurface.png", 0, true);
+	        addPngTexture("Shooter.png", 1, true);
+	        addPngTexture("LittleBomb.png", 2, true);
+	        addPngTexture("Live.png", 3, true);
+	        addPngTexture("SuperGun.png", 4, true);
+	        addPngTexture("Diamond.png", 5, true);
+	        addPngTexture("goldenkey.png", 6, true);
+	        addPngTexture("abcmono.png", 7, false);
+	        texturesCreated = true;
 		}
     	GameLibJNIWrapper.on_surface_created();
     	if (newgame)
     		GameLibJNIWrapper.new_game();
 	}
-	void addPngTexture(String fn, int kind)
+	void addPngTexture(String fn, int kind, boolean transparentWhite)
 	{
 		InputStream istr;
 	    Bitmap bitmap = null;
@@ -70,7 +73,7 @@ public class RendererWrapper implements Renderer {
 	        int h = bitmap.getHeight();
 	        int [] pixels = new int[h * w];
 	        bitmap.getPixels(pixels, 0, w, 0, 0, w, h);
-	        GameLibJNIWrapper.add_intarr_texture(w,h,pixels, kind);
+	        GameLibJNIWrapper.add_intarr_texture(w,h,pixels, kind, transparentWhite);
 	    }
 	    catch (IOException e)
 	    {

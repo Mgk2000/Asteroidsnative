@@ -4,7 +4,7 @@
 
 #include "logmsg.h"
 Bullet::Bullet(View* view, float _x, float _y, float _angle)
-    : FlyingObject(view, 1, _x, _y, 1.0f, _angle)
+    : FlyingObject(view, 1, _x, _y, getSpeed(), _angle)
 {
 }
 

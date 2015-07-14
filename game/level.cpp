@@ -10,6 +10,7 @@
 #include "math_helper.h"
 #include "roundedrectangle.h"
 #include "bitmaptext.h"
+#include "logmsg.h"
 void View::initLevels()
 {
     levelRandom = new Random();
@@ -30,6 +31,49 @@ void View::initLevels()
         targets.push_back(0);
     }
 }
+void View::createTargets()
+{
+    for (int i =0; i< _levelTargets; i++)
+    {
+        float x = levelRandom->frandom(left()+ 0.05, this->right() -0.05);
+        float y = levelRandom->frandom(0.4, 0.80);
+        float r = levelRandom->frandom(0.03, 0.05);
+        float r2 = sqr(0.05);
+        if (i > 0)
+        {
+            for (;;)
+            {
+                bool found = false;
+                for (int j=0; j<i ; j++)
+                    if (sqr(x - targets[j]->X()) + sqr(y - targets[j]->Y()) < r2)
+                    {
+                        found = true;
+                        break;
+                    }
+                if (found)
+                {
+                    x = levelRandom->frandom(left()+ 0.05, this->right() -0.05);
+                    y = levelRandom->frandom(0.4, 0.80);
+                }
+                else
+                    break;
+            }
+        }
+        Texture* t = textures().at(0);
+        targets[i] = new Target(this, t, x, y, r);
+        //Bonus* tbonus = new Bonus(this, Bonus::TARGET, target);
+        //targets[i]->setBonus(tbonus);
+    }
+    for (int i= _levelTargets; i< _maxTargets; i++)
+    {
+        if (targets[i])
+        {
+            delete targets[i];
+            targets[i] = 0;
+        }
+    }
+}
+
 void View::calcLevel(int __level)
 {
     int clevel = __level % _maxCountedLevel;
@@ -76,17 +120,17 @@ void View::calcLevel(int __level)
         _levelTargets = 1;
         _levelPatrolBreaks = 0;
         _levelTargetBreaks = 20;
-        _levelBonuses[0]->num = 1*0;
-        _levelBonuses[1]->num = 2*0;
-        _levelBonuses[2]->num = 3;
-        _levelBonuses[3]->num = 4;
-        _levelBonuses[4]->num = 5*0;
+        _levelBonuses[0]->num = 2;
+        _levelBonuses[1]->num = 2;
+        _levelBonuses[2]->num = 2;
+        _levelBonuses[3]->num = 2;
+        _levelBonuses[4]->num = 2;
         _levelScores = 1000;
-        _levelBonusProbability = 0.3;
+        _levelBonusProbability = 0.2;
         break;
     case 3:
         _levelTargets = 0;
-        _levelPatrolBreaks = 50;
+        _levelPatrolBreaks = 30;
         _levelTargetBreaks = 20;
         _levelScores = 0;
         break;
@@ -101,45 +145,7 @@ void View::calcLevel(int __level)
         _levelPatrolBreaks =12;
         break;
     }
-    for (int i =0; i< _levelTargets; i++)
-    {
-        float x = levelRandom->frandom(left()+ 0.05, this->right() -0.05);
-        float y = levelRandom->frandom(0.4, 0.80);
-        float r = levelRandom->frandom(0.03, 0.05);
-        float r2 = sqr(0.05);
-        if (i > 0)
-        {
-            for (;;)
-            {
-                bool found = false;
-                for (int j=0; j<i ; j++)
-                    if (sqr(x - targets[j]->X()) + sqr(y - targets[j]->Y()) < r2)
-                    {
-                        found = true;
-                        break;
-                    }
-                if (found)
-                {
-                    x = levelRandom->frandom(left()+ 0.05, this->right() -0.05);
-                    y = levelRandom->frandom(0.4, 0.80);
-                }
-                else
-                    break;
-            }
-        }
-        Texture* t = textures().at(0);
-        targets[i] = new Target(this, t, x, y, r);
-        //Bonus* tbonus = new Bonus(this, Bonus::TARGET, target);
-        //targets[i]->setBonus(tbonus);
-    }
-    for (int i= _levelTargets; i< _maxTargets; i++)
-    {
-        if (targets[i])
-        {
-            delete targets[i];
-            targets[i] = 0;
-        }
-    }
+    createTargets();
 }
 float View::calcAppearenceFrequency(int __level)
 {
@@ -162,6 +168,8 @@ void View::startLevel(int l)
     _random1.reset();
     for (int i=0; i< _levelTargets; i++)
     {
+        if (targets[i] ==0)
+            createTargets();
         targets[i]->setBreakCount(_levelTargetBreaks);
         targets[i]->setShootCount(0);
         targets[i]->init();
@@ -174,42 +182,54 @@ void View::startLevel(int l)
 
 void View::clearGame()
 {
+	LOGD("ClearGame 1");
     if (patrol)
     {
+    	LOGD("ClearGame 2");
         delete patrol;
         patrol = 0;
+    	LOGD("ClearGame 3");
+
     }
-    for (int i=0; i<_levelTargets; i++)
+    for (int i=0; i< targets.size(); i++)
     {
+    	LOGD("ClearGame 4");
         if(targets[i])
         {
             delete targets[i];
             targets[i] = 0;
         }
     }
+	LOGD("ClearGame 5");
     for (std::list<Bullet*>::iterator bit = bullets.begin();
          bit!= bullets.end(); bit++)
         delete *bit;
     bullets.clear();
-    for (std::list<Asteroid*>::iterator bit = asteroids.begin();
+	LOGD("ClearGame 6");
+	for (std::list<Asteroid*>::iterator bit = asteroids.begin();
          bit!= asteroids.end(); bit++)
         delete *bit;
     asteroids.clear();
+	LOGD("ClearGame 7");
     for (std::list<Bonus*>::iterator bit = bonuses.begin();
          bit!= bonuses.end(); bit++)
         delete *bit;
     bonuses.clear();
+	LOGD("ClearGame 8");
 
     for (std::vector<Bonus*>::iterator bit = _shipBonuses.begin();
          bit!= _shipBonuses.end(); bit++)
         delete *bit;
     _shipBonuses.clear();
+	LOGD("ClearGame 9");
     if (_shipBonus)
     {
         delete _shipBonus;
         _shipBonus = 0;
     }
     _scores = 0;
+	LOGD("ClearGame 10");
+
 }
 
 bool View::checkLevelDone()
@@ -225,7 +245,8 @@ bool View::checkLevelDone()
             return false;
     if (_scores<_levelScores)
         return false;
-
+    _lives=1;
+    sound(LEVELDONE);
     _levelDone = true;
     _gameRunning = false;
     levelDoneTicks = 100;
@@ -376,7 +397,8 @@ void View::processDialogTouch(float fx, float fy)
     if (fx >= _okButtonLeft -0.1 && fx <= _okButtonRight +0.1 &&
         fy >= _okButtonBottom - 0.1 && fy <=_okButtonTop + 0.1
             )
-        _showingDialog = false;
+    	okPressTime = currTime();
+    	_showingDialog = false;
         _levelDone = false;
          startLevel(_level);
 }

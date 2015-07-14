@@ -56,7 +56,8 @@ public:
         BONUS,
         EXPLOSION,
         SHIPBREAK,
-        ENDGAME
+        ENDGAME,
+		LEVELDONE
     };
 
     explicit View();
@@ -94,16 +95,21 @@ public:
     int scores() const {return _scores;}
     inline bool gameIsOver() const {return _lives <= 0;}
     void addTexture (int w, int h, const char* data,
-                     int kind, bool transparentWhite = true);
+                     int kind, bool transparentWhite);
     const std::vector <Texture *> &textures() {return _textures;}
     void freeBonus(Asteroid*);
     long long currTime() const {return _currTime;}
     const std::vector<Bonus*> &shipBonuses() const {return _shipBonuses;}
+    const std::list<Asteroid*> &getAsteroids() const {return asteroids;}
+    std::list<Bullet*> &getBullets()  {return bullets;}
     Bonus* shipBonus() const {return _shipBonus;}
-    Text* getText() const {return text;}
+    //Text* getText() const {return text;}
     BitmapText* getBitmapText() const {return bitmapText;}
     void checkBonusExpired();
     void clearGame();
+    Patrol* getPatrol() const {return patrol;}
+    void addBullet(Bullet* bullet);
+    void createTargets();
 private:
 
 	GLuint createShader(GLenum shaderType, const char* src);
@@ -117,7 +123,6 @@ private:
 	void deleteAsteroid(Asteroid* asteroid);
 	int asteroidAppearTime;
 	std::list <Bullet*> bullets;
-	void addBullet(Bullet* bullet);
 	void deleteBullet(Bullet* bullet);
 	void createSplinters(Asteroid* asteroid);
     std::list <Bonus*> bonuses;
@@ -138,7 +143,7 @@ private:
     long long _currTime, _lastTime;
     long long _startTime;
     int period;
-    Text *text;
+    //Text *text;
     BitmapText* bitmapText;
     bool pause;
     int _lives;
@@ -207,6 +212,7 @@ private:
     //-----------------
     ARectangle* _rectangle;
     RoundedRectangle* _roundedRect, * _wideRoundedRect;
+    long long okPressTime;
 };
 
 #endif // VIEW_H

@@ -9,11 +9,11 @@ View* view = 0;
 void on_surface_created(JNIEnv* _env, jclass cls)
 {
 
-//	LOGD("on_surface_created 1");
+	LOGD("on_surface_created 1 view=%d", (int) view);
 	view->initializeGL();
-//	LOGD("on_surface_created 2");
+	LOGD("on_surface_created 2");
 	view->setPause(false);
-//	LOGD("on_surface_created 3");
+	LOGD("on_surface_created 3");
 }
 
 void on_surface_changed(int width, int height)
@@ -43,6 +43,7 @@ int scores()
 
 void new_game()
 {
+	LOGD("new_game view=%d", (int) view);
 //	if (!view)
 //		view = new View ();
 //	else
@@ -55,7 +56,7 @@ void create_game()
 		view = new View();
 }
 
-void add_texture (int w, int h, const char* data, int kind)
+void add_texture (int w, int h, const char* data, int kind, bool whiteTransparent)
 {
-	view->addTexture(w,h, data, kind);
+	view->addTexture(w,h, data, kind, whiteTransparent);
 }

@@ -141,7 +141,7 @@ void View::catchBonus(Bonus* bonus)
     switch (kind)
     {
     case Bonus::BOMB :
-        LOGD("BigBomb kind=%d catched=%d",(int)kind - 1, _levelBonuses[(int)kind - 1]->catched+1 )
+        LOGD("BigBomb kind=%d catched=%d",(int)kind - 1, _levelBonuses[(int)kind - 1]->catched+1 );
     case Bonus::SHOOTER:
     case Bonus::DIAMOND:
     case Bonus::SUPER_GUN:

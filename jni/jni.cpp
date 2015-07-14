@@ -74,10 +74,10 @@ JNIEXPORT jint JNICALL Java_com_game_asteroidsnative_GameLibJNIWrapper_add_1text
   //  	LOGD("After read len=%d", len);
     //	LOGD("buf=%s", buf);
     AAsset_close(asset);
-	add_texture(szbuf[0], szbuf[1], &buf[54], kind);
+	add_texture(szbuf[0], szbuf[1], &buf[54], kind, true);
 }
 JNIEXPORT void JNICALL Java_com_game_asteroidsnative_GameLibJNIWrapper_add_1intarr_1texture
-  (JNIEnv * env, jclass cls, jint w, jint h, jintArray dataArr, jint kind)
+  (JNIEnv * env, jclass cls, jint w, jint h, jintArray dataArr, jint kind, jboolean whiteTransparent)
 {
 	LOGD("add_1intarr_1texture 1");
 	int* buf = new int[ w * h];
@@ -94,7 +94,7 @@ JNIEXPORT void JNICALL Java_com_game_asteroidsnative_GameLibJNIWrapper_add_1inta
 			int ii = h-i-1;
 			memcpy(&data[i*3 * w + j*3 ], &buf[ii *w + j], 3);
 		}
-	add_texture(w, h, data, kind);
+	add_texture(w, h, data, kind, whiteTransparent);
 	LOGD("Png texture added");
 }
 #ifdef __cplusplus

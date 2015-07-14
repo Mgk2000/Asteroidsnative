@@ -16,6 +16,7 @@ public:
 	Point bottom() const;
 	bool out() const;
 	virtual bool isMy() const {return true;}
+    static float getSpeed() {return 1.0;}
 private:
     float topdx, topdy;
 };

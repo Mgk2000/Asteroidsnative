@@ -4,6 +4,7 @@
 #include "target.h"
 #include "patrol.h"
 #include "view.h"
+#include "logmsg.h"
 
 Letter::Letter(View* view, Texture* texture ) : FlyingObject (view , 1,texture )
 {
@@ -26,24 +27,42 @@ void Letter::init(int nrows)
 
 void Letter::initGL(int nrows)
 {
-    int x = index % 8;
+	LOGD("Letter::initGL 1 this =%d", (int) this);
+	int x = index % 8;
+	LOGD("Letter::initGL 1.1");
     int y = index / 8;
+	LOGD("Letter::initGL 1.2");
     y = nrows -1 -y;
+	LOGD("Letter::initGL 1.3");
 //    int y = nrows -(index+7) / 8;
     float x0 = 1.0 * x / 8;
+	LOGD("Letter::initGL 1.4");
     float y0 = 1.0 * y / nrows;
+	LOGD("Letter::initGL 1.5");
     float x1 = 1.0 * (x + 1) / 8;
+	LOGD("Letter::initGL 1.6");
     float y1 = 1.0 * (y + 1) / nrows;
+	LOGD("Letter::initGL 1.7");
     Point4D* vertices4 = new Point4D[6];
+	LOGD("Letter::initGL 2");
     vertices4[0] = Point4D (0 , 0, (x0+ x1) * 0.5 , (y0+y1) * 0.5);
+	LOGD("Letter::initGL 2.1");
     vertices4[1] = Point4D(vertices[0].x, vertices[0].y, x0,y1);
+	LOGD("Letter::initGL 2.2");
     vertices4[2] = Point4D(vertices[1].x, vertices[1].y, x0,y0);
+	LOGD("Letter::initGL 2.3");
     vertices4[3] = Point4D(vertices[2].x, vertices[2].y, x1,y0);
+	LOGD("Letter::initGL 2.4");
     vertices4[4] = Point4D(vertices[3].x, vertices[3].y, x1, y1);
+	LOGD("Letter::initGL 2.5");
     vertices4[5] = vertices4[1];
+	LOGD("Letter::initGL 2.6");
     glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
+	LOGD("Letter::initGL 2.7");
     glBufferData(GL_ARRAY_BUFFER, (nvertices+2) * sizeof(Point4D), vertices4, GL_STATIC_DRAW);
+	LOGD("Letter::initGL 2.8");
     delete[] vertices4;
+	LOGD("Letter::initGL exit");
 
 }
 
@@ -353,9 +372,19 @@ void BitmapText::init()
 
 void BitmapText::initGL()
 {
+	LOGD ("BitmapText::initGL 1");
     std::map<char, Letter*>::iterator it = letters.begin();
+	LOGD ("BitmapText::initGL 2");
     for (; it!= letters.end(); it++)
-        it->second->initGL(nrows);
+        //it->second->initGL(nrows);
+    	it->second->init(nrows);
+	LOGD ("BitmapText::initGL 2 bonus = %d", (int) bonus);
+    bonus->initGL();
+	LOGD ("BitmapText::initGL 3");
+    patrol->initGL();
+	LOGD ("BitmapText::initGL 4");
+    target->initGL();
+	LOGD ("BitmapText::initGL 5");
 }
 void BitmapText::draw(float x, float y, float scale, const Point4D& color, const char *txt)
 {
