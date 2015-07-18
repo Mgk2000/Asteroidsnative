@@ -54,7 +54,10 @@ public class RendererWrapper implements Renderer {
 	        addPngTexture("SuperGun.png", 4, true);
 	        addPngTexture("Diamond.png", 5, true);
 	        addPngTexture("goldenkey.png", 6, true);
+//	        addPngTexture("abcgraysquare.png", 7, true);
 	        addPngTexture("abcmono.png", 7, false);
+	        addPngTexture("Pause.png", 8, true);
+	        addPngTexture("Continue.png", 9, true);
 	        texturesCreated = true;
 		}
     	GameLibJNIWrapper.on_surface_created();

@@ -70,6 +70,7 @@ BitmapText::BitmapText(View* view, Texture* texture)
 {
     cellSize = texture->picWidth() /8;
     this->nrows = texture->picHeight() / cellSize;
+    nrows = 9;
     Letter* l;
     l = new Letter (view, texture);
     l->index = 0;

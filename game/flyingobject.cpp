@@ -280,6 +280,8 @@ void FlyingObject::drawTexture(float angle)
         LOGD("err=%d", err);
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glBlendFunc (GL_SRC_COLOR, GL_DST_COLOR);
+//    glTexEnvx(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     glUniformMatrix4fv(_texture->matrixLocation(), 1, false,
                        (const GLfloat*) &_matrix1);
     err = glGetError();

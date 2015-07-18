@@ -12,7 +12,7 @@ void on_surface_created(JNIEnv* _env, jclass cls)
 	LOGD("on_surface_created 1 view=%d", (int) view);
 	view->initializeGL();
 	LOGD("on_surface_created 2");
-	view->setPause(false);
+	//view->setPause(false);
 	LOGD("on_surface_created 3");
 }
 
@@ -22,8 +22,8 @@ void on_surface_changed(int width, int height)
 }
 
 int on_draw_frame() {
-	if (view->getPause())
-		return true;
+//	if (view->getPause())
+//		return true;
 	return view->drawFrame();
 }
 void on_touch_event(jint what, jint x, jint y)
@@ -32,7 +32,7 @@ void on_touch_event(jint what, jint x, jint y)
 }
 void set_pause(bool p)
 {
-	view->setPause(p);
+	//view->setPause(p);
 }
 int scores()
 {

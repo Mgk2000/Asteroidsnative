@@ -65,6 +65,7 @@ void Asteroid::applyParams()
 }
 void Asteroid::initGL()
 {
+    float texScale = 2.0;
     Point4D* vertices4 = new Point4D[nvertices+2];
     vertices4[0] = Point4D (0 , 0, texCenterX , texCenterY);
     for (int i =0; i< nvertices; i++)

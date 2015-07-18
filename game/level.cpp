@@ -227,7 +227,7 @@ void View::clearGame()
         delete _shipBonus;
         _shipBonus = 0;
     }
-    _scores = 0;
+    //_scores = 0;
 	LOGD("ClearGame 10");
 
 }
@@ -394,11 +394,15 @@ void View::showLevelDialog()
 
 void View::processDialogTouch(float fx, float fy)
 {
-    if (fx >= _okButtonLeft -0.1 && fx <= _okButtonRight +0.1 &&
-        fy >= _okButtonBottom - 0.1 && fy <=_okButtonTop + 0.1
+    if (fx >= _okButtonLeft-0.1  && fx <= _okButtonRight+0.1  &&
+        fy >= _okButtonBottom-0.1  && fy <=_okButtonTop+0.1
             )
+    {
     	okPressTime = currTime();
+    	LOGD("Ok pre4ssed fx=%f fy=%f left=%f right=%f bot=%f top=%f", fx, fy, _okButtonLeft, _okButtonRight,
+    			_okButtonBottom, _okButtonTop);
     	_showingDialog = false;
         _levelDone = false;
          startLevel(_level);
+    }
 }

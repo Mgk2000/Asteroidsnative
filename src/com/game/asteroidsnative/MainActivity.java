@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-
+import com.google.android.gms.ads.*;
 public class MainActivity extends Activity implements OnClickListener
 {
 	private SurfaceWrapper glSurfaceView;
@@ -32,6 +32,7 @@ public class MainActivity extends Activity implements OnClickListener
 	int scores = 0;
 	public Sounds sounds;
 	public boolean soundFlag = true, musicFlag;
+	private InterstitialAd interstitial;
     Handler mainHandler = new Handler() {
         public void handleMessage(Message msg) {
              // remove surfaceview from layout and show non-opengl views

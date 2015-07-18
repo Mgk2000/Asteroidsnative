@@ -27,6 +27,7 @@ class Target;
 class ARectangle;
 class BitmapText;
 class RoundedRectangle;
+class PauseContinue;
 struct BulletInfo
 {
 	Bullet* bullet;
@@ -88,8 +89,8 @@ public:
     std::list<TouchEvent>touches;
     void onTouchEvent(int what, int x, int y);
     Ship* getShip() {return ship;}
-    void setPause(bool p) {pause = p;}
-    bool getPause() {return pause;}
+    void setPPause(bool p);
+    bool getPause() {return _pause;}
     void newGame();
     int lives() const {return _lives;}
     int scores() const {return _scores;}
@@ -111,6 +112,7 @@ public:
     void addBullet(Bullet* bullet);
     void createTargets();
 private:
+    bool _pause;
 
 	GLuint createShader(GLenum shaderType, const char* src);
 	GLuint createProgram(const char *pVertexSource, const char *pFragmentSource);
@@ -145,7 +147,6 @@ private:
     int period;
     //Text *text;
     BitmapText* bitmapText;
-    bool pause;
     int _lives;
     int _scores;
     void sound(Sounds is) {if (is>maxSound) maxSound=is;}
@@ -213,6 +214,7 @@ private:
     ARectangle* _rectangle;
     RoundedRectangle* _roundedRect, * _wideRoundedRect;
     long long okPressTime;
+    PauseContinue* pauseContinue;
 };
 
 #endif // VIEW_H

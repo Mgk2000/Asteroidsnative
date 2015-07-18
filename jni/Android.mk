@@ -27,6 +27,7 @@ LOCAL_SRC_FILES += ../game/level.cpp
 LOCAL_SRC_FILES += ../game/target.cpp
 LOCAL_SRC_FILES += ../game/bitmaptext.cpp
 LOCAL_SRC_FILES += ../game/shooter.cpp
+LOCAL_SRC_FILES += ../game/pausecontinue.cpp
 LOCAL_LDLIBS := -lGLESv2 -llog -landroid
 LOCAL_C_INCLUDES += ${NDKROOT}/sources/cxx-stl/stlport/stlport
 LOCAL_C_INCLUDES += ../game

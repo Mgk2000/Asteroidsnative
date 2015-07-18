@@ -21,9 +21,10 @@
 #include "bitmaptext.h"
 #include "texture.h"
 #include "shooter.h"
+#include "pausecontinue.h"
 View::View() :
      bullets(0),asteroidAppearTime(0), nticks(0), period(12),
-     ship(0), gun(0), pause(false), _shipBonus(0), _smallExplosionRadius(0.5),
+     ship(0), gun(0), _pause(false), _shipBonus(0), _smallExplosionRadius(0.5),
      _maxTargets(20), _gameRunning(false)
 {
     initLevels();
@@ -54,6 +55,11 @@ void View::processTouchPress(int x, int y)
         processDialogTouch(fx, fy);
         return;
     }
+    if (_pause)
+    {
+        pauseContinue->processTouchPause(fx, fy);
+        return;
+    }
 	float fi;
      Bonus * bonus = touchedShipBonus(fx, fy);
     if ( bonus )
@@ -76,6 +82,8 @@ void View::processTouchPress(int x, int y)
         if (delta > 300)
         shoot (fi);
     }
+    else
+        pauseContinue->processTouchPause(fx, fy);
 
 }
 void View::destroyAsteroid(Asteroid* asteroid, bool total)
@@ -452,7 +460,7 @@ void View::freeBonus(Asteroid* asteroid)
 
 int View::drawFrame()
 {
-	//LOGD("DrawFrame 1");
+	//LOGD("DrawFrame 1 pause=%d", _pause);
 #ifdef WIN32
     _currTime = 1.0* clock() / CLOCKS_PER_SEC * 1000;
 #else
@@ -482,7 +490,7 @@ int View::drawFrame()
         if (!dieticks)
             return -1;
     }
-    else if (_gameRunning && !_showingDialog)
+    else if (_gameRunning && !_showingDialog && !_pause)
     {
         processTouches();
         moveObjects(delta);
@@ -495,7 +503,7 @@ int View::drawFrame()
         {
         }
     }
-    else if (_showingDialog)
+    else if (_showingDialog || _pause)
         processTouches();
     paintGL();
 	nticks ++;
@@ -507,7 +515,7 @@ int View::drawFrame()
 bool View::initializeGL()
 {
     LOGD("View::initializeGL() 1");
-	glClearColor(0.0,0., 0.1, 1);
+    glClearColor(0.0,0., 0.1, 1);
     LOGD("View::initializeGL() 2");
     if (!initShaders())
         return false;
@@ -519,7 +527,7 @@ bool View::initializeGL()
         for (int i = 0; i< _textures.size(); i++)
             _textures[i]->initGL();
         LOGD("View::initializeGL() 4.1  _textures.size()=%d" , _textures.size());
-        background = new Background(this, _textures[0]);
+        background = new Background(this, _textures[7]);
         background->init();
         LOGD("View::initializeGL() 4.2");
 
@@ -536,6 +544,8 @@ bool View::initializeGL()
         _roundedRect = new RoundedRectangle(this, 1, 1.2);
         _wideRoundedRect = new RoundedRectangle(this, 0.4, 0.15);
         LOGD("View::initializeGL() 4.5");
+        pauseContinue = new PauseContinue(this, _textures[(int) Bonus::PAUSE], _textures[(int) Bonus::CONTINUE]);
+        pauseContinue->init();
         mutex = new Mutex;
 		startGame();
         LOGD("View::initializeGL() 4.6");
@@ -555,6 +565,7 @@ bool View::initializeGL()
         LOGD("View::initializeGL() 8.1");
         delete bitmapText;
         LOGD("View::initializeGL() 8.11");
+
         bitmapText = new BitmapText (this, _textures[(int)Bonus::LETTERS]);
         LOGD("View::initializeGL() 8.12");
         bitmapText->init();
@@ -562,6 +573,7 @@ bool View::initializeGL()
         _rectangle->initGL();
         _roundedRect->initGL();
         _wideRoundedRect->initGL();
+        pauseContinue->initGL();
         for (int i=0; i< targets.size(); i++)
         	if (targets[i])
         	targets[i]->initGL();
@@ -724,7 +736,7 @@ void View::paintGL()
 {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   // background->draw();
+    //background->draw();
     //glViewport(0, 0.0, 380,700);
     if (_showingDialog)
     {
@@ -749,6 +761,7 @@ void View::paintGL()
     if (patrol)
 		patrol->draw();
 	drawCurrentResult();
+    pauseContinue->draw();
     drawLevelTodo();
 
     drawShipBonuses();
@@ -770,46 +783,25 @@ void View::paintGL()
         }
     }
 }
+void View::setPPause(bool p)
+{
+	 _pause = p;
+//	 LOGD("View::setPause %d", (int) _pause);
+}
 void View::drawCurrentResult() const
 {
 	char buf[32];
-    std::sprintf(buf, "Level:%d", _level);
-//    _rectangle->draw(-0.6, 0.9, 0.6, 1.0, Point4D(0.2, 0.0, 0.5));
-//    _rectangle->drawFrame(-0.6,  0.9, 0.6, 1.0, Point4D(1.0, 1.0, 0.5));
-//    _rectangle->drawFramed(-0.6,  0.9, 0.6, 1.0, 0.5, Point4D(0.2, 0.0, 0.5), Point4D(1.0, 1.0, 0.5));
+    std::sprintf(buf, "Level:%d P=%d", _level, (int) _pause);
     _rectangle->draw(-0.6,  0.9, 0.6, 1.0, Point4D(0.2, 0.0, 0.5));
-//    text->draw(-0.57, 0.95, 0.02, Point4D(1.0,1.0,0.0),
-//               2.0, buf);
     float scale = 0.035;
     bitmapText->draw(-0.57, 0.94, scale, Point4D(1.0,1.0,0.0), buf);
 
     std::sprintf(buf, "Scores:%d", _scores);
-//    text->draw(-0.2, 0.95, 0.02, Point4D(1.0,1.0,0.0),
-//               2.0, buf);
     bitmapText->draw(-0.2, 0.94, scale, Point4D(1.0,1.0,0.0), buf);
 
     std::sprintf(buf, "Lives:%d", _lives);
-//    text->draw(0.3, 0.95, 0.02, Point4D(0.0,1.0,0.0), 2.0, buf);
-    bitmapText->draw(0.3, 0.94, scale, Point4D(0.0,1.0,0.0), buf);
+    bitmapText->draw(0.2, 0.94, scale, Point4D(0.0,1.0,0.0), buf);
 
-//    _roundedRect->drawFrame(-0.5,  -0.5, 0.5, 0.5, 1.0,
-//                              Point4D(1.0, 0.0, 1.0));
-//    _roundedRect->drawFramed(-0.5,  -0.5, 0.5, 0.5, 1.0,
-//                             Point4D(0.2, 0.2, 0.0), Point4D(1.0, 1.0, 0.0));
-//    _wideRoundedRect->drawFramed(-0.5,  -0.5, 0.5, 0.5, 3.0,
-//                             Point4D(0.3, 0.2, 0.0), Point4D(1.0, 1.0, 0.0));
-//    text->drawCenter(-0.0, 0.75, 0.04, Point4D(0.0,1.0,0.0), 2.0, "Level cleared!");
-//    text->drawCenter(-0.0, 0.75, 0.05, Point4D(0.0,1.0,0.0), 2.0, "Your task: OK");
-    /*
-    float k = 0.04;
-    float l =-0.6;
-    bitmapText->draw(l, 0.7, k, Point4D(1,1,0), 1.0, "Congratullations! %1%");
-    bitmapText->draw(l, 0.5, k, Point4D(1,0,1), 1.0, "Level 12 done");
-    bitmapText->draw(l, 0.3, k, Point4D(1,1,0), 1.0, "Your task: %3%");
-    bitmapText->draw(l, 0.1, k, Point4D(1,1,0), 1.0, "The End");
-    bitmapText->draw(l, -0.1, k, Point4D(1,1,0), 1.0, "0123-45.67,89:0?");
-    bitmapText->draw(l, -0.3, k, Point4D(1,1,0), 1.0, "OK");
-    */
 }
 void View::drawEndGame() const
 {
