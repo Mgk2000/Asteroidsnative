@@ -9,11 +9,11 @@ View* view = 0;
 void on_surface_created(JNIEnv* _env, jclass cls)
 {
 
-	LOGD("on_surface_created 1 view=%d", (int) view);
+//	LOGD("on_surface_created 1 view=%d", (int) view);
 	view->initializeGL();
-	LOGD("on_surface_created 2");
+//	LOGD("on_surface_created 2");
 	//view->setPause(false);
-	LOGD("on_surface_created 3");
+//	LOGD("on_surface_created 3");
 }
 
 void on_surface_changed(int width, int height)
@@ -43,7 +43,7 @@ int scores()
 
 void new_game()
 {
-	LOGD("new_game view=%d", (int) view);
+	//LOGD("new_game view=%d", (int) view);
 //	if (!view)
 //		view = new View ();
 //	else

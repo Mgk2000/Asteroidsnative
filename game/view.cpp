@@ -514,62 +514,62 @@ int View::drawFrame()
 
 bool View::initializeGL()
 {
-    LOGD("View::initializeGL() 1");
+    //LOGD("View::initializeGL() 1 level=%d levelDone=%d maxsound=%d ship=%d", _level, (int)_levelDone, (int) maxSound, (int) ship);
     glClearColor(0.0,0., 0.1, 1);
-    LOGD("View::initializeGL() 2");
+   // LOGD("View::initializeGL() 2");
     if (!initShaders())
         return false;
-    LOGD("View::initializeGL() 3");
+    //LOGD("View::initializeGL() 3");
 
     if (!ship)
     {
-        LOGD("View::initializeGL() 4");
+      //  LOGD("View::initializeGL() 4");
         for (int i = 0; i< _textures.size(); i++)
             _textures[i]->initGL();
-        LOGD("View::initializeGL() 4.1  _textures.size()=%d" , _textures.size());
+        //LOGD("View::initializeGL() 4.1  _textures.size()=%d" , _textures.size());
         background = new Background(this, _textures[7]);
         background->init();
-        LOGD("View::initializeGL() 4.2");
+        //LOGD("View::initializeGL() 4.2");
 
         ship = new Ship (this);
 		gun = new Gun (this);
 		patrol = 0;
 		// Use QBasicTimer because its faster than QTimer
         //text = new Text(this);
-        LOGD("View::initializeGL() 4.3 Bonus::LETTERS=%d", (int)Bonus::LETTERS);
+        //LOGD("View::initializeGL() 4.3 Bonus::LETTERS=%d", (int)Bonus::LETTERS);
         bitmapText = new BitmapText (this, _textures[(int)Bonus::LETTERS]);
         bitmapText->init();
-        LOGD("View::initializeGL() 4.4");
+        //LOGD("View::initializeGL() 4.4");
         _rectangle = new ARectangle(this);
         _roundedRect = new RoundedRectangle(this, 1, 1.2);
         _wideRoundedRect = new RoundedRectangle(this, 0.4, 0.15);
-        LOGD("View::initializeGL() 4.5");
+        //LOGD("View::initializeGL() 4.5");
         pauseContinue = new PauseContinue(this, _textures[(int) Bonus::PAUSE], _textures[(int) Bonus::CONTINUE]);
         pauseContinue->init();
         mutex = new Mutex;
 		startGame();
-        LOGD("View::initializeGL() 4.6");
+        //LOGD("View::initializeGL() 4.6");
 
     }
     else //after pause pressing Home button)
     {
-        LOGD("View::initializeGL() 5");
+        //LOGD("View::initializeGL() 5");
         for (unsigned int i = 0; i< _textures.size(); i++)
             _textures[i]->initGL();
-        LOGD("View::initializeGL() 6");
+        //LOGD("View::initializeGL() 6");
         ship->initGL();
-        LOGD("View::initializeGL() 7");
+        //LOGD("View::initializeGL() 7");
     	gun->initGL();
-        LOGD("View::initializeGL() 8");
+        //LOGD("View::initializeGL() 8");
         //text->initGL();
-        LOGD("View::initializeGL() 8.1");
+        //LOGD("View::initializeGL() 8.1");
         delete bitmapText;
-        LOGD("View::initializeGL() 8.11");
+        //LOGD("View::initializeGL() 8.11");
 
         bitmapText = new BitmapText (this, _textures[(int)Bonus::LETTERS]);
-        LOGD("View::initializeGL() 8.12");
+        //LOGD("View::initializeGL() 8.12");
         bitmapText->init();
-        LOGD("View::initializeGL() 9");
+        //LOGD("View::initializeGL() 9");
         _rectangle->initGL();
         _roundedRect->initGL();
         _wideRoundedRect->initGL();
@@ -577,29 +577,29 @@ bool View::initializeGL()
         for (int i=0; i< targets.size(); i++)
         	if (targets[i])
         	targets[i]->initGL();
-        LOGD("View::initializeGL() 10");
+        //LOGD("View::initializeGL() 10");
         //background->initGL();
         if (!ship->dead())
     	{
 			if (patrol)
 				patrol->initGL();
-            LOGD("View::initializeGL() 11");
+          //  LOGD("View::initializeGL() 11");
 			std::list<Bullet*>::iterator bit = bullets.begin();
 			for(; bit!= bullets.end(); bit++)
 				(*bit)->initGL();
-            LOGD("View::initializeGL() 12");
+            //LOGD("View::initializeGL() 12");
 			std::list<Asteroid*>::iterator ait = asteroids.begin();
 			for(; ait!= asteroids.end(); ait++)
 				(*ait)->initGL();
-            LOGD("View::initializeGL() 13");
+            //LOGD("View::initializeGL() 13");
             for(std::list<Bonus*>::iterator ait = bonuses.begin();
                 ait!= bonuses.end(); ait++)
                 (*ait)->initGL();
-        	LOGD("View::initializeGL() 14");
+        	//LOGD("View::initializeGL() 14");
             for(std::vector<Bonus*>::iterator ait = _shipBonuses.begin();
                 ait!= _shipBonuses.end(); ait++)
                 (*ait)->initGL();
-            LOGD("View::initializeGL() 15");
+            //LOGD("View::initializeGL() 15");
         }
     }
     return true;
@@ -791,16 +791,10 @@ void View::setPPause(bool p)
 void View::drawCurrentResult() const
 {
 	char buf[32];
-    std::sprintf(buf, "Level:%d P=%d", _level, (int) _pause);
+    std::sprintf(buf, "Level:%d Scores=%d Lives=%d", _level+1, _scores, _lives);
     _rectangle->draw(-0.6,  0.9, 0.6, 1.0, Point4D(0.2, 0.0, 0.5));
     float scale = 0.035;
     bitmapText->draw(-0.57, 0.94, scale, Point4D(1.0,1.0,0.0), buf);
-
-    std::sprintf(buf, "Scores:%d", _scores);
-    bitmapText->draw(-0.2, 0.94, scale, Point4D(1.0,1.0,0.0), buf);
-
-    std::sprintf(buf, "Lives:%d", _lives);
-    bitmapText->draw(0.2, 0.94, scale, Point4D(0.0,1.0,0.0), buf);
 
 }
 void View::drawEndGame() const
@@ -824,7 +818,7 @@ void View::addTexture(int w, int h, const char* data, int kind, bool transparent
     }
 	Texture* texture = new Texture (w,h, data, kind, transparentWhite);
     _textures.push_back(texture);
-    LOGD("View::addTexture textures.size =%d", _textures.size());
+   // LOGD("View::addTexture textures.size =%d", _textures.size());
 }
 void View::onTouchEvent(int what, int x, int y)
 {

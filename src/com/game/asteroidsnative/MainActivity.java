@@ -36,7 +36,13 @@ public class MainActivity extends Activity implements OnClickListener
     Handler mainHandler = new Handler() {
         public void handleMessage(Message msg) {
              // remove surfaceview from layout and show non-opengl views
-        	gameOver();
+        	if (msg.what == 999)
+        		gameOver();
+        	else if (msg.what == 888)
+        	{
+        		renderer.newgame = false;
+        		displayInterstitial() ;
+        	}
         }
     };
 	@Override
@@ -65,6 +71,27 @@ public class MainActivity extends Activity implements OnClickListener
 	        rendererSet = true;
 	        //setContentView(glSurfaceView);
 	        topResults = new TopResults(this);
+	        interstitial = new InterstitialAd(this);
+	        interstitial.setAdUnitId("ca-app-pub-5616246497492135/2242267005");
+	        // Создаём запрос к AdMob
+	        AdRequest adRequesti = new AdRequest.Builder().build();
+	        //AdRequest adRequesti = new AdRequest.Builder()
+	        //	.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+	        //	.addTestDevice("C6E7F2711495E0333E699F49859621AF")
+	        //	.build();
+	        // Начинаем загружать объявление
+	        interstitial.setAdListener(new AdListener() {
+	        	@Override
+	        	public void onAdLoaded() {
+	        	//Toast.makeText(getBaseContext(), "Загружено", Toast.LENGTH_SHORT).show();
+	        	}
+	            @Override
+	            public void onAdClosed() {
+	                requestNewInterstitial();
+	                //beginPlayingGame();
+	            }
+	        	});
+	        interstitial.loadAd(adRequesti);
 	        showStartScreen();
 
 	    } else {
@@ -74,6 +101,26 @@ public class MainActivity extends Activity implements OnClickListener
 	                Toast.LENGTH_LONG).show();
 	        return;
 	    }
+	}
+	final int adPeriod = 2;
+	int adCount = adPeriod;
+	public void displayInterstitial() {
+		if (adCount !=0)
+		{
+			adCount--;
+			return;
+		}
+		adCount = adPeriod;
+		if (interstitial.isLoaded()) {
+		interstitial.show();
+		}
+		}
+	private void requestNewInterstitial() {
+	    AdRequest adRequest = new AdRequest.Builder()
+	              .addTestDevice("YOUR_DEVICE_HASH")
+	              .build();
+
+	    interstitial.loadAd(adRequest);
 	}
 
 	private boolean isProbablyEmulator() {
@@ -122,6 +169,7 @@ public class MainActivity extends Activity implements OnClickListener
     	}
     	else if (v == (View) topResultsButton)
     	{
+    		displayInterstitial() ;
     		topResults.show();
     	}
     	else if (v == (View) nameOkButton)
@@ -217,7 +265,10 @@ public class MainActivity extends Activity implements OnClickListener
 			askName();
 		}
 		else	
+		{
+			this.displayInterstitial();
 			showStartScreen();
+		}
 	}
 	public void showStartScreen()
 	{

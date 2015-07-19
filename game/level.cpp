@@ -256,7 +256,7 @@ bool View::checkLevelDone()
 
 void View::drawLevelTodo()
 {
-    float left = -0.6;
+    float left = -0.55;
     float top = -0.3;
     float tleft = left + 0.02;
     float ttop = top;

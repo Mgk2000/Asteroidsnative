@@ -79,15 +79,15 @@ JNIEXPORT jint JNICALL Java_com_game_asteroidsnative_GameLibJNIWrapper_add_1text
 JNIEXPORT void JNICALL Java_com_game_asteroidsnative_GameLibJNIWrapper_add_1intarr_1texture
   (JNIEnv * env, jclass cls, jint w, jint h, jintArray dataArr, jint kind, jboolean whiteTransparent)
 {
-	LOGD("add_1intarr_1texture 1");
+//	LOGD("add_1intarr_1texture 1");
 	int* buf = new int[ w * h];
 	char* data = new char[ w * h * 3];
-	LOGD("add_1intarr_1texture 2");
+//	LOGD("add_1intarr_1texture 2");
 	jint length = env->GetArrayLength(dataArr);
-	LOGD("add_1intarr_1texture 3 length=%d", length);
+//	LOGD("add_1intarr_1texture 3 length=%d", length);
 
     env->GetIntArrayRegion(dataArr, 0, length, (jint*)buf);
-	LOGD("w=%d h=%d length=%d buf=%x", w,h,length, buf[0]);
+//	LOGD("w=%d h=%d length=%d buf=%x", w,h,length, buf[0]);
 	for (int i=0; i< h; i++)
 		for (int j =0; j< w; j++)
 		{
@@ -95,7 +95,7 @@ JNIEXPORT void JNICALL Java_com_game_asteroidsnative_GameLibJNIWrapper_add_1inta
 			memcpy(&data[i*3 * w + j*3 ], &buf[ii *w + j], 3);
 		}
 	add_texture(w, h, data, kind, whiteTransparent);
-	LOGD("Png texture added");
+//	LOGD("Png texture added");
 }
 #ifdef __cplusplus
 };

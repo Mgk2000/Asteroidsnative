@@ -36,6 +36,12 @@ public class RendererWrapper implements Renderer {
         else if (res>0)
         {
         	playSound(res-1);
+        	if (res==8)
+        	{
+            	Message msg = Message.obtain();
+    			msg.what = 888;
+            	activity.mainHandler.sendMessage(msg);
+        	}
         }
     }
 
