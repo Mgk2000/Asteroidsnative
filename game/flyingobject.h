@@ -79,6 +79,8 @@ protected:
     long long _startTime;
     int _shootCount, _breakCount;
     GLenum _howDrawTriangles;
+    void* offset;
+    virtual int nTextureVertices() const {return nvertices+2;}
 
 };
 

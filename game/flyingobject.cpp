@@ -8,7 +8,7 @@
 FlyingObject::FlyingObject(View* _view, int _nbos, Texture* __texture): nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
     _rotateSpeed(0.0f), angle(0.f), rotateAngle (0.0f),  speed (0.f),  _scale(1.0), _texture(__texture),
     _colorMult(1.0,1.0,1.0), _shootCount(0), _breakCount (1), _scaleX(1.0), _scaleY(1.0),
-    _howDrawTriangles (GL_TRIANGLES)
+    _howDrawTriangles (GL_TRIANGLES), offset(0)
 {
 	if (nvbos)
 	{
@@ -25,7 +25,7 @@ FlyingObject::FlyingObject(View *_view, int _nbos, float _x, float _y, float _sp
     speed (_speed), x(_x), y(_y) , _scale(1.0), _texture(0),
     _colorMult(1.0,1.0,1.0),
    _shootCount(0), _breakCount (1) , _scaleX(1.0), _scaleY(1.0),
-   _howDrawTriangles (GL_TRIANGLES)
+   _howDrawTriangles (GL_TRIANGLES), offset(0)
 
 {
 	if (nvbos)
@@ -43,7 +43,7 @@ nvbos (_nbos), vertices(0), indices(0), nvertices(0), nindices(0), view(_view),
 _rotateSpeed(0.0f), angle(_angle), rotateAngle (0.0f), speed (_speed), x(_x), y(_y) ,
   _scale(1.0), _texture(__texture), _colorMult(1.0,1.0,1.0)
 , _shootCount(0), _breakCount (1) , _scaleX(1.0), _scaleY(1.0),
-  _howDrawTriangles (GL_TRIANGLES)
+  _howDrawTriangles (GL_TRIANGLES), offset(0)
 
 {
     if (nvbos)
@@ -296,10 +296,10 @@ void FlyingObject::drawTexture(float angle)
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);
-    err = glGetError();
-    if (err)
-        LOGD("err=%d", err);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);
+//    err = glGetError();
+//    if (err)
+//        LOGD("err=%d", err);
     int texturelocation = _texture->textureLocation();
     glUniform1i(texturelocation, 0);
     err = glGetError();
@@ -307,28 +307,29 @@ void FlyingObject::drawTexture(float angle)
         LOGD("err=%d", err);
 
 //    quintptr offset = 0;
-    void* offset = 0;
+    void* _offset = offset;
     int vertexLocation = _texture->posLocation();
     glEnableVertexAttribArray(vertexLocation);
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
 
-    glVertexAttribPointer(vertexLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Point4D), (const void *)offset);
+    glVertexAttribPointer(vertexLocation, 2, GL_FLOAT, GL_FALSE,
+                          sizeof(Point4D), (const void *)_offset);
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
-    offset += 8;
+    _offset += 8;
 
     glEnableVertexAttribArray(_texture->texCoordLocation());
     err = glGetError();
     if (err)
         LOGD("err=%d", err);
     glVertexAttribPointer(_texture->texCoordLocation(), 2, GL_FLOAT,
-                          GL_FALSE, sizeof(Point4D), (const void *)offset);
+                          GL_FALSE, sizeof(Point4D), (const void *)_offset);
     err = glGetError();
 //    glDrawElements(how, nindices, GL_UNSIGNED_SHORT, 0);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, nvertices+2);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, nTextureVertices());
     err = glGetError();
     if (err)
         LOGD("err=%d", err);

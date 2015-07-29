@@ -64,6 +64,8 @@ public class RendererWrapper implements Renderer {
 	        addPngTexture("abcmono.png", 7, false);
 	        addPngTexture("Pause.png", 8, true);
 	        addPngTexture("Continue.png", 9, true);
+	        addPngTexture("Ship.png", 10, true);
+	        addPngTexture("Patrol.png", 11, true);
 	        texturesCreated = true;
 		}
     	GameLibJNIWrapper.on_surface_created();

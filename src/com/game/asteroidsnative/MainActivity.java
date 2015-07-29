@@ -291,7 +291,7 @@ public class MainActivity extends Activity implements OnClickListener
         exitButton.setOnClickListener(this);
         ImageView mImageView;
         mImageView = (ImageView) findViewById(R.id.imageView1);
-        mImageView.setImageResource(R.drawable.asteroid);
+        mImageView.setImageResource(R.drawable.asteroids);
         TextView scoresView = (TextView) findViewById(R.id.ScoresView);
         scoresView.setText("" + GameLibJNIWrapper.scores());
 	

@@ -79,7 +79,7 @@ void View::calcLevel(int __level)
     int clevel = __level % _maxCountedLevel;
     //_levelAppearenceFrequency = calcAppearenceFrequency(__level);
     _levelBonusProbability = 0.1;
-    _levelAppearenceFrequency = 2.0 / log( (__level+1)*2.718281828);
+    _levelAppearencePeriod = 1.5 / log( (__level+1)*2.718281828);
     for (int i =0 ; i < _levelBonuses.size(); i++)
     {
         _levelBonuses[i]->num = 0;
@@ -114,7 +114,8 @@ void View::calcLevel(int __level)
         _levelTargets = 2;
         _levelPatrolBreaks =0;
         _levelTargetBreaks = 20;
-        _levelScores = 500;
+        _levelBonuses[1]->num = 1;
+        _levelScores = 1000;
         break;
     case 2:
         _levelTargets = 1;
@@ -125,8 +126,8 @@ void View::calcLevel(int __level)
         _levelBonuses[2]->num = 2;
         _levelBonuses[3]->num = 2;
         _levelBonuses[4]->num = 2;
-        _levelScores = 1000;
-        _levelBonusProbability = 0.2;
+        _levelScores = 3000;
+        //_levelBonusProbability = 0.2;
         break;
     case 3:
         _levelTargets = 0;
@@ -138,8 +139,7 @@ void View::calcLevel(int __level)
         _levelTargets = 6;
         _levelPatrolBreaks =0;
         _levelTargetBreaks = 10;
-        _levelScores = 200;
-        _levelStartScores = 0;
+        _levelScores = 500;
         for (int i =0 ; i < _levelBonuses.size(); i++)
             _levelBonuses[i]->num = 2;
         _levelPatrolBreaks =12;
@@ -182,53 +182,53 @@ void View::startLevel(int l)
 
 void View::clearGame()
 {
-	LOGD("ClearGame 1");
+	//LOGD("ClearGame 1");
     if (patrol)
     {
-    	LOGD("ClearGame 2");
+    	//LOGD("ClearGame 2");
         delete patrol;
         patrol = 0;
-    	LOGD("ClearGame 3");
+    	//LOGD("ClearGame 3");
 
     }
     for (int i=0; i< targets.size(); i++)
     {
-    	LOGD("ClearGame 4");
+    	//LOGD("ClearGame 4");
         if(targets[i])
         {
             delete targets[i];
             targets[i] = 0;
         }
     }
-	LOGD("ClearGame 5");
+	//LOGD("ClearGame 5");
     for (std::list<Bullet*>::iterator bit = bullets.begin();
          bit!= bullets.end(); bit++)
         delete *bit;
     bullets.clear();
-	LOGD("ClearGame 6");
+	//LOGD("ClearGame 6");
 	for (std::list<Asteroid*>::iterator bit = asteroids.begin();
          bit!= asteroids.end(); bit++)
         delete *bit;
     asteroids.clear();
-	LOGD("ClearGame 7");
+	//LOGD("ClearGame 7");
     for (std::list<Bonus*>::iterator bit = bonuses.begin();
          bit!= bonuses.end(); bit++)
         delete *bit;
     bonuses.clear();
-	LOGD("ClearGame 8");
+	//LOGD("ClearGame 8");
 
     for (std::vector<Bonus*>::iterator bit = _shipBonuses.begin();
          bit!= _shipBonuses.end(); bit++)
         delete *bit;
     _shipBonuses.clear();
-	LOGD("ClearGame 9");
+	//LOGD("ClearGame 9");
     if (_shipBonus)
     {
         delete _shipBonus;
         _shipBonus = 0;
     }
     //_scores = 0;
-	LOGD("ClearGame 10");
+	//LOGD("ClearGame 10");
 
 }
 
@@ -243,7 +243,7 @@ bool View::checkLevelDone()
     for (int i =0; i< _levelBonuses.size(); i++)
         if ( _levelBonuses[i]->catched < _levelBonuses[i]->num)
             return false;
-    if (_scores<_levelScores)
+    if (_scores - _levelStartScores <_levelScores)
         return false;
     _lives=1;
     sound(LEVELDONE);

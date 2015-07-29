@@ -58,9 +58,9 @@ GLubyte *Texture::getFragment(GLubyte *src, GLubyte* dst,
         memcpy(dptr, sptr, width);
     }
 }
-bool Texture::initGL()
+bool Texture::initGL(int __program)
 {
-    createProgram();
+    _program = __program;
     if (!_program)
     {
         LOGD("Could not create program.");
@@ -105,7 +105,36 @@ void Texture::loadPicture(int picWidth, int picHeight, const char* data, bool tr
         pcData[i*4+3] = a;
     }
 }
-void Texture::createProgram()
+void Texture::createTexture()
+{
+//        int err;
+        glBindTexture(GL_TEXTURE_2D, _textureId);
+//        err = glGetError();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _picWidth, _picHeight,
+           0, GL_RGBA, GL_UNSIGNED_BYTE, pcData);
+//        err = glGetError();
+        glEnable(GL_TEXTURE_2D) ;
+
+        glGenerateMipmap(GL_TEXTURE_2D);
+//        err = glGetError();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//        err = glGetError();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//        err = glGetError();
+}
+
+
+TextureProgram::TextureProgram()
+{
+    createProgram();
+}
+
+void TextureProgram::initGL()
+{
+    createProgram();
+}
+
+void TextureProgram::createProgram()
 {
     GLuint vtxShader = 0;
     GLuint fragShader = 0;
@@ -139,9 +168,10 @@ exit:
     ;
     glDeleteShader(vtxShader);
     glDeleteShader(fragShader);
+
 }
 
-GLuint Texture::createShader(GLenum shaderType, const char *src)
+GLuint TextureProgram::createShader(GLenum shaderType, const char *src)
 {
     GLuint shader = glCreateShader(shaderType);
     if (!shader) {
@@ -158,22 +188,5 @@ GLuint Texture::createShader(GLenum shaderType, const char *src)
         return 0;
     }
     return shader;
-}
 
-void Texture::createTexture()
-{
-//        int err;
-        glBindTexture(GL_TEXTURE_2D, _textureId);
-//        err = glGetError();
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _picWidth, _picHeight,
-           0, GL_RGBA, GL_UNSIGNED_BYTE, pcData);
-//        err = glGetError();
-        glEnable(GL_TEXTURE_2D) ;
-
-        glGenerateMipmap(GL_TEXTURE_2D);
-//        err = glGetError();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//        err = glGetError();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//        err = glGetError();
 }

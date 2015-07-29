@@ -2,7 +2,7 @@
 #include "random.h"
 #include <math.h>
 
-Sand::Sand(View* _view, FlyingObject* _parent) : FlyingObject(_view, 1, 0)
+Sand::Sand(View* _view, FlyingObject* _parent, const Color & col) : FlyingObject(_view, 1, 0)
 {
     float pr = _parent->r() * 1.5;
     x = _parent->X();
@@ -23,7 +23,7 @@ Sand::Sand(View* _view, FlyingObject* _parent) : FlyingObject(_view, 1, 0)
         vertices[i*2+1].x = vertices[i*2].x;
         vertices[i*2+1].y = vertices[i*2].y+ 0.003;
     }
-    _color = Point4D (1,1,1,1); //_parent->color();
+    _color = col; //_parent->color();
     initGL();
 }
 

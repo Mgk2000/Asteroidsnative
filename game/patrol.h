@@ -7,7 +7,7 @@ class Random;
 class Patrol : public FlyingObject
 {
 public:
-	Patrol(View* _view);
+    Patrol(View* _view, Texture* texture);
 	virtual ~Patrol();
 	void init();
 	void initGL();
@@ -20,6 +20,8 @@ public:
 private:
 	float width;
 	bool leftShoot, rightShoot;
+    long long _beginTime;
+    bool _firstDraw;
 
 };
 

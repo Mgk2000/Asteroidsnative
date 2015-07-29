@@ -357,7 +357,7 @@ BitmapText::BitmapText(View* view, Texture* texture)
     l->width = 64;
     letters['?'] = l;
     bonus = new Bonus(view, Bonus::NONE,0);
-    patrol = new Patrol(view);
+    patrol = new Patrol(view, view->textures().at((int) Bonus::PATROL));
     target = new Target(view, view->textures().at(0),0,0,1.0);
 }
 

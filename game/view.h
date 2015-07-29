@@ -160,6 +160,7 @@ private:
     void drawEndGame() const;
     void drawLevelDone() const;
     std::vector <Texture *> _textures;
+    TextureProgram* _textureProgram;
     std::vector<Bonus*> _shipBonuses;
     std::list <Explosion*> explosions;
     Bonus* _shipBonus;
@@ -182,7 +183,7 @@ private:
     int _level;
     int _maxTargets;
     int _maxCountedLevel;
-    float _levelAppearenceFrequency;
+    float _levelAppearencePeriod;
     int _levelTargets;
     int _levelPatrolBreaks , _patrolBreaks ;
     struct LevelBonus

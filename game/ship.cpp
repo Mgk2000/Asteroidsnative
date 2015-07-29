@@ -1,7 +1,7 @@
 #include "ship.h"
 #include "view.h"
 
-Ship::Ship(View* _view): FlyingObject(_view, 2, 0), _dead (false)
+Ship::Ship(View* _view, Texture* texture): FlyingObject(_view, 1, texture), _dead (false)
 {
 	init();
 }
@@ -12,7 +12,17 @@ Ship::~Ship()
 }
 void Ship::initGL()
 {
-	fill_vbos();
+    Point4D* vertices4 = new Point4D[6];
+    vertices4[0] = Point4D (0 , 0, 0.5 , 0.5);
+    vertices4[1] = Point4D(-_width, _width, 0,1);
+    vertices4[2] = Point4D(-_width, -_width, 0,0);
+    vertices4[3] = Point4D(_width, -_width , 1,0);
+    vertices4[4] = Point4D(_width, _width, 1,1);
+    vertices4[5] = vertices4[1];
+    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
+    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Point4D), vertices4, GL_STATIC_DRAW);
+    delete[] vertices4;
+
 }
 
 void Ship::init()
@@ -41,7 +51,7 @@ void Ship::init()
 	nindices = 6;
 	deadcolor = Point4D(1,0,0,1);
 	alivecolor =  Point4D(0.0, 0.7, 0.7, 1.0);
-	fill_vbos();
+    initGL();
 }
 
 void Ship::setX(float _x)
@@ -105,8 +115,14 @@ const Point4D &Ship::color() const
 
 void Ship::draw()
 {
-    drawTriangles(vboIds[1]);
+    if (!_dead)
+        _colorMult = COLOR_WHITE;
+    else
+        _colorMult = COLOR_RED;
+
+    //drawTriangles(vboIds[1]);
 	//FlyingObject::draw();
+    drawTexture();
 }
 
 

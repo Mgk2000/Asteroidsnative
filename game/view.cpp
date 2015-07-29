@@ -208,6 +208,8 @@ void View::checkShoots()
 		{
             //LOGD("patrol delete bullets=%d", bullets.size() );
 			_scores+= patrol->cost();
+            Sand* sand = new Sand(this, patrol, Color(0, 0.5, 1));
+            sands.push_back(sand);
 			delete patrol;
             _patrolBreaks++;
 			patrol =0;
@@ -375,7 +377,7 @@ void View::checkAppearences()
         {
             if (_random1.frandom() <= 0.3)
             {
-                patrol = new Patrol (this);
+                patrol = new Patrol (this, _textures[(int)Bonus::PATROL]);
                 patrol->init();
                 sound(PATROL);
                 pat = true;
@@ -413,7 +415,7 @@ void View::checkAppearences()
             addAsteroid(asteroid);
         }
         asteroidAppearTime = nticks + random1().irandom(300, 700) *
-           _levelAppearenceFrequency  / log10 (nticks+10.0) ;
+           _levelAppearencePeriod  / log10 (nticks+10.0) ;
     }
 }
 
@@ -524,14 +526,15 @@ bool View::initializeGL()
     if (!ship)
     {
       //  LOGD("View::initializeGL() 4");
+        _textureProgram = new TextureProgram();
         for (int i = 0; i< _textures.size(); i++)
-            _textures[i]->initGL();
+            _textures[i]->initGL(_textureProgram->program());
         //LOGD("View::initializeGL() 4.1  _textures.size()=%d" , _textures.size());
         background = new Background(this, _textures[7]);
         background->init();
         //LOGD("View::initializeGL() 4.2");
 
-        ship = new Ship (this);
+        ship = new Ship (this, _textures[(int) Bonus::SHIP]);
 		gun = new Gun (this);
 		patrol = 0;
 		// Use QBasicTimer because its faster than QTimer
@@ -554,8 +557,9 @@ bool View::initializeGL()
     else //after pause pressing Home button)
     {
         //LOGD("View::initializeGL() 5");
+    	_textureProgram->initGL();
         for (unsigned int i = 0; i< _textures.size(); i++)
-            _textures[i]->initGL();
+            _textures[i]->initGL(_textureProgram->program());
         //LOGD("View::initializeGL() 6");
         ship->initGL();
         //LOGD("View::initializeGL() 7");

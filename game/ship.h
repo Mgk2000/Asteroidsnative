@@ -5,7 +5,7 @@ class View;
 class Ship : public FlyingObject
 {
 public:
-	Ship(View* view);
+    Ship(View* view, Texture* texture);
 	virtual ~Ship();
 	void init();
 	void initGL();
@@ -27,6 +27,7 @@ private:
     float _height;
 	bool _dead;
 	Point4D alivecolor, deadcolor;
+    virtual int nTextureVertices() const {return 6;}
 };
 
 #endif // SHIP_H
