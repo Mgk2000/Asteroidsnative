@@ -103,7 +103,7 @@ public class MainActivity extends Activity implements OnClickListener
 	    }
 	}
 	final int adPeriod = 2;
-	int adCount = adPeriod;
+	int adCount = 0;
 	public void displayInterstitial() {
 		if (adCount !=0)
 		{
