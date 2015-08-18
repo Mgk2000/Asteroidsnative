@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Crazy Asteroids</string>
+    <string name="sNewgame">Новая игра</string>
+    <string name="sContinue">Продолжить</string>
+    <string name="sSoundOn">Звук:вкл</string>
+    <string name="sSoundOff">Звук:выкл</string>
+    <string name="sMusicOn">Музыка:вкл</string>
+    <string name="sMusicOff">Музыка:выкл</string>
+    <string name="sTopResults">Рекорды</string>
+    <string name="sExit">Выход</string>
+    <string name="sOK">OK</string>
+    <string name="sBack">Вернуться</string>
+    <string name="sMainMenu">Главное меню</string>
+    <string name="sEnterYourName">Введите ваше имя:</string>
+    <string name="sTop10results">Лучшие 10 результатов:</string>
+    <string name="sYourScores">Ваш результат:</string>
+    <string name="sMainImage">Главное изображение</string>
+    <string name="dummy_content">StartAD.mobi</string>
+    <string name="sHelpUs">Помогите нам!</string>
+    
+    
+</resources>

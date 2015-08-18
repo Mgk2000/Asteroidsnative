@@ -9,9 +9,9 @@ extern "C" {
 #endif
 
 JNIEXPORT void JNICALL Java_com_game_asteroidsnative_GameLibJNIWrapper_on_1surface_1created
-(JNIEnv * _env, jclass cls)
+(JNIEnv * _env, jclass cls, jboolean russian)
 {
-	on_surface_created(_env, cls);
+	on_surface_created(_env, cls, russian);
 }
 
 JNIEXPORT void JNICALL Java_com_game_asteroidsnative_GameLibJNIWrapper_on_1surface_1changed

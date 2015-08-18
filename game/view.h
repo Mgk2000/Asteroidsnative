@@ -82,7 +82,7 @@ public:
     void processTouchMove (int x, int y);
     void processTouchPress (int x, int y);
     int drawFrame();
-    bool initializeGL();
+    bool initializeGL(bool _russian);
     void resizeGL(int w, int h);
     void paintGL();
     int width, height;
@@ -216,6 +216,7 @@ private:
     RoundedRectangle* _roundedRect, * _wideRoundedRect;
     long long okPressTime;
     PauseContinue* pauseContinue;
+    bool russian;
 };
 
 #endif // VIEW_H

@@ -17,5 +17,8 @@
     <string name="sTop10results">Top 10 results:</string>
     <string name="sYourScores">Your Scores:</string>
     <string name="sMainImage">Main Image</string>
+    <string name="dummy_content">StartAD.mobi</string>
+    <string name="sHelpUs">Help us!</string>
+    
     
 </resources>

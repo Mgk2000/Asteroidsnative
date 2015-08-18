@@ -3,7 +3,7 @@
 
 #include <android/log.h>
 #include <jni.h>
-void on_surface_created(JNIEnv* _env, jclass _cls);
+void on_surface_created(JNIEnv* _env, jclass _cls, jboolean russian);
 void on_surface_changed(int width, int height);
 int on_draw_frame();
 void on_touch_event(int what, int x, int y);

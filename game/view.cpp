@@ -514,10 +514,11 @@ int View::drawFrame()
 }
 
 
-bool View::initializeGL()
+bool View::initializeGL(bool _russian)
 {
     //LOGD("View::initializeGL() 1 level=%d levelDone=%d maxsound=%d ship=%d", _level, (int)_levelDone, (int) maxSound, (int) ship);
-    glClearColor(0.0,0., 0.1, 1);
+   russian = _russian;
+	glClearColor(0.0,0., 0.1, 1);
    // LOGD("View::initializeGL() 2");
     if (!initShaders())
         return false;
@@ -795,21 +796,39 @@ void View::setPPause(bool p)
 void View::drawCurrentResult() const
 {
 	char buf[32];
-    std::sprintf(buf, "Level:%d Scores=%d Lives=%d", _level+1, _scores, _lives);
+	if (!russian)
+		std::sprintf(buf, "Level:%d Scores:%d Lives:%d", _level+1, _scores, _lives);
+	else
+		std::sprintf(buf, "Óðîâåíü:%d Î÷êè:%d Æèçíè:%d", _level+1, _scores, _lives);
+
     _rectangle->draw(-0.6,  0.9, 0.6, 1.0, Point4D(0.2, 0.0, 0.5));
     float scale = 0.035;
-    bitmapText->draw(-0.57, 0.94, scale, Point4D(1.0,1.0,0.0), buf);
+    bitmapText->draw(-0.57, 0.94, scale, Point4D(1.0,1.0,0.0),  buf);
+    //bitmapText->draw(-0.57, 0.84, scale, Point4D(1.0,1.0,0.0), "Å¨ÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏ");
+    //bitmapText->draw(-0.57, 0.74, scale, Point4D(1.0,1.0,0.0), "ÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßß");
+   // bitmapText->draw(-0.57, 0.64, scale, Point4D(1.0,1.0,0.0), "àáâãäå¸æçèéêëìíîï");
+    //bitmapText->draw(-0.57, 0.54, scale, Point4D(1.0,1.0,0.0), "ïðñòóôõö÷øùúûúýþÿÿ");
+    //bitmapText->draw(-0.57, 0.44, scale, Point4D(1.0,1.0,0.0), "ABCDEFGHIJKLMNOPP");
+    //bitmapText->draw(-0.57, 0.34, scale, Point4D(1.0,1.0,0.0), "QRSTUVWXYZ)!@#$^&*()");
+    //bitmapText->draw(-0.57, 0.24, scale, Point4D(1.0,1.0,0.0), "abcdefghijklmnopp");
+   // bitmapText->draw(-0.57, 0.14, scale, Point4D(1.0,1.0,0.0), "qrstuvwxyz01234567890");
 
 }
 void View::drawEndGame() const
 {
-    bitmapText->drawCenter(0, 0.0, 0.05, COLOR_RED, "END");
+	if (!russian)
+		bitmapText->drawCenter(0, 0.0, 0.05, COLOR_RED, "END");
+	else
+		bitmapText->drawCenter(0, 0.0, 0.05, COLOR_RED, "ÊÎÍÅÖ ÈÃÐÛ");
 }
 
 void View::drawLevelDone() const
 {
     char buf[64];
-    sprintf(buf, "Level %d done!", _level);
+    if (!russian)
+    	sprintf(buf, "Level %d done!", _level);
+    else
+    	sprintf(buf, "Óðîâåíü %d ïðîéäåí!", _level);
     bitmapText ->drawCenter(0, 0, 0.05, COLOR_GREEN, buf);
 }
 

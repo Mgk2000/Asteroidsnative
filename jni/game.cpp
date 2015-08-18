@@ -6,11 +6,11 @@
 #include <time.h>
 
 View* view = 0;
-void on_surface_created(JNIEnv* _env, jclass cls)
+void on_surface_created(JNIEnv* _env, jclass cls, jboolean russian)
 {
 
 //	LOGD("on_surface_created 1 view=%d", (int) view);
-	view->initializeGL();
+	view->initializeGL(russian);
 //	LOGD("on_surface_created 2");
 	//view->setPause(false);
 //	LOGD("on_surface_created 3");

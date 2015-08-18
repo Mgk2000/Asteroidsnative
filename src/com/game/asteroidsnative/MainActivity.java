@@ -1,31 +1,41 @@
 package com.game.asteroidsnative;
 
 
+import java.util.Locale;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 //import android.view.Menu;
 //import android.view.MenuItem;
 import android.widget.Toast;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import com.google.android.gms.ads.*;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.startad.lib.SADView;
 public class MainActivity extends Activity implements OnClickListener
 {
 	private SurfaceWrapper glSurfaceView;
 	private boolean rendererSet;
 	RendererWrapper renderer;
 	boolean pause = false;
+	boolean locale_ru = false;
 	Button playButton, continueButton, topResultsButton, exitButton,nameOkButton, soundButton, musicButton;
 	public int layoutId =0;
 	TopResults topResults;
@@ -33,6 +43,10 @@ public class MainActivity extends Activity implements OnClickListener
 	public Sounds sounds;
 	public boolean soundFlag = true, musicFlag;
 	private InterstitialAd interstitial;
+    protected SADView sadView;
+    protected LinearLayout adViewLayout;
+    protected String currentAdPlaceId = AdConstants.ADPLACEID_DEFAULT;
+
     Handler mainHandler = new Handler() {
         public void handleMessage(Message msg) {
              // remove surfaceview from layout and show non-opengl views
@@ -62,7 +76,9 @@ public class MainActivity extends Activity implements OnClickListener
 	            // Avoids crashes on startup with some emulator images.
 	            glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 	        }
-	 
+	        String sLanguage = Locale.getDefault().getLanguage();
+	        if (sLanguage.equals("ru"))
+	        	locale_ru=true;
 	        glSurfaceView.setEGLContextClientVersion(2);
 	        renderer = new RendererWrapper(); 
 	        glSurfaceView.setRenderer(renderer);
@@ -79,6 +95,8 @@ public class MainActivity extends Activity implements OnClickListener
 	        //	.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
 	        //	.addTestDevice("C6E7F2711495E0333E699F49859621AF")
 	        //	.build();
+	        interstitial.loadAd(adRequesti);
+
 	        // Начинаем загружать объявление
 	        interstitial.setAdListener(new AdListener() {
 	        	@Override
@@ -91,8 +109,6 @@ public class MainActivity extends Activity implements OnClickListener
 	                //beginPlayingGame();
 	            }
 	        	});
-	        interstitial.loadAd(adRequesti);
-	        showStartScreen();
 
 	    } else {
 	        // Should never be seen in production, since the manifest filters
@@ -101,7 +117,20 @@ public class MainActivity extends Activity implements OnClickListener
 	                Toast.LENGTH_LONG).show();
 	        return;
 	    }
+        showStartScreen();
+	    
 	}
+    protected void reloadSAD(){
+//    	this.adViewLayout.bringToFront();
+    	if (sadView == null)
+    		return;
+    	if (locale_ru)
+    		this.sadView.loadAd(this.currentAdPlaceId, SADView.LANGUAGE_RU);
+    	else
+    		this.sadView.loadAd(this.currentAdPlaceId, SADView.LANGUAGE_EN);
+//        sadView.bringToFront();
+    }
+
 	final int adPeriod = 2;
 	int adCount = 0;
 	public void displayInterstitial() {
@@ -111,6 +140,7 @@ public class MainActivity extends Activity implements OnClickListener
 			return;
 		}
 		adCount = adPeriod;
+		reloadSAD();
 		if (interstitial.isLoaded()) {
 		interstitial.show();
 		}
@@ -164,12 +194,16 @@ public class MainActivity extends Activity implements OnClickListener
     	}
     	else if (v == (View) musicButton)
     	{
-    		musicFlag=!musicFlag;
-    		setMusicButtonText();
+            //this.showBannerActivity(AdConstants.ADPLACEID_DEFAULT);
+            this.reloadSAD();
+
+//    		musicFlag=!musicFlag;
+//    		setMusicButtonText();
     	}
     	else if (v == (View) topResultsButton)
     	{
     		displayInterstitial() ;
+
     		topResults.show();
     	}
     	else if (v == (View) nameOkButton)
@@ -286,7 +320,8 @@ public class MainActivity extends Activity implements OnClickListener
         setMusicButtonText();
         soundButton.setOnClickListener(this);
         musicButton.setOnClickListener(this);
-        musicButton.setEnabled(false);
+        musicButton.setText(getString(R.string.sHelpUs));
+//        musicButton.setEnabled(false);
         topResultsButton.setOnClickListener(this);
         exitButton.setOnClickListener(this);
         ImageView mImageView;
@@ -294,6 +329,47 @@ public class MainActivity extends Activity implements OnClickListener
         mImageView.setImageResource(R.drawable.asteroids);
         TextView scoresView = (TextView) findViewById(R.id.ScoresView);
         scoresView.setText("" + GameLibJNIWrapper.scores());
+        this.adViewLayout = (LinearLayout)this.findViewById(R.id.content);
+        if(null != this.sadView)
+        	sadView = null;
+        this.sadView = new SADView(this, AdConstants.APPLICATION_ID);
+        if (sadView != null)
+        {
+        this.sadView.setAdListener(new SADView.SADListener() {
+            @Override
+            public void onReceiveAd() {
+                Log.d(AdConstants.TAG, "SADListener onReceiveId");
+ //               BannerActivity.this.showToast("SADListener onReceiveId");
+            }
+
+            @Override
+            public void onShowedAd() {
+                Log.d(AdConstants.TAG, "SADListener onShowedAd");
+//                BannerActivity.this.showToast("SADListener onShowedAd");
+            }
+
+            @Override
+            public void onError(SADView.ErrorCode error) {
+                Log.d(AdConstants.TAG, "SADListener onError " + error);
+//                BannerActivity.this.showToast("SADListener onError " + error);
+            }
+
+            @Override
+            public void onAdClicked() {
+                Log.d(AdConstants.TAG, "SADListener onAdClicked");
+ //               BannerActivity.this.showToast("SADListener onAdClicked");
+            }
+
+            @Override
+            public void noAdFound() {
+                Log.d(AdConstants.TAG, "SADListener noAdFound");
+//                BannerActivity.this.showToast("SADListener noAdFound");
+            }
+        });
+
+        this.adViewLayout.addView(this.sadView);
+        this.reloadSAD();
+        }
 	
 	}
 	void askName()
@@ -326,4 +402,24 @@ public class MainActivity extends Activity implements OnClickListener
 	{
 		sounds.playSound(ind);
 	}
+    protected void showBannerActivity(String adPlaceId){
+        Intent intent = new Intent(MainActivity.this, BannerActivity.class);
+        intent.putExtra(AdConstants.ADPLACEID, adPlaceId);
+        this.startActivity(intent);
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if(null != this.sadView) this.sadView.saveInstanceState(outState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if(null != this.sadView) this.sadView.restoreInstanceState(outState);
+    }
+
+
 }

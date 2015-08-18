@@ -61,14 +61,15 @@ public class RendererWrapper implements Renderer {
 	        addPngTexture("Diamond.png", 5, true);
 	        addPngTexture("goldenkey.png", 6, true);
 //	        addPngTexture("abcgraysquare.png", 7, true);
-	        addPngTexture("abcmono.png", 7, false);
+//        addPngTexture("abcmono.png", 7, false);
+	        addPngTexture("abcenru.png", 7, false);
 	        addPngTexture("Pause.png", 8, true);
 	        addPngTexture("Continue.png", 9, true);
 	        addPngTexture("Ship.png", 10, true);
 	        addPngTexture("Patrol.png", 11, true);
 	        texturesCreated = true;
 		}
-    	GameLibJNIWrapper.on_surface_created();
+    	GameLibJNIWrapper.on_surface_created(activity.locale_ru);
     	if (newgame)
     		GameLibJNIWrapper.new_game();
 	}

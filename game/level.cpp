@@ -262,12 +262,18 @@ void View::drawLevelTodo()
     float ttop = top;
     float dh = -0.08;
     float scale = 0.03;
-    bitmapText->draw(tleft, ttop,scale,Color(1,1,0),"TODO:");
+    if (russian)
+    	bitmapText->draw(tleft, ttop,scale,Color(1,1,0),"НАДО:");
+    else
+    	bitmapText->draw(tleft, ttop,scale,Color(1,1,0),"TODO:");
     ttop = ttop + dh;
     char buf[128];
     if (_levelScores && _levelScores - (_scores-_levelStartScores) >0)
     {
-        sprintf(buf, "Scores:%d", _levelScores - (_scores-_levelStartScores));
+    	if (!russian)
+    		sprintf(buf, "Scores:%d", _levelScores - (_scores-_levelStartScores));
+    	else
+    		sprintf(buf, "Очки:%d", _levelScores - (_scores-_levelStartScores));
         bitmapText->draw(tleft,ttop,scale,Color(1,1,0), buf);
         ttop = ttop + dh;
     }
@@ -342,12 +348,18 @@ void View::showLevelDialog()
         bitmapText->draw(-0.2, y,scale, Color(1,1,1),buf);
     }
     y = y + dh;
-    sprintf(buf, "Your task for level %d:", _level+1);
+    if (!russian)
+    	sprintf(buf, "Your task for level %d:", _level+1);
+    else
+    	sprintf(buf, "Задание на уровень %d:", _level+1);
     bitmapText->draw(left, y,scale, Color(1,1,1), buf);
     y = y + dh;
     if (_levelScores)
     {
-        sprintf (buf, "Scores : %d", _levelScores);
+    	if (!russian)
+    		sprintf (buf, "Scores : %d", _levelScores);
+    	else
+    		sprintf (buf, "Очки : %d", _levelScores);
         bitmapText->draw(left, y,scale, Color(1,1,1),buf);
         y = y + dh;
     }
@@ -361,8 +373,13 @@ void View::showLevelDialog()
     char buf1[16];
     if (_levelTargets)
     {
-        sprintf (buf, "%%%d%%    %d  Shoots : %d",
+    	if (!russian)
+    		sprintf (buf, "%%%d%%    %d  Shoots : %d",
                  (int) Bonus::TARGET, _levelTargets, _levelTargetBreaks);
+    	else
+    		sprintf (buf, "%%%d%%    %d  Попадания : %d",
+                 (int) Bonus::TARGET, _levelTargets, _levelTargetBreaks);
+
         bitmapText->draw(left, y,scale, Color(1,1,1),buf);
         y = y + dh;
     }
